@@ -18,6 +18,9 @@ dist-ssr
 !.vscode/settings.json
 .idea
 .DS_Store
+.env
+.env.local
+.env.*.local
 Thumbs.db
 *.suo
 *.ntvs*
