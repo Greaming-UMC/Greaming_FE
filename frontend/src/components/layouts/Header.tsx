@@ -1,8 +1,16 @@
+import Logo from "../common/Logo";
+
 const Header = () => {
   return (
     <header className="h-14 flex items-center px-6 bg-surface border-b border-outline">
-      {/* 로고 / 타이틀 영역 */}
-      <h1 className="headline-small-emphasized">Greaming</h1>
+      <div className="flex items-center gap-2">
+        <Logo
+          name="primary"
+          size={24}
+          aria-label="Greaming logo"
+        />
+        <h1 className="title-medium-emphasized">Greaming</h1>
+      </div>
     </header>
   );
 };
