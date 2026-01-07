@@ -6,7 +6,7 @@ interface AppLayoutProps {
 
 const AppLayout = ({ children }: AppLayoutProps) => {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-surface text-on-surface">
       <Header />
       <main>{children}</main>
     </div>
