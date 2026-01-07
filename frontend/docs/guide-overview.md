@@ -17,7 +17,7 @@
 ### 1) 폴더 구조
 
 ```
-src/components/
+src/components/common/
   input/
   display/
   feedback/
