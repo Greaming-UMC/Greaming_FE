@@ -48,6 +48,30 @@ src/components/common/
 - 아이콘만 있는 버튼은 `aria-label` 필수
 - 모달은 `role="dialog"` + `aria-modal="true"`
 
+## 패턴 선택 기준 (Flat vs Compound)
+
+### Flat 패턴
+
+- **단일 컴포넌트 + props 기반**
+- 단순한 UI/변형이 적은 컴포넌트에 적합
+- 예: Button, Badge, Divider, Icon
+
+### Compound 패턴
+
+- **부모 + 하위 컴포넌트 조합**
+- 슬롯이 많거나 구조가 복잡한 컴포넌트에 적합
+- 예: Modal, Tabs, Dropdown, Layout
+
+### 원칙
+
+- **단순 컴포넌트는 Flat만 제공**
+- **복잡한 컴포넌트는 하이브리드(Primitive + Compound) 허용**
+  - Primitive(Flat)가 실제 구현 기준
+  - Compound는 Primitive를 조립한 편의 API
+- 역할 기준 추천:
+  - Input/Display → Flat 우선
+  - Feedback/Layout → Compound + Primitive(필요 시) 우선
+
 ## 역할별 가이드
 
 - [입력(Input)](./roles/input.md)

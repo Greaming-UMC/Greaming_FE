@@ -13,6 +13,10 @@
 - 크기(`size`), 상태(`loading`)는 최소 옵션으로 시작
 - `onClear` 같은 보조 액션은 필요할 때만 추가
 
+## 권장 패턴
+
+- **Flat** (단일 컴포넌트 + props)
+
 ## Button 최소 스펙 (권장 예시)
 
 ```ts
@@ -26,7 +30,7 @@ type ButtonProps = {
 };
 ```
 
-## 간단 예시
+## Flat 패턴 예시
 
 ```tsx
 <Button variant="solid" iconLeft={<Icon name="add" />} onClick={handleSave}>

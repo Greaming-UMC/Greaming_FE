@@ -13,11 +13,15 @@
 - 헤더/탭 등은 `aria` 속성 포함
 - 반응형 클래스는 최소로 시작
 
-## 간단 예시
+## 권장 패턴
+
+- **Compound** (레이아웃 슬롯 구성)
+
+## Compound 패턴 예시
 
 ```tsx
 <AppLayout>
-  <Header title="Greaming" />
-  <main className="px-6 py-8">{children}</main>
+  <AppLayout.Header title="Greaming" />
+  <AppLayout.Body>{children}</AppLayout.Body>
 </AppLayout>
 ```
