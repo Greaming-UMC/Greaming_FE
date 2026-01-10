@@ -75,7 +75,7 @@ const Icon = ({ name, size, className, ...rest }: IconProps) => {
   // 2) 없으면 개발 모드에서만 경고를 찍고 렌더를 중단합니다.
   if (!Component) {
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
+       
       console.warn(`[Icon] Unknown name: "${name}".`, ICON_NAMES)
     }
     return null
