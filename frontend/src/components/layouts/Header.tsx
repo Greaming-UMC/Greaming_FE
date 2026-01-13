@@ -1,15 +1,116 @@
-import Logo from "../common/Logo";
+import { useEffect, useState } from 'react';
 
-const Header = () => {
+import Logo from '../../assets/logo/mono-white.svg?react';
+import MyRoomIcon from '../../assets/icon/Header_MyRoom.svg?react';
+import JourneyIcon from '../../assets/icon/header_journey.svg?react';
+import CircleIcon from '../../assets/icon/Header_Circle.svg?react';
+import BellIcon from '../../assets/icon/bell.svg?react';
+
+const NAV_ITEMS = [
+  { id: 'my-room', label: 'My Room', Icon: MyRoomIcon },
+  { id: 'journey', label: 'Journey', Icon: JourneyIcon },
+  { id: 'circle', label: 'Circle', Icon: CircleIcon },
+] as const;
+
+interface HeaderProps {
+  mode?: 'onboarding' | 'main';
+}
+
+const Header = ({ mode = 'main' }: HeaderProps) => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  // eslint-disable-next-line
+  const [activeNav, setActiveNav] = useState('my-room');
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 0);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className="h-14 flex items-center px-6 bg-surface border-b border-outline">
-      <div className="flex items-center gap-2">
-        <Logo
-          name="primary"
-          size={24}
-          aria-label="Greaming logo"
-        />
-        <h1 className="title-medium-emphasized">Greaming</h1>
+    <header
+      className={`
+        fixed top-0 z-50 w-full border-b
+        transition-all duration-300 ease-in-out
+        bg-primary 
+        border-outline
+        ${isScrolled ? 'h-14' : 'h-20'} 
+      `}
+    >
+      <div className="relative flex h-full items-center px-6">
+        
+        {/* [LEFT] 로고 영역 */}
+        <div className="flex shrink-0 items-center gap-3 text-on-primary">
+          <Logo className={`transition-all duration-300 ${isScrolled ? 'h-5' : 'h-7'}`} />
+          <h1 className="title-medium-emphasized">Greaming</h1>
+        </div>
+
+       {/* [CENTER] 네비게이션 */}
+        {mode === 'main' && (
+          <nav
+            className={`
+              absolute flex items-center transition-all duration-500 ease-in-out
+              ${isScrolled ? 'left-[160px] translate-x-0' : 'left-1/2 -translate-x-1/2'}
+              ${!isScrolled ? 'gap-3' : ''}
+            `}
+          >
+            {NAV_ITEMS.map(({ id, label, Icon }, index) => (
+              <div key={id} className="flex items-center">
+                <button
+                  type="button"
+                  onClick={() => setActiveNav(id)}
+                  className={`
+                    flex items-center gap-1.5 transition-all duration-300 rounded-full
+                    text-on-primary label-large
+                    state-layer surface-variant-opacity-8
+                    ${!isScrolled 
+                       ? 'border border-outline-variant' 
+                       : 'border border-transparent'
+                    }
+
+                    ${isScrolled ? 'px-2 py-1' : 'px-3 py-1.5'}
+                  `}
+                >
+                  <Icon className="h-4 w-4 text-current" />
+                  <span>{label}</span>
+                </button>
+
+                {/* 메뉴 사이 구분선 */}
+                <span 
+                  className={`
+                    mx-2 transition-opacity duration-300 text-outline-variant
+                    ${isScrolled && index < NAV_ITEMS.length - 1 ? 'opacity-100' : 'opacity-0 hidden'}
+                  `}
+                >
+                  |
+                </span>
+              </div>
+            ))}
+          </nav>
+        )}
+
+        {/* [RIGHT] : 로그아웃, 알림 bell */}
+        {mode === 'main' && (
+          <div className="ml-auto flex items-center gap-4 text-on-primary">
+            <button
+              type="button"
+              className={`
+                label-large rounded-full px-4 py-1.5 transition-all
+                border border-outline-variant
+                text-on-primary
+                state-layer surface-variant-opacity-8
+              `}
+            >
+              로그아웃
+            </button>
+            <button 
+              type="button" 
+              className="rounded-full p-2 state-layer surface-variant-opacity-8"
+            >
+              <BellIcon className="h-5 w-5" />
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );
