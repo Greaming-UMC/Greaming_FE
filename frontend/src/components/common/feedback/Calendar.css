@@ -1,0 +1,126 @@
+/* Calendar.css */
+
+/* 1. 달력 외곽: 피그마 레이아웃 규격 강제 적용 */
+.react-datepicker {
+  display: flex !important;
+  width: 290px !important;
+  height: 246px !important;
+  padding: 20px 16px 16px 16px !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  
+  background-color: var(--color-surface) !important;
+  border: none !important;
+  font-family: var(--font-plain) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important; /* 내부 요소 튀어나옴 방지 */
+}
+
+/* 2. 헤더: 월 표시 영역 최소화 */
+.react-datepicker__header {
+  width: 100% !important;
+  height: auto !important; /* 고정 높이 제거 */
+  background-color: transparent !important;
+  border-bottom: none !important;
+  padding: 0 !important;
+}
+
+/* 3. 요일(S M T W T F S) 행: 텍스트 크기와 줄 높이 최적화 */
+.react-datepicker__day-names {
+  display: flex !important;
+  justify-content: space-around !important;
+  width: 100% !important;
+  height: 24px !important; /* 요일 행 높이 축소 */
+  margin-bottom: 4px !important;
+}
+
+.react-datepicker__day-name {
+  color: var(--color-on-surface) !important;
+  font-family: var(--font-plain) !important;
+  font-weight: var(--font-weight-semi-bold) !important;
+  font-size: var(--text-label-medium) !important; /* 12px 정도로 축소 */
+  
+  width: 28px !important; /* 날짜 원형 크기에 맞춰 축소 */
+  text-align: center !important;
+  margin: 0 !important;
+  line-height: 24px !important;
+}
+
+/* 4 & 5. 날짜 영역 및 주(Week) 스타일 */
+.react-datepicker__month {
+  width: 100% !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important; /* 주간 간격 좁힘 */
+}
+
+.react-datepicker__week {
+  height: 28px !important; /* 각 주(행)의 높이 축소 */
+  display: flex !important;
+  justify-content: space-around !important;
+  align-items: center !important;
+}
+
+/* 6. 개별 날짜: 피그마 일자별 요소 규격(26x26) 적용 */
+.react-datepicker__day, 
+.calendar-day-base {
+  display: flex !important;
+  width: 26px !important;
+  height: 26px !important;
+  /* padding은 flex-center 정렬로 인해 생략하거나 미세 조정합니다 */
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-shrink: 0 !important;
+
+  margin: 0 !important;
+  border-radius: var(--radius-full) !important;
+  font-size: var(--text-label-small) !important; /* 공간이 좁으므로 11px 규격 사용 */
+  box-sizing: border-box !important;
+  cursor: default !important;
+}
+
+/* 성공: 검정 배경 + 연두색 글자 */
+.day-success {
+  background-color: var(--color-primary) !important;
+  color: var(--color-secondary) !important;
+  border: none !important;
+}
+
+/* 실패: 검정 테두리 */
+.day-fail {
+  background-color: transparent !important;
+  border: 1px solid var(--color-primary) !important; /* 26px에는 1px 테두리가 가장 적당 */
+  color: var(--color-primary) !important;
+}
+
+/* 전달/다음달: 흐린 테두리 */
+.outside-day {
+  color: var(--color-on-surface-variant-low) !important;
+  border: 1px solid var(--color-outline-variant) !important;
+}
+
+/* 오늘 날짜 밑줄 */
+.react-datepicker__day--today {
+  font-weight: var(--font-weight-bold) !important;
+  text-decoration: underline !important;
+  text-underline-offset: 2px !important;
+}
+/* 효과 제거 */
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected,
+.react-datepicker__day:hover {
+  background-color: transparent !important;
+  color: inherit !important;
+  cursor: default !important;
+}
+
+/* 오늘 날짜 */
+.react-datepicker__day--today {
+  font-weight: var(--font-weight-bold) !important;
+  color: var(--color-secondary-variant) !important; 
+  text-decoration: underline !important;
+}

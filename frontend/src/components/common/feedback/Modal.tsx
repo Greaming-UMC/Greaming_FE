@@ -75,7 +75,7 @@ export const Modal = ({ open, onClose, title, children, type = 'default', onConf
             <button 
               onClick={onConfirm} 
               type="button"
-              className="label-large-emphasized state-layer secondary-opacity-8 rounded-medium bg-secondary px-16 py-3 text-on-secondary"
+              className="flex-1 label-large-emphasized state-layer secondary-opacity-8 rounded-medium bg-secondary py-3 text-on-secondary"
             >
               {confirmText || '확인'}
             </button>
@@ -83,7 +83,7 @@ export const Modal = ({ open, onClose, title, children, type = 'default', onConf
             <button
               onClick={onClose} 
               type="button"
-              className="label-large-emphasized state-layer secondary-opacity-8 rounded-medium bg-primary px-16 py-3 text-secondary"
+              className="flex-1 label-large-emphasized state-layer secondary-opacity-8 rounded-medium bg-primary py-3 text-secondary"
             >
               {cancelText || '취소'}
             </button>
