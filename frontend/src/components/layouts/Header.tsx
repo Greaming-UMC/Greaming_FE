@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import Logo from '../../assets/logo/mono-white.svg?react';
+import Logo from '../../assets/logo/mono-white-wordmark.svg?react';
 import MyRoomIcon from '../../assets/icon/Header_MyRoom.svg?react';
 import JourneyIcon from '../../assets/icon/header_journey.svg?react';
 import CircleIcon from '../../assets/icon/Header_Circle.svg?react';
@@ -41,8 +41,14 @@ const Header = ({ mode = 'main' }: HeaderProps) => {
         
         {/* [LEFT] 로고 영역 */}
         <div className="flex shrink-0 items-center gap-3 text-on-primary">
-          <Logo className={`transition-all duration-300 ${isScrolled ? 'h-5' : 'h-7'}`} />
-          <h1 className="title-medium-emphasized">Greaming</h1>
+          <Logo
+    className={`
+      transition-all duration-300
+      w-auto
+      ${isScrolled ? 'h-[68px]' : 'h-[88px]'}
+    `}
+  />
+
         </div>
 
        {/* [CENTER] 네비게이션 */}
@@ -94,19 +100,20 @@ const Header = ({ mode = 'main' }: HeaderProps) => {
           <div className="ml-auto flex items-center gap-4 text-on-primary">
             <button
               type="button"
-              className={`
-                label-large rounded-full px-4 py-1.5 transition-all
-                border border-outline-variant
-                text-on-primary
-                state-layer surface-variant-opacity-8
-              `}
+              onClick={() => {
+             // TODO: 프로필 모달 오픈
+                      }}
+              className="
+              h-7 w-7 rounded-full
+            bg-outline-variant
+              overflow-hidden
+              state-layer surface-variant-opacity-8"
             >
-              로그아웃
+            {/* 나중에 API 연동 시 수정 필요 */}
             </button>
-            <button 
-              type="button" 
-              className="rounded-full p-2 state-layer surface-variant-opacity-8"
-            >
+             <button
+             type="button"
+             className="rounded-full p-2 state-layer surface-variant-opacity-8">
               <BellIcon className="h-5 w-5" />
             </button>
           </div>
