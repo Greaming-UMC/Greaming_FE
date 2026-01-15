@@ -76,16 +76,16 @@ const ModalRoot = ({
   return createPortal(
     <ModalContext.Provider value={{ variant, onClose }}>
       <div
-        className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200"
+        className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 p-4"
         onClick={onClose}
       >
-        <div
+        <div  
           role="dialog"
           aria-modal="true"
           onClick={(e) => e.stopPropagation()}
           className={`
-            bg-surface rounded-large shadow-xl transition-all animate-in zoom-in-95 duration-200
-            ${variant === 'confirm' ? 'max-w-sm p-8 text-center' : 'max-w-md p-6'}
+            bg-surface rounded-large shadow-xl
+            ${variant === 'confirm' ? 'w-full max-w-sm pt-6 px-6 pb-0 text-center' : 'w-full max-w-md p-6'}
           `}
         >
           {children}
@@ -145,7 +145,7 @@ const ModalBody = ({ children }: ModalSectionProps) => {
       className={`
         body-medium text-on-surface-variant
         ${variant === 'default'
-          ? 'max-h-[60vh] overflow-y-auto pr-1'
+          ? 'max-h-[60vh] overflow-y-auto pr-4 py-2'
           : 'mt-2'}
       `}
     >
@@ -159,7 +159,7 @@ const ModalFooter = ({ children }: ModalSectionProps) => {
   if (variant === 'default') return null;
 
   return (
-    <div className="mt-8 flex justify-center gap-2">
+    <div className="mt-2 flex justify-center gap-2">
       {children}
     </div>
   );
