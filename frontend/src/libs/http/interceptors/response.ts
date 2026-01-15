@@ -1,4 +1,4 @@
-import httpRefresh from "../../http/refreshClient";
+import { httpRefresh } from "../../http/refreshClient";
 import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { getAccessToken, setAccessToken } from "../../security/tokenStore";
 
@@ -28,7 +28,7 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
       if (!refreshing) {
         refreshing = (async () => {
           try {
-            
+
             const res = await httpRefresh.post("/auth/refresh");
             setAccessToken(res.data.accessToken);
             
