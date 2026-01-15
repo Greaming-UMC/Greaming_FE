@@ -28,11 +28,9 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
       if (!refreshing) {
         refreshing = (async () => {
           try {
+            
             const res = await httpRefresh.post("/auth/refresh");
             setAccessToken(res.data.accessToken);
-            
-            // http 인스턴스 기본 헤더도 변경
-            http.defaults.headers.common['Authorization'] = `Bearer ${res.data.accessToken}`;
             
           } catch (e) {
             // 리프레시 실패 시 로그아웃 처리
