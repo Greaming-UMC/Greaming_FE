@@ -1,96 +1,176 @@
-import { useEffect } from 'react';
+import type { ReactNode } from 'react';
+import { createPortal } from 'react-dom';
+import { createContext, useContext, useEffect } from 'react';
+
+/* -------------------------------------------------------------------------- */
+/* 1. Types & Interfaces                                                     */
+/* -------------------------------------------------------------------------- */
+
+type ModalVariant = 'default' | 'confirm';
 
 interface ModalProps {
   open: boolean;
   onClose: () => void;
-  title?: string;         // 제목
-  children: React.ReactNode; // 내용물
-  type?: 'default' | 'confirm'; // 기본 모달, 확인 모달
-  onConfirm?: () => void;     // 확인 버튼 클릭 시 실행할 함수
-  confirmText?: string;       // 확인 버튼 문구
-  cancelText?: string;        // 취소 버튼 문구
+  children: ReactNode;
+  variant?: ModalVariant;
 }
 
 
-export const Modal = ({ open, onClose, title, children, type = 'default', onConfirm, confirmText, cancelText}: ModalProps) => {
-  if (!open) return null;
+/* -------------------------------------------------------------------------- */
+/* 2. Context                                                                */
+/* -------------------------------------------------------------------------- */
 
+const ModalContext = createContext<{ variant: ModalVariant; onClose: () => void }>({
+  variant: 'default',
+  onClose: () => {},
+});
+
+const useModalContext = () => useContext(ModalContext);
+
+/* -------------------------------------------------------------------------- */
+/* 3. Main Component (Root)                                                  */
+/* -------------------------------------------------------------------------- */
+
+const ModalRoot = ({
+  open,
+  onClose,
+  children,
+  variant = 'default',
+}: ModalProps) => {
+  // 1️⃣ 스크롤 잠금 및 ESC 처리 통합 로직 (Hook은 항상 최상단에서 호출되어야 합니다)
   useEffect(() => {
+    if (!open) return;
+
+    // 모달이 열릴 때 스크롤 잠금
+    const html = document.documentElement;
+    const body = document.body;
+
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose(); // ESC 키 누를 시 모달 창 닫기
+      if (e.key === 'Escape') onClose();
     };
 
-    if (open) {
-      window.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden'; // 모달 창 밖 클릭 시 닫기
-    }
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
+      
+      // 클린업: 현재 열려있는 다른 모달이 있는지 확인 (중첩 상황 대비)
+      const openModals = document.querySelectorAll('[role="dialog"]');
+      
+      // 모달이 닫힐 때 1개 이하(현재 닫히는 것 포함)라면 스크롤 해제
+      if (openModals.length <= 1) {
+        html.style.removeProperty('overflow');
+        body.style.removeProperty('overflow');
+      }
     };
   }, [open, onClose]);
 
-  const isConfirm = type === 'confirm';
-  
-  return (
-    <div 
-      className="fixed inset-0 z-1000 flex items-center justify-center bg-black/50 p-4"
-      onClick={onClose}
-    >
-      <div 
-        className={`bg-surface rounded-large px-6 w-full shadow-xl transition-all 
-                    ${isConfirm ? 'max-w-sm py-10' : 'max-w-md py-4'}`}
-        role="dialog" 
-        aria-modal="true" 
-        onClick={(e) => e.stopPropagation()}
+  // 2️⃣ 조건부 렌더링은 Hook 호출 아래에 배치합니다.
+  if (!open) return null;
+
+  const portalTarget = document.getElementById('modal-root') ?? document.body;
+
+  return createPortal(
+    <ModalContext.Provider value={{ variant, onClose }}>
+      <div
+        className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200"
+        onClick={onClose}
       >
-        <div className={`flex items-center mb-4 shrink-0 ${isConfirm ? 'justify-center' : 'justify-between'}`}> 
-          {title && (
-            <h2 className="sub-title-xlarge-emphasized text-on-surface">
-              {title} 
-            </h2>
-          )}
-
-          {/* type이 default일 때만 X 버튼 표시 */}
-          {!isConfirm && (
-            <button 
-              type="button"
-              className="large-emphasized text-primary px-2 py-1 rounded-medium cursor-pointer hover:bg-primary/10 transition-colors"
-              onClick={onClose}
-            >
-              ⨉
-            </button>
-          )}
-        </div>
-
-        <div className="body-medium text-on-surface-variant-dim overflow-y-auto pr-2 max-h-[40vh]">
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={(e) => e.stopPropagation()}
+          className={`
+            bg-surface rounded-large shadow-xl transition-all animate-in zoom-in-95 duration-200
+            ${variant === 'confirm' ? 'max-w-sm p-8 text-center' : 'max-w-md p-6'}
+          `}
+        >
           {children}
         </div>
-
-        {type === 'confirm' && (
-          <div className="flex gap-2 mt-6 justify-center">
-
-            {/*공용 컴포넌트 버튼에 맞게 수정예정*/}
-            <button 
-              onClick={onConfirm} 
-              type="button"
-              className="flex-1 label-large-emphasized state-layer secondary-opacity-8 rounded-medium bg-secondary py-3 text-on-secondary"
-            >
-              {confirmText || '확인'}
-            </button>
-
-            <button
-              onClick={onClose} 
-              type="button"
-              className="flex-1 label-large-emphasized state-layer secondary-opacity-8 rounded-medium bg-primary py-3 text-secondary"
-            >
-              {cancelText || '취소'}
-            </button>
-          </div>
-        )}
-
       </div>
+    </ModalContext.Provider>,
+    portalTarget
+  );
+};
+
+/* -------------------------------------------------------------------------- */
+/* 4. Sub Components                                                         */
+/* -------------------------------------------------------------------------- */
+
+interface ModalHeaderProps {
+  title: string;
+  onClose?: () => void;
+}
+
+const ModalHeader = ({ title, onClose: customOnClose }: ModalHeaderProps) => {
+  const { variant, onClose: contextOnClose } = useModalContext();
+  const handleClose = customOnClose || contextOnClose;
+
+  return (
+    <div
+      className={`mb-4 flex items-center
+        ${variant === 'confirm' ? 'justify-center' : 'justify-between'}
+      `}
+    >
+      <h2 className="sub-title-xlarge-emphasized text-on-surface">
+        {title}
+      </h2>
+
+      {variant === 'default' && (
+        <button
+          type="button"
+          onClick={handleClose}
+          className="rounded-medium px-2 py-1 text-primary hover:bg-primary/10 transition-colors"
+          aria-label="닫기"
+        >
+          ⨉
+        </button>
+      )}
     </div>
   );
 };
+
+interface ModalSectionProps {
+  children: ReactNode;
+}
+
+const ModalBody = ({ children }: ModalSectionProps) => {
+  const { variant } = useModalContext();
+
+  return (
+    <div
+      className={`
+        body-medium text-on-surface-variant
+        ${variant === 'default'
+          ? 'max-h-[60vh] overflow-y-auto pr-1'
+          : 'mt-2'}
+      `}
+    >
+      {children}
+    </div>
+  );
+};
+
+const ModalFooter = ({ children }: ModalSectionProps) => {
+  const { variant } = useModalContext();
+  if (variant === 'default') return null;
+
+  return (
+    <div className="mt-8 flex justify-center gap-2">
+      {children}
+    </div>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
+/* 5. Compound Export                                                        */
+/* -------------------------------------------------------------------------- */
+
+export const Modal = Object.assign(ModalRoot, {
+  Header: ModalHeader,
+  Body: ModalBody,
+  Footer: ModalFooter,
+});
