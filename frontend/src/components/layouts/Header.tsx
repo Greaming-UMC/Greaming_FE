@@ -42,16 +42,15 @@ const Header = ({ mode = 'main' }: HeaderProps) => {
         {/* [LEFT] 로고 영역 */}
         <div className="flex shrink-0 items-center gap-3 text-on-primary">
           <Logo
-    className={`
-      transition-all duration-300
-      w-auto
-      ${isScrolled ? 'h-[68px]' : 'h-[88px]'}
-    `}
-  />
-
+            className={`
+              transition-all duration-300
+              w-auto
+              ${isScrolled ? 'h-[68px]' : 'h-[88px]'}
+            `}
+          />
         </div>
 
-       {/* [CENTER] 네비게이션 */}
+        {/* [CENTER] 네비게이션 */}
         {mode === 'main' && (
           <nav
             className={`
@@ -60,60 +59,65 @@ const Header = ({ mode = 'main' }: HeaderProps) => {
               ${!isScrolled ? 'gap-3' : ''}
             `}
           >
-            {NAV_ITEMS.map(({ id, label, Icon }, index) => (
-              <div key={id} className="flex items-center">
-                <button
-                  type="button"
-                  onClick={() => setActiveNav(id)}
-                  className={`
-                    flex items-center gap-1.5 transition-all duration-300 rounded-full
-                    text-on-primary label-large
-                    state-layer surface-variant-opacity-8
-                    ${!isScrolled 
-                       ? 'border border-outline-variant' 
-                       : 'border border-transparent'
-                    }
+            {NAV_ITEMS.map(({ id, label, Icon }, index) => {
+              const isActive = activeNav === id;
 
-                    ${isScrolled ? 'px-2 py-1' : 'px-3 py-1.5'}
-                  `}
-                >
-                  <Icon className="h-4 w-4 text-current" />
-                  <span>{label}</span>
-                </button>
+              return (
+                <div key={id} className="flex items-center">
+                  <button
+                    type="button"
+                    onClick={() => setActiveNav(id)}
+                    className={`
+                      flex items-center gap-1.5 transition-all duration-300 rounded-full
+                      label-large
+                      state-layer surface-variant-opacity-8
+                      ${isScrolled && isActive ? 'text-secondary' : 'text-on-primary'}
+                      ${!isScrolled 
+                        ? 'border border-outline-variant' 
+                        : 'border border-transparent'
+                      }
+                      ${isScrolled ? 'px-2 py-1' : 'px-3 py-1.5'}
+                    `}
+                  >
+                    <Icon className="h-4 w-4 text-current" />
+                    <span>{label}</span>
+                  </button>
 
-                {/* 메뉴 사이 구분선 */}
-                <span 
-                  className={`
-                    mx-2 transition-opacity duration-300 text-outline-variant
-                    ${isScrolled && index < NAV_ITEMS.length - 1 ? 'opacity-100' : 'opacity-0 hidden'}
-                  `}
-                >
-                  |
-                </span>
-              </div>
-            ))}
+                  {/* 메뉴 사이 구분선 */}
+                  <span 
+                    className={`
+                      mx-2 transition-opacity duration-300 text-outline-variant
+                      ${isScrolled && index < NAV_ITEMS.length - 1 ? 'opacity-100' : 'opacity-0 hidden'}
+                    `}
+                  >
+                    |
+                  </span>
+                </div>
+              );
+            })}
           </nav>
         )}
 
-        {/* [RIGHT] : 로그아웃, 알림 bell */}
+        {/* [RIGHT] : 프로필, 알림 bell */}
         {mode === 'main' && (
           <div className="ml-auto flex items-center gap-4 text-on-primary">
             <button
               type="button"
               onClick={() => {
-             // TODO: 프로필 모달 오픈
-                      }}
+                // TODO: 프로필 모달 오픈
+              }}
               className="
-              h-7 w-7 rounded-full
-            bg-outline-variant
-              overflow-hidden
-              state-layer surface-variant-opacity-8"
+                h-7 w-7 rounded-full
+                bg-outline-variant
+                overflow-hidden
+                state-layer surface-variant-opacity-8"
             >
-            {/* 나중에 API 연동 시 수정 필요 */}
+              {/* 나중에 API 연동 시 수정 필요 */}
             </button>
-             <button
-             type="button"
-             className="rounded-full p-2 state-layer surface-variant-opacity-8">
+            <button
+              type="button"
+              className="rounded-full p-2 state-layer surface-variant-opacity-8"
+            >
               <BellIcon className="h-5 w-5" />
             </button>
           </div>
