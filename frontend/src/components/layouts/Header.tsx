@@ -118,7 +118,7 @@ const Header = ({ mode = 'main' }: HeaderProps) => {
               type="button"
               className="rounded-full p-2 state-layer surface-variant-opacity-8"
             >
-              <BellIcon className="h-5 w-5" />
+              <BellIcon className="h-5 w-5 text-on-primary" />
             </button>
           </div>
         )}
