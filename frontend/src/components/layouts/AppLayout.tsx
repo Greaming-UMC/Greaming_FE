@@ -8,7 +8,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   return (
     <div className="min-h-screen bg-surface text-on-surface">
       <Header />
-      <main>{children}</main>
+      <main className="pt-20">{children}</main>
     </div>
   );
 };
