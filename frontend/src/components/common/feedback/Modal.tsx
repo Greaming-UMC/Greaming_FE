@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext, useEffect, useRef } from 'react';
 
 /* -------------------------------------------------------------------------- */
 /* 1. Types & Interfaces                                                     */
@@ -37,7 +37,10 @@ const ModalRoot = ({
   children,
   variant = 'default',
 }: ModalProps) => {
-  // 1️⃣ 스크롤 잠금 및 ESC 처리 통합 로직 (Hook은 항상 최상단에서 호출되어야 합니다)
+
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // 1️⃣ 스크롤 잠금 및 ESC 처리 통합 로직
   useEffect(() => {
     if (!open) return;
 
@@ -49,7 +52,17 @@ const ModalRoot = ({
     body.style.overflow = 'hidden';
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        // 3. 현재 화면에 떠 있는 모든 모달들을 다 불러옵니다.
+        const openModals = document.querySelectorAll('[role="dialog"]');
+        // 4. 그중에서 가장 마지막(맨 위)에 있는 요소를 찾습니다.
+        const lastModal = openModals[openModals.length - 1];
+        
+        // 5. ⭐️ [핵심] 내 이름표(modalRef)가 붙은 모달이 맨 위(lastModal)일 때만 닫기!
+        if (modalRef.current === lastModal) {
+          onClose();
+        }
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -80,6 +93,7 @@ const ModalRoot = ({
         onClick={onClose}
       >
         <div  
+          ref={modalRef}
           role="dialog"
           aria-modal="true"
           onClick={(e) => e.stopPropagation()}
