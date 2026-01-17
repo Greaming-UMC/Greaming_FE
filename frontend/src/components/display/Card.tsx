@@ -115,7 +115,7 @@ export const CardMedia = ({
 export const CardOverlay = ({ children, className = '', ...props }: HTMLAttributes<HTMLDivElement>) => (
   <div 
     className={`
-      absolute inset-0 z-10 flex flex-col justify-end p-4
+      absolute z-10 flex flex-col justify-end p-4 bottom-0 left-0 w-full
       bg-[linear-gradient(0deg,#121315_0%,rgba(105,111,123,0.00)_97.39%)]
       opacity-0 group-hover:opacity-100 
       transition-opacity duration-300 ease-in-out
