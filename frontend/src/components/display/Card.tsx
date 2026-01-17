@@ -1,5 +1,6 @@
 
 import type { HTMLAttributes, ReactNode } from 'react';
+import Icon from '../common/Icon';
 
 /* -------------------------------------------------------------------------- */
 /* 1. Types & Interfaces                                                     */
@@ -45,7 +46,7 @@ export const Card = ({
       className={`
         /* 공통 레이아웃 */
         relative flex flex-col overflow-hidden transition-all duration-300
-        rounded-medium
+        rounded-[10px]
         
         /* 스타일 적용 */
         ${variantStyles[variant]}
@@ -83,16 +84,30 @@ interface CardMediaProps extends HTMLAttributes<HTMLDivElement> {
   alt: string;
   /** Tailwind Aspect Ratio 클래스 (예: aspect-video, aspect-square) */
   aspectRatio?: string;
+  /** 뱃지 타입: 'weekly' | 'daily' | undefined */
+  badge?: 'weekly' | 'daily';
 }
 
 export const CardMedia = ({ 
   src, 
   alt, 
   aspectRatio = 'aspect-video', 
+  badge,
   className = '', 
   children, 
   ...props 
-}: CardMediaProps) => (
+}: CardMediaProps) => {
+
+  // 뱃지 타입에 따른 아이콘/색상 매핑
+  const badgeConfig = {
+    weekly: { icon: 'check', bgColor: 'bg-secondary',  }, // 위클리
+    daily: { icon: 'check_secondary', bgColor: 'bg-primary' }, // 데일
+  };
+
+  const currentBadge = badge ? badgeConfig[badge] : null;
+
+  return (
+  
   <div 
     className={`
       relative w-full overflow-hidden bg-surface-variant group 
@@ -106,10 +121,27 @@ export const CardMedia = ({
       alt={alt} 
       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
     />
+
+    {/* 우측 상단 뱃지 렌더링 */}
+      {currentBadge && (
+        <div className={`
+          absolute top-3 right-3 z-20 
+          flex w-[24px] h-[24px] p-[7px 5px 3.593px 5px] justify-center items-center flex-shrink-0
+          rounded-full     
+          ${currentBadge.bgColor}
+        `}>
+          {/* 3. 아이콘 색상 적용 (text-...) */}
+          <Icon 
+            name={currentBadge.icon}
+            size={14} 
+          />
+        </div>
+      )}
     {/* Overlay 컴포넌트가 들어갈 자리 */}
     {children}
   </div>
-);
+  );
+};
 
 // [Overlay] 미디어 위에 올라가는 호버 정보창 (그라데이션 포함)
 export const CardOverlay = ({ children, className = '', ...props }: HTMLAttributes<HTMLDivElement>) => (
