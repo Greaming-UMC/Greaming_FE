@@ -24,6 +24,8 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
   size?: BadgeSize;
   icon?: string; // 상태 아이콘 (좌측 고정)
+  imgSrc?: string; // 이미지 소스 (아이콘 대신 커스텀 이미지),
+  alt?: string; // 이미지 대체 텍스트 (imgSrc가 있을 때 필수)
   /** * 점(Dot) 모드
    * - true일 경우 텍스트 없이 작은 점만 표시 (읽지 않은 알림 등)
    */
@@ -53,10 +55,39 @@ export const Badge = ({
   variant = "error",
   size = "md",
   icon,
+  imgSrc,
+  alt = "badge image",
   dot = false,
   className = "",
   ...props
 }: BadgeProps) => {
+  // -------------------------------------------------------
+  // 이미지 모드: 있는 그대로 보여주기
+  // -------------------------------------------------------
+  if (imgSrc) {
+    // 사이즈만 잡아줍니다.
+    const imgSizeClasses = size === "sm" ? "w-5 h-5" : "w-6 h-6";
+
+    return (
+      // span은 그냥 이미지를 감싸는 투명한 박스 역할만 합니다.
+      <span
+        className={`
+          inline-block relative shrink-0 /* 찌그러짐 방지 */
+          ${imgSizeClasses} 
+          ${className}
+        `}
+        {...props}
+      >
+        <img
+          src={imgSrc}
+          alt={alt}
+          // object-contain을 써서 이미지가 잘리지 않고 비율 유지하며 다 보이게 합니다.
+          className="w-full h-full object-contain"
+        />
+      </span>
+    );
+  }
+
   // Dot 모드일 때는 크기와 스타일이 완전히 달라짐
   if (dot) {
     return (
