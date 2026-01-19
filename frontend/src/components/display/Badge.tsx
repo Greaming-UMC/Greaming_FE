@@ -1,111 +1,96 @@
 import type { HTMLAttributes } from "react";
 import Icon from "../common/Icon";
+//사용예시
+// <div className="flex gap-2">
+//   <Badge label="New" variant="primary" size="sm" />
+//   <Badge label="99+" variant="error" />
+// </div>
 
 /* -------------------------------------------------------------------------- */
-/* 1. Types Definition                                                       */
+/* Types                                                                      */
 /* -------------------------------------------------------------------------- */
 
 type BadgeVariant =
-  | "primary" // 브랜드 컬러
-  | "secondary" // 보조
-  | "neutral" // 기본 회색
-  | "outline" // 테두리만
-  | "error" // 에러 (빨강)
+  | "neutral" // 회색 (기본)
+  | "primary" // 브랜드
+  | "error" // 에러/알림 (빨강)
   | "success" // 성공 (초록)
-  | "tag"; // [태그/해시태그] 스타일
+  | "warning"; // 경고 (노랑)
 
 type BadgeSize = "sm" | "md";
 
-type IconPosition = "left" | "right";
-
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  label: string;
+  label?: string | number;
   variant?: BadgeVariant;
   size?: BadgeSize;
-  icon?: string;
-  iconPosition?: IconPosition;
+  icon?: string; // 상태 아이콘 (좌측 고정)
+  /** * 점(Dot) 모드
+   * - true일 경우 텍스트 없이 작은 점만 표시 (읽지 않은 알림 등)
+   */
+  dot?: boolean;
 }
 
 /* -------------------------------------------------------------------------- */
-/* 2. Styles Mapping                                                          */
+/* Styles                                                                     */
 /* -------------------------------------------------------------------------- */
 
-const variantStyles: Record<BadgeVariant, string> = {
-  // [Tag]
-  tag: "bg-surface-variant-lowest text-on-surface-variant-bright cursor-pointer border border-transparent rounded-extra-large",
-
-  // [Primary]
-  primary: "bg-primary text-on-primary border-transparent",
-
-  // [Secondary]
-  secondary: "bg-secondary text-on-secondary border-transparent",
-
-  // [Neutral]
-  neutral: "bg-surface-variant text-on-surface-variant border-transparent",
-
-  // [Error]
-  error: "bg-error-container text-on-error-container border-transparent",
-
-  // [Success]
-  success:
-    "bg-green-100 text-green-800 border-transparent dark:bg-green-900 dark:text-green-100",
-
-  // [Outline]
-  outline:
-    "bg-surface border border-[1px] border-solid border-outline text-on-surface-variant rounded-surface",
+const badgeStyles: Record<BadgeVariant, string> = {
+  neutral: "bg-surface-variant text-on-surface-variant",
+  primary: "bg-primary text-on-primary",
+  error: "bg-error text-on-error",
+  success: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100",
+  warning:
+    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100",
 };
 
-const sizeStyles: Record<BadgeSize, string> = {
-  sm: "h-6 px-2 text-xs gap-1", // 작은 사이즈
-  md: "h-8 px-3 text-sm gap-1", // 기본 사이즈
+const badgeSizes: Record<BadgeSize, string> = {
+  sm: "h-5 text-[10px] px-1.5 rounded-full", // 아주 작은 뱃지
+  md: "h-6 text-xs px-2 rounded-full", // 일반 뱃지
 };
-
-const iconSizeMap: Record<BadgeSize, number> = {
-  sm: 14,
-  md: 18,
-};
-
-/* -------------------------------------------------------------------------- */
-/* 3. Main Component                                                         */
-/* -------------------------------------------------------------------------- */
 
 export const Badge = ({
   label,
-  variant = "neutral",
+  variant = "error",
   size = "md",
   icon,
-  iconPosition = "left",
+  dot = false,
   className = "",
   ...props
 }: BadgeProps) => {
+  // Dot 모드일 때는 크기와 스타일이 완전히 달라짐
+  if (dot) {
+    return (
+      <span
+        className={`
+          inline-block rounded-full ${badgeStyles[variant]}
+          w-2.5 h-2.5 /* 점 크기 고정 */
+          ${className}
+        `}
+        {...props}
+      />
+    );
+  }
+
   return (
     <span
       className={`
-        /* 공통 레이아웃 */
-        inline-flex items-center justify-center 
-        
-        font-medium leading-none pb-[1px] /* 텍스트 수직 중앙 정렬 보정 */
-        
-        /* 스타일 적용 */
-        ${variantStyles[variant]}
-        ${sizeStyles[size]}
-        
+        inline-flex items-center justify-center gap-1
+        font-bold leading-none
+        whitespace-nowrap
+        ${badgeStyles[variant]}
+        ${badgeSizes[size]}
         ${className}
       `}
       {...props}
     >
-      {/* 왼쪽 아이콘 */}
-      {icon && iconPosition === "left" && (
-        <Icon name={icon} size={iconSizeMap[size]} className="fill-current" />
+      {icon && (
+        <Icon
+          name={icon}
+          size={size === "sm" ? 10 : 12}
+          className="fill-current"
+        />
       )}
-
-      {/* 텍스트 */}
       <span>{label}</span>
-
-      {/* 오른쪽 아이콘 */}
-      {icon && iconPosition === "right" && (
-        <Icon name={icon} size={iconSizeMap[size]} className="fill-current" />
-      )}
     </span>
   );
 };
