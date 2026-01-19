@@ -13,7 +13,11 @@ const Header = ({ mode = 'main' }: HeaderProps) => {
   const [activeNav, setActiveNav] = useState('my-room');
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 0);
+    const handleScroll = () => {
+      const triggerPoint = window.innerHeight - 100;
+      setIsScrolled(window.scrollY > triggerPoint);
+    };
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -21,22 +25,21 @@ const Header = ({ mode = 'main' }: HeaderProps) => {
   return (
     <header
       className={`
-        fixed top-0 z-50 w-full border-b
-        transition-all duration-300 ease-in-out
-        bg-primary 
-        border-outline
-        ${isScrolled ? 'h-14' : 'h-20'} 
+        fixed top-0 z-50 w-full 
+        flex flex-col justify-center items-center
+       transition-all duration-300 ease-in-out
+        ${isScrolled ? 'h-[62px] bg-primary shadow-md' : 'h-[82px] bg-gradient-to-b from-primary via-primary/60 to-transparent backdrop-blur-[3.3px]'}
       `}
+      
     >
-      <div className="relative flex h-full items-center px-6">
+      <div className="relative flex w-full items-center px-6">
         
         {/* [LEFT] 로고 영역 */}
-        <div className="flex shrink-0 items-center gap-3 text-on-primary">
+        <div className="flex shrink-0 items-center gap-3 text-on-surface">
           <Logo
             className={`
-              transition-all duration-300
-              w-auto
-              ${isScrolled ? 'h-[68px]' : 'h-[88px]'}
+              transition-all duration-300 w-auto
+              ${isScrolled ? 'h-15' : 'h-20'} 
             `}
           />
         </div>
@@ -52,7 +55,7 @@ const Header = ({ mode = 'main' }: HeaderProps) => {
 
         {/* [RIGHT] : 프로필, 알림 bell */}
         {mode === 'main' && (
-          <div className="ml-auto flex items-center gap-4 text-on-primary">
+          <div className="ml-auto flex items-center gap-4 text-on-surface">
             <button
               type="button"
               onClick={() => {

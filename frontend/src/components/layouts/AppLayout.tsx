@@ -1,4 +1,5 @@
-import Header from './Header';
+import Header from "./Header";
+
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -6,9 +7,9 @@ interface AppLayoutProps {
 
 const AppLayout = ({ children }: AppLayoutProps) => {
   return (
-    <div className="min-h-screen bg-surface text-on-surface">
+    <div className="min-h-screen bg-transparent">
       <Header />
-      <main className="pt-20">{children}</main>
+      <main>{children}</main>
     </div>
   );
 };

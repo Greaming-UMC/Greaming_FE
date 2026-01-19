@@ -20,7 +20,7 @@ const HeaderTabs = ({ isScrolled, activeNav, onChange }: HeaderTabsProps) => {
       className={`
         absolute flex items-center transition-all duration-500 ease-in-out
         ${isScrolled ? 'left-[160px] translate-x-0' : 'left-1/2 -translate-x-1/2'}
-        ${!isScrolled ? 'gap-3' : ''}
+        ${!isScrolled ? 'gap-3' : 'gap-1'}
       `}
     >
       {NAV_ITEMS.map(({ id, label, Icon }, index) => {
@@ -33,14 +33,13 @@ const HeaderTabs = ({ isScrolled, activeNav, onChange }: HeaderTabsProps) => {
               onClick={() => onChange(id)}
               className={`
                 flex items-center gap-1.5 transition-all duration-300 rounded-full
-                label-large
-                state-layer surface-variant-opacity-8
-                ${isScrolled && isActive ? 'text-secondary' : 'text-on-primary'}
+                label-large state-layer
+                ${!isScrolled ? 'bg-primary' : 'bg-transparent'}
                 ${!isScrolled 
-                  ? 'border border-outline-variant' 
-                  : 'border border-transparent'
+                    ? (isActive ? 'text-on-primary' : 'text-on-primary')
+                    : (isActive ? 'text-secondary' : 'text-on-primary')
                 }
-                ${isScrolled ? 'px-2 py-1' : 'px-3 py-1.5'}
+                ${isScrolled ? 'px-2 py-1' : 'px-4 py-2'}
               `}
             >
               <Icon className="h-4 w-4 text-current" />
@@ -49,7 +48,7 @@ const HeaderTabs = ({ isScrolled, activeNav, onChange }: HeaderTabsProps) => {
 
             <span 
               className={`
-                mx-2 transition-opacity duration-300 text-outline-variant
+                mx-2 text-outline-variant transition-opacity duration-300
                 ${isScrolled && index < NAV_ITEMS.length - 1 ? 'opacity-100' : 'opacity-0 hidden'}
               `}
             >
