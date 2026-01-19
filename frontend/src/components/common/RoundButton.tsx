@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-type ButtonSize = 'xxxs' | 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type ButtonSize = 'xxxs' | 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'longlg' | 'xl';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
@@ -34,6 +34,7 @@ const RoundButton = ({
     sm: 'h-[33px] px-4 text-sm gap-2.5 rounded-[16px]',
     md: 'h-[35px] px-5 text-sm gap-2.5',
     lg: 'h-[38px] px-6 text-base gap-2.5',
+    longlg: 'h-[25px] px-6 text-sm gap-2.5 rounded-[16px]',
     xl: 'h-[44px] px-8 text-lg gap-2.5',
   };
 
