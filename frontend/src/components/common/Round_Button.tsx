@@ -61,6 +61,6 @@ export default Round_Button;
 
 /* 사용 예시
     <Round_Button size="lg" icon={<아이콘 임포트 하시면 됩니다/>} bgColor="bg-secondary" textColor="text-on-secondary" borderColor="border-outline">
-        버튼 턱스트 자리
+        버튼 텍스트 자리
     </Round_Button> 
 */
