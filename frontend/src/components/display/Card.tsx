@@ -1,12 +1,13 @@
-
-import type { HTMLAttributes, ReactNode } from 'react';
-import Icon from '../common/Icon';
+import type { HTMLAttributes, ReactNode } from "react";
+import { Badge } from "./Badge";
+import daily from "../../assets/icon/daily.svg";
+import weekly from "../../assets/icon/weekly.svg";
 
 /* -------------------------------------------------------------------------- */
 /* 1. Types & Interfaces                                                     */
 /* -------------------------------------------------------------------------- */
 
-type CardVariant = 'elevated' | 'filled' | 'outlined';
+type CardVariant = "elevated" | "filled" | "outlined";
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
@@ -24,18 +25,18 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
 
 export const Card = ({
   children,
-  variant = 'filled',
+  variant = "filled",
   clickable = false,
   hoverEffect = false,
-  className = '',
+  className = "",
   onClick,
   ...props
 }: CardProps) => {
-  // GDS 토큰 매핑 
+  // GDS 토큰 매핑
   const variantStyles = {
-    elevated: 'bg-surface shadow-md border-transparent', // 온보딩, 중요 카드
-    filled: 'bg-surface-container-highest border-transparent', // 일반적인 배경 있는 카드
-    outlined: 'bg-transparent border border-outline', // 업로드 카드 등
+    elevated: "bg-surface shadow-md border-transparent", // 온보딩, 중요 카드
+    filled: "bg-surface-container-highest border-transparent", // 일반적인 배경 있는 카드
+    outlined: "bg-transparent border border-outline", // 업로드 카드 등
   };
 
   const isInteractive = clickable || !!onClick;
@@ -52,10 +53,10 @@ export const Card = ({
         ${variantStyles[variant]}
         
         /* 인터랙션 (커서 및 호버 레이어) */
-        ${isInteractive ? 'cursor-pointer state-layer' : ''}
+        ${isInteractive ? "cursor-pointer state-layer" : ""}
         
         /* 호버 애니메이션 (둥둥 뜨기) - hoverEffect가 켜져있을 때만 동작 */
-        ${isInteractive && hoverEffect ? 'hover:-translate-y-1' : ''}
+        ${isInteractive && hoverEffect ? "hover:-translate-y-1" : ""}
         
         /* 커스텀 오버라이딩 (가장 마지막에 위치) */
         ${className}
@@ -72,8 +73,15 @@ export const Card = ({
 /* -------------------------------------------------------------------------- */
 
 // [Header] 제목, 프로필(Avatar), 메뉴 아이콘 배치
-export const CardHeader = ({ children, className = '', ...props }: HTMLAttributes<HTMLDivElement>) => (
-  <div className={`flex items-center justify-between p-4 pb-2 ${className}`} {...props}>
+export const CardHeader = ({
+  children,
+  className = "",
+  ...props
+}: HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={`flex items-center justify-between p-4 pb-2 ${className}`}
+    {...props}
+  >
     {children}
   </div>
 );
@@ -85,74 +93,73 @@ interface CardMediaProps extends HTMLAttributes<HTMLDivElement> {
   /** Tailwind Aspect Ratio 클래스 (예: aspect-video, aspect-square) */
   aspectRatio?: string;
   /** 뱃지 타입: 'weekly' | 'daily' | undefined */
-  badge?: 'weekly' | 'daily';
+  badge?: string | null;
 }
 
-export const CardMedia = ({ 
-  src, 
-  alt, 
-  aspectRatio = 'aspect-video', 
+export const CardMedia = ({
+  src,
+  alt,
+  aspectRatio = "aspect-video",
   badge,
-  className = '', 
-  children, 
-  ...props 
+  className = "",
+  children,
+  ...props
 }: CardMediaProps) => {
-
   // 뱃지 타입에 따른 아이콘/색상 매핑
-  const badgeConfig = {
-    weekly: { icon: 'check', bgColor: 'bg-secondary',  }, // 위클리
-    daily: { icon: 'check_secondary', bgColor: 'bg-primary' }, // 데일
+
+  const badgeMap: Record<string, string> = {
+    daily: daily, // import daily from ...
+    weekly: weekly, // import weekly from ...
   };
 
-  const currentBadge = badge ? badgeConfig[badge] : null;
+  // badge 프롭이 있으면 매핑된 이미지를 가져옴
+  const currentBadgeSrc = (badge && badgeMap[badge]) || null;
 
   return (
-  
-  <div 
-    className={`
+    <div
+      className={`
       relative w-full overflow-hidden bg-surface-variant group 
       ${aspectRatio} 
       ${className}
-    `} 
-    {...props}
-  >
-    <img 
-      src={src} 
-      alt={alt} 
-      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" 
-    />
+    `}
+      {...props}
+    >
+      <img
+        src={src}
+        alt={alt}
+        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+      />
 
-    {/* 우측 상단 뱃지 렌더링 */}
-      {currentBadge && (
-        <div className={`
-          absolute top-3 right-3 z-20 
-          flex w-[24px] h-[24px] p-[7px 5px 3.593px 5px] justify-center items-center flex-shrink-0
-          rounded-full     
-          ${currentBadge.bgColor}
-        `}>
-          {/* 3. 아이콘 색상 적용 (text-...) */}
-          <Icon 
-            name={currentBadge.icon}
-            size={14} 
+      {/* 우측 상단 뱃지 렌더링 */}
+      {currentBadgeSrc && (
+        <div className="absolute top-3 right-3 z-20">
+          {/* Badge 컴포넌트의 imgSrc 모드 사용 */}
+          <Badge
+            imgSrc={currentBadgeSrc}
+            alt={`${badge} badge`} // 접근성 (예: "daily badge")
           />
         </div>
       )}
-    {/* Overlay 컴포넌트가 들어갈 자리 */}
-    {children}
-  </div>
+      {/* Overlay 컴포넌트가 들어갈 자리 */}
+      {children}
+    </div>
   );
 };
 
 // [Overlay] 미디어 위에 올라가는 호버 정보창 (그라데이션 포함)
-export const CardOverlay = ({ children, className = '', ...props }: HTMLAttributes<HTMLDivElement>) => (
-  <div 
+export const CardOverlay = ({
+  children,
+  className = "",
+  ...props
+}: HTMLAttributes<HTMLDivElement>) => (
+  <div
     className={`
       absolute z-10 flex flex-col justify-end p-4 bottom-0 left-0 w-full
       bg-[linear-gradient(0deg,#121315_0%,rgba(105,111,123,0.00)_97.39%)]
       opacity-0 group-hover:opacity-100 
       transition-opacity duration-300 ease-in-out
       ${className}
-    `} 
+    `}
     {...props}
   >
     {children}
@@ -160,15 +167,26 @@ export const CardOverlay = ({ children, className = '', ...props }: HTMLAttribut
 );
 
 // [Body] 본문 텍스트 영역
-export const CardBody = ({ children, className = '', ...props }: HTMLAttributes<HTMLDivElement>) => (
+export const CardBody = ({
+  children,
+  className = "",
+  ...props
+}: HTMLAttributes<HTMLDivElement>) => (
   <div className={`flex-1 p-4 ${className}`} {...props}>
     {children}
   </div>
 );
 
 // [Footer] 하단 액션 버튼, 태그 영역
-export const CardFooter = ({ children, className = '', ...props }: HTMLAttributes<HTMLDivElement>) => (
-  <div className={`flex items-center justify-between p-4 pt-0 ${className}`} {...props}>
+export const CardFooter = ({
+  children,
+  className = "",
+  ...props
+}: HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={`flex items-center justify-between p-4 pt-0 ${className}`}
+    {...props}
+  >
     {children}
   </div>
 );
