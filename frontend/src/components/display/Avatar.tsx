@@ -1,5 +1,5 @@
-import { useState, useEffect, type HTMLAttributes } from 'react';
-import Icon from '../common/Icon'; 
+import { useState, useEffect, type HTMLAttributes } from "react";
+import Icon from "../common/Icon";
 
 //사용 예시 <Avatar src="https://example.com/avatar.jpg" alt="User Avatar" size="md" />
 /* -------------------------------------------------------------------------- */
@@ -7,11 +7,11 @@ import Icon from '../common/Icon';
 /* -------------------------------------------------------------------------- */
 
 const sizePresets = {
-  xs: 25,
+  xs: 24,
   sm: 32,
-  md: 54,
+  md: 48,
   lg: 112,
-  xl: 138,
+  xl: 128,
 };
 
 interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
@@ -31,10 +31,10 @@ interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
 
 export const Avatar = ({
   src,
-  icon = 'profile_Icon', 
-  alt = 'avatar',
-  size = 'md',
-  className = '',
+  icon = "profile_Icon",
+  alt = "avatar",
+  size = "md",
+  className = "",
   ...props
 }: AvatarProps) => {
   // 이미지 에러 상태
@@ -46,7 +46,7 @@ export const Avatar = ({
   }, [src]);
 
   // 실제 픽셀 크기
-  const pixelSize = typeof size === 'number' ? size : sizePresets[size];
+  const pixelSize = typeof size === "number" ? size : sizePresets[size];
 
   return (
     <div
@@ -71,11 +71,7 @@ export const Avatar = ({
         /* 2. 사진이 없거나 깨졌을 때 -> Icon으로 대체 */
         /* 아이콘을 꽉 차게 하거나 적절한 크기로 중앙 배치 */
         <div className="flex h-full w-full items-center justify-center">
-           <Icon 
-             name={icon} 
-             size={pixelSize} 
-             className="fill-current"
-           />
+          <Icon name={icon} size={pixelSize} className="fill-current" />
         </div>
       )}
     </div>
