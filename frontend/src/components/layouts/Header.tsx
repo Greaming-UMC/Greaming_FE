@@ -10,7 +10,6 @@ interface HeaderProps {
 
 const Header = ({ mode = 'main' }: HeaderProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
-  // eslint-disable-next-line
   const [activeNav, setActiveNav] = useState('my-room');
 
   useEffect(() => {
