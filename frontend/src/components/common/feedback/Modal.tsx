@@ -31,49 +31,80 @@ const useModalContext = () => useContext(ModalContext);
 /* 3. Main Component (Root)                                                  */
 /* -------------------------------------------------------------------------- */
 
-const ModalRoot = ({
-  open,
-  onClose,
-  children,
-  variant = 'default',
+const ModalRoot = ({ 
+  open, 
+  onClose, 
+  children, 
+  variant = 'default' 
 }: ModalProps) => {
-
+  
   const modalRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
 
-  // 1️⃣ 스크롤 잠금 및 ESC 처리 통합 로직
+  // 실제 포커스 가능한 요소만 필터링 (가독성 및 재사용)
+  const getFocusables = () => {
+    if (!modalRef.current) return [];
+    const selectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    return Array.from(modalRef.current.querySelectorAll<HTMLElement>(selectors)).filter((el) => {
+      const isDisabled = (el as any).disabled || el.hasAttribute('disabled');
+      const isVisible = el.offsetWidth > 0 && el.offsetHeight > 0; // 화면에 보이는지 확인
+      return !isDisabled && isVisible;
+    });
+  };
+
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      // 모달 닫힘 시, 모달을 열기 전 포커스 위치로 복귀
+      triggerRef.current?.focus();
+      return;
+    }
+    
+    // 모달이 열리기 직전, 마지막으로 포커스하고 있던 요소를 저장
+    triggerRef.current = document.activeElement as HTMLElement;
 
-    // 모달이 열릴 때 스크롤 잠금
     const html = document.documentElement;
     const body = document.body;
-
     html.style.overflow = 'hidden';
     body.style.overflow = 'hidden';
 
+    //  이미 내부 요소에 포커스가 있는 경우(예: 리렌더링)는 건너뜀
+    const focusTimer = requestAnimationFrame(() => {
+      if (modalRef.current && !modalRef.current.contains(document.activeElement)) {
+        const focusables = getFocusables();
+        focusables.length > 0 ? focusables[0].focus() : modalRef.current.focus();
+      }
+    });
+
     const handleKeyDown = (e: KeyboardEvent) => {
+      // ESC 처리
       if (e.key === 'Escape') {
-        // 3. 현재 화면에 떠 있는 모든 모달들을 다 불러옵니다.
         const openModals = document.querySelectorAll('[role="dialog"]');
-        // 4. 그중에서 가장 마지막(맨 위)에 있는 요소를 찾습니다.
-        const lastModal = openModals[openModals.length - 1];
-        
-        // 5. ⭐️ [핵심] 내 이름표(modalRef)가 붙은 모달이 맨 위(lastModal)일 때만 닫기!
-        if (modalRef.current === lastModal) {
-          onClose();
+        if (modalRef.current === openModals[openModals.length - 1]) onClose();
+      }
+
+      // 탭 트랩
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusables = getFocusables();
+        if (focusables.length === 0) return;
+
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+
+        if (e.shiftKey && document.activeElement === first) {
+          last.focus();
+          e.preventDefault();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          first.focus();
+          e.preventDefault();
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
-
     return () => {
+      cancelAnimationFrame(focusTimer);
       window.removeEventListener('keydown', handleKeyDown);
-      
-      // 클린업: 현재 열려있는 다른 모달이 있는지 확인 (중첩 상황 대비)
       const openModals = document.querySelectorAll('[role="dialog"]');
-      
-      // 모달이 닫힐 때 1개 이하(현재 닫히는 것 포함)라면 스크롤 해제
       if (openModals.length <= 1) {
         html.style.removeProperty('overflow');
         body.style.removeProperty('overflow');
@@ -81,32 +112,41 @@ const ModalRoot = ({
     };
   }, [open, onClose]);
 
-  // 2️⃣ 조건부 렌더링은 Hook 호출 아래에 배치합니다.
   if (!open) return null;
 
   const portalTarget = document.getElementById('modal-root') ?? document.body;
+
+   {/* 기본모달 스타일링 (수정 예정)*/}
+  const defaultClasses = 'w-full max-w-md rounded-small';
+
+   {/* 확인모달 스타일링 (수정 예정)*/}
+  const confirmClasses = 'w-full max-w-sm pt-6 px-6 pb-0 text-center rounded-large'
 
   return createPortal(
     <ModalContext.Provider value={{ variant, onClose }}>
       <div
         className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 p-4"
-        onClick={onClose}
+        onMouseDown={(e) => {
+          // 3️⃣ 배경 클릭 시 의도치 않은 닫힘 방지 (배경에서 마우스를 누를 때만 작동)
+          if (e.target === e.currentTarget) onClose();
+        }}
       >
-        <div  
+        <div
           ref={modalRef}
           role="dialog"
           aria-modal="true"
-          onClick={(e) => e.stopPropagation()}
+          tabIndex={-1}
+          onClick={(e) => e.stopPropagation()} // 내부 클릭은 전파 차단
           className={`
-            bg-surface rounded-large shadow-xl
-            ${variant === 'confirm' ? 'w-full max-w-sm pt-6 px-6 pb-0 text-center' : 'w-full max-w-md p-6'}
+            bg-surface shadow-xl outline-none
+            ${variant === 'confirm' ? confirmClasses : defaultClasses}
           `}
         >
           {children}
         </div>
       </div>
     </ModalContext.Provider>,
-    portalTarget
+    portalTarget  
   );
 };
 
@@ -126,18 +166,19 @@ const ModalHeader = ({ title, onClose: customOnClose }: ModalHeaderProps) => {
   return (
     <div
       className={`mb-4 flex items-center
-        ${variant === 'confirm' ? 'justify-center' : 'justify-between'}
+        ${variant === 'confirm' ? 'justify-center' : 'justify-between p-3 border-b border-outline-variant'}
       `}
     >
       <h2 className="sub-title-xlarge-emphasized text-on-surface">
         {title}
       </h2>
 
+      {/* 공용컴포넌트 버튼으로 수정 */}
       {variant === 'default' && (
         <button
           type="button"
-          onClick={handleClose}
-          className="rounded-medium px-2 py-1 text-primary hover:bg-primary/10 transition-colors"
+          onClick={handleClose} 
+          className="rounded-medium px-2 py-1 text-primary state-layer secondary-opacity-8 transition-colors"
           aria-label="닫기"
         >
           ⨉
@@ -157,9 +198,9 @@ const ModalBody = ({ children }: ModalSectionProps) => {
   return (
     <div
       className={`
-        body-medium text-on-surface-variant
+        body-medium text-on-surface
         ${variant === 'default'
-          ? 'max-h-[60vh] overflow-y-auto pr-4 py-2'
+          ? 'max-h-[60vh] overflow-y-auto px-4 py-2'
           : 'mt-2'}
       `}
     >
@@ -169,8 +210,6 @@ const ModalBody = ({ children }: ModalSectionProps) => {
 };
 
 const ModalFooter = ({ children }: ModalSectionProps) => {
-  const { variant } = useModalContext();
-  if (variant === 'default') return null;
 
   return (
     <div className="mt-2 flex justify-center gap-2">
