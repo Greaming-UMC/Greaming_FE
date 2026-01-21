@@ -20,7 +20,7 @@ const HeaderTabs = ({ isScrolled, activeNav, onChange }: HeaderTabsProps) => {
     <nav
       className={`
         absolute flex items-center transition-all duration-500 ease-in-out
-        ${isScrolled ? 'left-[160px] translate-x-0' : 'left-1/2 -translate-x-1/2'}
+        ${isScrolled ? 'left-[100px] translate-x-0' : 'left-1/2 -translate-x-1/2'}
         ${!isScrolled ? 'gap-3' : 'gap-1'}
       `}
     >
