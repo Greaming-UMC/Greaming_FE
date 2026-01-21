@@ -22,8 +22,8 @@ export interface RegisterInfoRequest {
 
   usage_purpose: UsagePurpose;
   weekly_goal_score: number;
-}
+};
 
 
 // Response
-export type RegisterInfoResult = null;
+// ./common.ts 에서 ApiResultResponse<null> 사용

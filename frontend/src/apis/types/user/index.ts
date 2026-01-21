@@ -1,2 +1,2 @@
-export * from './checkMyProfileHeader';
-export * from './checkUserProfileHeader';
+export * from './checkMyProfile';
+export * from './checkUserProfile';

@@ -62,30 +62,33 @@ export const ENDPOINTS = {
     // 도메인: SUBMISSIONS
     SUBMISSIONS : {
         // 작품 게시물 수정 (PUT    /api/works/{workId})
-        UPDATE_WORK: (workId: number | string) => `/api/works/${workId}`,
+        UPDATE_SUBMISSON: (workId: number | string) => `/api/works/${workId}`,
 
         // 작품 게시물 삭제 (DELETE     /api/works/{workId})
-        DELETE_WORK: (workId: number | string) => `/api/works/${workId}`,
+        DELETE_SUBMISSON: (workId: number | string) => `/api/works/${workId}`,
 
         // 유저 작품 상세 조회 (GET     /api/works/{workId})
-        GET_WORK_DETAIL: (workId: number | string) => `/api/works/${workId}`,
+        GET_SUBMISSON_DETAIL: (workId: number | string) => `/api/works/${workId}`,
 
         // 작품 미리보기  (GET    /api/works/{workId}/preview)
-        GET_WORK_PREVIEW: (workId: number | string) => `/api/works/${workId}/preview`,
+        GET_SUBMISSON_PREVIEW: (workId: number | string) => `/api/works/${workId}/preview`,
 
         // 작품들 조회(페이지)  (GET    /api/works)
-        GET_WORKS: "/api/works",
+        GET_SUBMISSONS: "/api/works",
 
         // 챌린지 출품작 조회(페이지)  (GET    /api/challenges/{challengeId}/works)
-        GET_CHALLENGE_WORKS: (challengeId: number | string) => `/api/challenges/${challengeId}/works`,
+        GET_CHALLENGE_SUBMISSONS: (challengeId: number | string) => `/api/challenges/${challengeId}/works`,
 
         // 메인화면 상단  (GET    /api/home)
         GET_HOME_TOP: "/api/home",
 
-        // 게시물 업로드    (POST /api/users/upload)
-        UPLOAD_WORK: "/api/users/upload",
     },
 
+    // 도메인: UPLOAD
+    UPLOAD : {
+         // 게시물 업로드    (POST /api/users/upload)
+         UPLOAD_SUBMISSON: "/api/users/upload",       
+    },
 
 
     // 도메인: FOLLOW
@@ -111,7 +114,7 @@ export const ENDPOINTS = {
 
 
 
-    // 도메인: CALENDAR (✅ 오타 수정: CALENDER -> CALENDAR)
+    // 도메인: CALENDAR
     CALENDAR : {
         // 내 캘린더 조회(페이지)   (GET  /api/users/me/calendar)
         GET_MY_CALENDAR: "/api/users/me/calendar",

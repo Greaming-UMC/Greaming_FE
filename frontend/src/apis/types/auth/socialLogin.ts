@@ -4,7 +4,28 @@
  */
 
 // Response
+// ./common.ts 에서 ApiResultResponse<T> 사용
 export type SocialResult = {
     expires_in: number;
     is_new_user: boolean;
-}
+};
+
+
+
+/**
+ * 로그아웃 (POST /api/auth/logout)
+ * URI: /api/auth/logout
+ */
+
+// Response
+// ./common.ts 에서 ApiResultResponse<null> 사용
+
+
+
+/**
+ * 엑세스 토큰 만료시 재발급을 지원합니다. (POST /api/auth/reissue)
+ * URI: /api/auth/reissue
+ */
+
+// Response
+// ./common.ts 에서 ApiResultResponse<null> 사용

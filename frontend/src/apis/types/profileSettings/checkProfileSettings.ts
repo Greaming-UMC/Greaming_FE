@@ -1,4 +1,4 @@
-import type { ProfileSettings } from '../common';
+import type { userInformations } from '../common';
 /**
  * 초기에 프로필 설정 화면 조회 (GET /api/users/me/profile)
  * URI: /api/users/me/profile
@@ -6,6 +6,7 @@ import type { ProfileSettings } from '../common';
 
 
 // Response
+// ./common.ts 에서 ApiResultSuccessResponse<T> 사용
 export type ProfileSettingsResult = {
-    profileSettings: ProfileSettings;
-}
+    user_information: userInformations;
+};

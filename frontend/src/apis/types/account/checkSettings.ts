@@ -1,14 +1,15 @@
-import type { Visibillty } from "../common";
+import type { VisibilityType } from "../common";
 
 /**
- * 계정 설정 조회 (PUT /api/users/me/account)
+ * 계정 설정 조회 (GET /api/users/me/account)
  * URI: /api/users/me/account
  */
 
 
 // Response
+// ApiResultSuccessResponse<CheckSettingsResult>
 export type CheckSettingsResult = {
     email: string,
-    visibillty: Visibillty,
+    visibility: VisibilityType,
     loginType: string;
-}
+};

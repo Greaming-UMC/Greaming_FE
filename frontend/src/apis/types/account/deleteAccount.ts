@@ -6,13 +6,14 @@
 
 // Request
 export interface DeleteAccountRequest {
-    reason: string;
+    reason?: string | null;
     agreed: boolean;
-}
+};
 
 
 // Response
+// ApiResultSuccessResponse<DeleteAccountResult>
 export type DeleteAccountResult = {
     userId: number;
     deleteAt: string;
-}
+};
