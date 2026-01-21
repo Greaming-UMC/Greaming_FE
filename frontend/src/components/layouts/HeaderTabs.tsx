@@ -15,6 +15,7 @@ interface HeaderTabsProps {
 }
 
 const HeaderTabs = ({ isScrolled, activeNav, onChange }: HeaderTabsProps) => {
+  // TODO : 공용 컴포넌트 머지 후 round button으로 교체하여 사용 (다지인도 figma와 동일하게)
   return (
     <nav
       className={`
