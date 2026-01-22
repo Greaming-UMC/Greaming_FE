@@ -3,11 +3,11 @@ import type { ComponentType, SVGProps } from 'react'
 // SVG 컴포넌트 타입: <svg>에 넣을 수 있는 모든 props를 그대로 받는 React 컴포넌트.
 type SvgComponent = ComponentType<SVGProps<SVGSVGElement>>
 
-// 1) 폴더 안의 모든 SVG를 React 컴포넌트로 가져옵니다.
+// 1) 아이콘 폴더(하위 폴더 포함) 안의 모든 SVG를 React 컴포넌트로 가져옵니다.
 // - import.meta.glob: 파일을 객체로 모음 (키=경로, 값=모듈)
 // - eager: true → 빌드 시점에 즉시 import
 // - query: '?react' → SVGR로 SVG를 React 컴포넌트로 변환
-const iconModules = import.meta.glob('../../assets/icon/*.svg', {
+const iconModules = import.meta.glob('../../assets/icon/**/*.svg', {
   eager: true,
   import: 'default',
   query: '?react',
@@ -75,7 +75,7 @@ const Icon = ({ name, size, className, ...rest }: IconProps) => {
   // 2) 없으면 개발 모드에서만 경고를 찍고 렌더를 중단합니다.
   if (!Component) {
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
+       
       console.warn(`[Icon] Unknown name: "${name}".`, ICON_NAMES)
     }
     return null
