@@ -1,7 +1,8 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { Badge } from "./Badge";
-import daily from "../../assets/icon/daily.svg";
-import weekly from "../../assets/icon/weekly.svg";
+import daily from "../../assets/icon/mono/daily.svg";
+import weekly from "../../assets/icon/multi/weekly.svg";
+
 
 /* -------------------------------------------------------------------------- */
 /* 1. Types & Interfaces                                                     */
