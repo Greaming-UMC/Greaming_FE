@@ -3,11 +3,11 @@ import type { ComponentType, SVGProps } from 'react'
 // SVG 컴포넌트 타입: <svg>에 넣을 수 있는 모든 props를 그대로 받는 React 컴포넌트.
 type SvgComponent = ComponentType<SVGProps<SVGSVGElement>>
 
-// 1) 폴더 안의 모든 SVG를 React 컴포넌트로 가져옵니다.
+// 1) 아이콘 폴더(하위 폴더 포함) 안의 모든 SVG를 React 컴포넌트로 가져옵니다.
 // - import.meta.glob: 파일을 객체로 모음 (키=경로, 값=모듈)
 // - eager: true → 빌드 시점에 즉시 import
 // - query: '?react' → SVGR로 SVG를 React 컴포넌트로 변환
-const iconModules = import.meta.glob('../../assets/icon/*.svg', {
+const iconModules = import.meta.glob('../../assets/icon/**/*.svg', {
   eager: true,
   import: 'default',
   query: '?react',

@@ -1,5 +1,5 @@
 import { httpRefresh } from "../../http/refreshClient";
-import { ENDPOINTS } from "../endpoints/\bendpoints";
+import { ENDPOINTS } from "../endpoints/endpoints";
 import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { getAccessToken, setAccessToken, clearAccessToken } from "../../security/tokenStore";
 
