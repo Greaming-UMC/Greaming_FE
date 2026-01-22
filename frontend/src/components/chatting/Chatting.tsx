@@ -1,4 +1,4 @@
-import type { HTMLAttributes, TextareaHTMLAttributes } from 'react';
+import type { HTMLAttributes, InputHTMLAttributes } from 'react';
 import Icon from '../common/Icon'; 
 import { Divider } from '../display/Divider';
 import { Avatar } from '../display';
@@ -141,7 +141,7 @@ export const ChattingReplySeparator = ({
 /* 4. Input (입력창)                                                         */
 /* -------------------------------------------------------------------------- */
 
-interface ChattingInputProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface ChattingInputProps extends InputHTMLAttributes<HTMLInputElement> {
   userAvatarSrc?: string;
   onSubmit?: () => void;
   disabled?: boolean;
