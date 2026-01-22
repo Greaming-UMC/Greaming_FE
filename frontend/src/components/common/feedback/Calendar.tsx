@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { startOfMonth, endOfMonth, startOfWeek, eachWeekOfInterval, format, getMonth } from 'date-fns';
+import { format } from 'date-fns';
 import './Calendar.css';
 import Icon from '../Icon';
 
@@ -67,7 +67,8 @@ const CalendarHeader = () => {
       
       <div className="flex items-center gap-2"> {/* 버튼 사이의 간격을 살짝 좁혀 응집력을 높임 */}
         <button onClick={() => adjust(-1)} className="p-1 rounded-full transition-colors state-layer secondary-opacity-8">
-          <Icon name="arrow_left_white" size={24} />
+          {/* 색깔 수정 예정*/}
+          <Icon name="arrow_left" size={24} />
         </button>
 
         {/* ⭐️ 핵심: 고정 너비(w-[50px]~[60px])와 중앙 정렬 적용 */}
@@ -76,7 +77,8 @@ const CalendarHeader = () => {
         </span>
 
         <button onClick={() => adjust(1)} className="p-1 rounded-full transition-colors state-layer secondary-opacity-8">
-          <Icon name="arrow_right_white" size={24} />
+          {/* 색깔 수정 예정*/}
+          <Icon name="arrow_right" size={24} />
         </button>
       </div>
     </div>
@@ -175,11 +177,20 @@ const BodyDays = () => {
   );
 };
 
+/* -------------------------------------------------------------------------- */
+/* 5. BodyWeeks (주차 선택)                                                     */
+/* -------------------------------------------------------------------------- */
+
 const BodyWeeks = () => {
   const { viewDate, setViewDate, variant } = useCalendar();
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedWeekIndex, setSelectedWeekIndex] = useState(0); // 인덱스로 관리
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const [selectedInfo, setSelectedInfo] = useState({
+    year: new Date().getFullYear(),
+    month: new Date().getMonth(),
+    weekIndex: 0,
+  });
 
   // 1. 무조건 6주차까지 고정 배열 생성
   const fixedWeeks = Array.from({ length: 6 }, (_, i) => i);
@@ -189,6 +200,13 @@ const BodyWeeks = () => {
     0: "success",
     // 1: "fail",
   };
+
+  useEffect(() => {
+    if (isOpen && variant === 'modal') {
+      const savedDate = new Date(selectedInfo.year, selectedInfo.month, 1);
+      setViewDate(savedDate);
+    }
+  }, [isOpen, variant, selectedInfo.year, selectedInfo.month, setViewDate]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -206,7 +224,7 @@ const BodyWeeks = () => {
     setViewDate(d);
   };
 
-  /** * 1. Inline 렌더링: 가로 3열 6개 박스 고정
+  /** * 1. Inline
    */
   const RenderInline = () => (
     <div className="flex flex-col w-full h-full bg-surface p-3 rounded-lg">
@@ -240,7 +258,7 @@ const BodyWeeks = () => {
     </div>
   );
 
-  /** * 2. Modal 렌더링: 세로 1열 6개 항목 고정
+  /** * 2. Modal 
    */
   const RenderModal = () => (
     <div className="relative w-fit" ref={containerRef}>
@@ -252,7 +270,7 @@ const BodyWeeks = () => {
           <Icon name="calendar_month" size={24} className="text-on-surface" />
         </div>
         <span className="label-xxlarge-emphasized text-on-surface text-center pl-4">
-          {viewDate.getMonth() + 1}월 {selectedWeekIndex + 1}주차
+          {selectedInfo.month + 1}월 {selectedInfo.weekIndex + 1}주차
         </span> 
       </div>
 
@@ -269,27 +287,40 @@ const BodyWeeks = () => {
           </div>
           
           <div className="flex flex-col gap-2">
-              {fixedWeeks.map((index) => (
+            {fixedWeeks.map((index) => {
+              const isSelected = 
+                viewDate.getFullYear() === selectedInfo.year &&
+                viewDate.getMonth() === selectedInfo.month &&
+                selectedInfo.weekIndex === index;
+
+              return (
                 <div
                   key={index}
-                  onClick={() => { setSelectedWeekIndex(index); setIsOpen(false); }}
+                  onClick={() => { 
+                    setSelectedInfo({
+                      year: viewDate.getFullYear(),
+                      month: viewDate.getMonth(),
+                      weekIndex: index
+                    });
+                    setIsOpen(false); 
+                  }}
                   className={`
                     flex items-center justify-center h-[44px] rounded-3xl cursor-pointer transition-colors
-                    ${selectedWeekIndex === index 
+                    ${isSelected 
                       ? 'bg-primary text-on-primary border-primary' 
                       : 'bg-surface text-on-surface border-3 border-surface-variant-low state-layer primary-opacity-8'
                     }
                   `}
                 >
-                  <span className="label-large-emphasized">{viewDate.getMonth() + 1}월 {index + 1}주차</span>
+                  <span className="label-large-emphasized">{index + 1}주차</span>
                 </div>
-              ))}
-            </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>
   );
-
   return (
     <div className={variant === 'inline' ? 'w-full h-full' : 'w-fit'}>
       {variant === 'inline' ? <RenderInline /> : <RenderModal />}

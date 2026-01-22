@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { createContext, useContext, useEffect, useRef } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 /* -------------------------------------------------------------------------- */
 /* 1. Types & Interfaces                                                     */
@@ -38,6 +38,28 @@ const ModalRoot = ({
   variant = 'default' 
 }: ModalProps) => {
   
+  // 1. 실제로 DOM에 렌더링할지 여부를 결정하는 상태
+  const [shouldRender, setShouldRender] = useState(open);
+  // 2. 애니메이션 클래스를 적용하기 위한 상태
+  const [isAnimate, setIsAnimate] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setShouldRender(true);
+      // 브라우저가 DOM 렌더링을 인지한 후 애니메이션을 시작하도록 약간의 지연(requestAnimationFrame)을 줍니다.
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setIsAnimate(true));
+      });
+    } else {
+      setIsAnimate(false);
+      // 애니메이션 시간(200ms)이 지난 후 렌더링 중단
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+      }, 200); 
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
+
   const modalRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
 
@@ -138,8 +160,9 @@ const ModalRoot = ({
           tabIndex={-1}
           onClick={(e) => e.stopPropagation()} // 내부 클릭은 전파 차단
           className={`
-            bg-surface shadow-xl outline-none
+            bg-surface shadow-xl outline-none transform transition-all duration-300 ease-out
             ${variant === 'confirm' ? confirmClasses : defaultClasses}
+            ${isAnimate ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-4'}
           `}
         >
           {children}
