@@ -20,6 +20,9 @@ importers:
       axios:
         specifier: ^1.13.2
         version: 1.13.2
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       jotai:
         specifier: ^2.16.1
         version: 2.16.1(@babel/core@7.28.5)(@babel/template@7.27.2)(@types/react@19.2.7)(react@19.2.3)
