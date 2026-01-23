@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from "react";
-import Icon from "../common/Icon";
+import Icon from "../Icon";
 //사용예시
 // <div className="flex gap-2">
 //   <Badge label="New" variant="primary" size="sm" />

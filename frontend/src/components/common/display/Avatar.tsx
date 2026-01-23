@@ -1,5 +1,5 @@
 import { useState, useEffect, type HTMLAttributes } from "react";
-import Icon from "../common/Icon";
+import Icon from "../Icon";
 
 //사용 예시 <Avatar src="https://example.com/avatar.jpg" alt="User Avatar" size="md" />
 /* -------------------------------------------------------------------------- */

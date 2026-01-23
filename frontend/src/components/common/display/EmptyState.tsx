@@ -1,5 +1,5 @@
 import type{ ReactNode } from 'react';
-import Icon from '../common/Icon'; 
+import Icon from "../Icon";
 /**
  * EmptyState 컴포넌트
  * 

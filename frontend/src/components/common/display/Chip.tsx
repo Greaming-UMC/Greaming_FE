@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes } from "react";
-import Icon from "../common/Icon";
+import Icon from "../Icon";
 
 // 1. 입력형 (삭제 가능) - 예: 태그 입력기
 // <Chip
