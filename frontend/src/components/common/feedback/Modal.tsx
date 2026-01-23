@@ -134,7 +134,7 @@ const ModalRoot = ({
     };
   }, [open, onClose]);
 
-  if (!open) return null;
+  if (!shouldRender) return null;
 
   const portalTarget = document.getElementById('modal-root') ?? document.body;
 

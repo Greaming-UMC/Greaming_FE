@@ -6,9 +6,9 @@
 
 import type { HTMLAttributes } from "react";
 
-type DividerOrientation = "horizontal" | "vertical";
+export type DividerOrientation = "horizontal" | "vertical";
 
-interface DividerProps extends HTMLAttributes<HTMLDivElement> {
+export interface DividerProps extends HTMLAttributes<HTMLDivElement> {
   /**
    * 구분선 방향 (기본값: 'horizontal')
    * - horizontal: 가로선 (width: 100%)

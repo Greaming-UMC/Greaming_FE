@@ -1,7 +1,9 @@
 
-import { Button } from "./components/common/input";
+import { useState } from "react";
+import { Button, SegmentedButton } from "./components/common/input";
 
 function App() {
+  const [segmentValue, setSegmentValue] = useState("all");
   const variants = [
     "primary",
     "secondary",
@@ -18,6 +20,30 @@ function App() {
   return (
     <div className="min-h-screen bg-surface text-on-surface p-8">
       <div className="mx-auto max-w-5xl space-y-10">
+        <section className="space-y-3">
+          <h2 className="label-xxxlarge-emphasized">Segmented Styles</h2>
+          <div className="flex flex-wrap gap-[8px] items-center">
+            <SegmentedButton
+              style="primary"
+              value={segmentValue}
+              options={[
+                { label: "All", value: "all" },
+                { label: "Bookmarked", value: "bookmarked" },
+              ]}
+              onChange={setSegmentValue}
+            />
+            <SegmentedButton
+              style="secondary"
+              value={segmentValue}
+              options={[
+                { label: "All", value: "all" },
+                { label: "Bookmarked", value: "bookmarked" },
+              ]}
+              onChange={setSegmentValue}
+            />
+          </div>
+        </section>
+
         <section className="space-y-3">
           <h2 className="label-xxxlarge-emphasized">Variants</h2>
           <div className="flex flex-wrap gap-4">
