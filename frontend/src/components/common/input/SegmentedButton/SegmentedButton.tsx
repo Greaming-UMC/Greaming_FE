@@ -12,14 +12,15 @@ export const SegmentedButton = forwardRef<
       options,
       value,
       onChange,
-      style = "primary",
+      variant = "primary",
       disabled,
       className,
       displayClassName = "main-title-small-emphasized",
     },
     ref,
   ) => {
-  const dividerColor = style === "secondary" ? "bg-surface" : "bg-on-surface";
+    const dividerColor =
+      variant === "secondary" ? "bg-surface" : "bg-on-surface";
     return (
       <div
         ref={ref}
@@ -32,9 +33,11 @@ export const SegmentedButton = forwardRef<
           const isDisabled = disabled || opt.disabled;
 
           const selectedTextColor =
-            style === "secondary" ? "text-secondary" : "text-primary";
+            variant === "secondary" ? "text-secondary" : "text-primary";
           const stateLayerClass =
-            style === "secondary" ? "secondary-opacity-8" : "primary-opacity-8";
+            variant === "secondary"
+              ? "secondary-opacity-8"
+              : "primary-opacity-8";
 
           return (
             <Fragment key={opt.value}>

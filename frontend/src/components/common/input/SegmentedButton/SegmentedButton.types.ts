@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type SegmentedButtonStyle = "primary" | "secondary";
+export type SegmentedButtonVariant = "primary" | "secondary";
 
 export interface SegmentedOption {
   label: ReactNode;
@@ -12,7 +12,7 @@ export interface SegmentedButtonProps {
   options: SegmentedOption[];
   value: string;
   onChange: (value: string) => void;
-  style?: SegmentedButtonStyle;
+  variant?: SegmentedButtonVariant;
   disabled?: boolean;
   className?: string;
   displayClassName?: string;

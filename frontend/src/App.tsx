@@ -1,9 +1,11 @@
 
 import { useState } from "react";
-import { Button, SegmentedButton } from "./components/common/input";
+import { Button, Checkbox, SegmentedButton } from "./components/common/input";
 
 function App() {
   const [segmentValue, setSegmentValue] = useState("all");
+  const [checkedA, setCheckedA] = useState(true);
+  const [checkedB, setCheckedB] = useState(false);
   const variants = [
     "primary",
     "secondary",
@@ -21,10 +23,22 @@ function App() {
     <div className="min-h-screen bg-surface text-on-surface p-8">
       <div className="mx-auto max-w-5xl space-y-10">
         <section className="space-y-3">
+          <h2 className="label-xxxlarge-emphasized">Checkbox</h2>
+          <div className="flex flex-wrap gap-[8px] items-center">
+            <Checkbox checked={checkedA} onChange={setCheckedA}>
+              Default
+            </Checkbox>
+            <Checkbox checked={checkedB} onChange={setCheckedB} disabled>
+              Disabled
+            </Checkbox>
+          </div>
+        </section>
+
+        <section className="space-y-3">
           <h2 className="label-xxxlarge-emphasized">Segmented Styles</h2>
           <div className="flex flex-wrap gap-[8px] items-center">
             <SegmentedButton
-              style="primary"
+              variant="primary"
               value={segmentValue}
               options={[
                 { label: "All", value: "all" },
@@ -33,7 +47,7 @@ function App() {
               onChange={setSegmentValue}
             />
             <SegmentedButton
-              style="secondary"
+              variant="secondary"
               value={segmentValue}
               options={[
                 { label: "All", value: "all" },
