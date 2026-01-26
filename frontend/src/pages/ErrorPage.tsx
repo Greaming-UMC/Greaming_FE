@@ -2,7 +2,7 @@
 
 const ErrorPage = () => {
   return (
-    <div className="pt-[82px]">ErrorPage</div>
+    <div className="pt-[82px] text-center">Error Page</div>
   )
 }
 
