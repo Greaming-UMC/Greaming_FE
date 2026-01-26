@@ -8,10 +8,12 @@ import Icon from "../Icon";
 
 const sizePresets = {
   xs: 24,
-  sm: 32,
-  md: 48,
-  lg: 112,
-  xl: 128,
+  sm: 28,
+  md: 44,
+  lg: 48,
+  xlg: 54,
+  xxl: 112,
+  xxxl: 128,
 };
 
 export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
