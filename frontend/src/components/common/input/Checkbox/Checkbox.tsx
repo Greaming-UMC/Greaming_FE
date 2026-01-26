@@ -64,7 +64,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           type="checkbox"
           checked={checked}
           disabled={disabled}
-          onChange={(event) => onChange(event.target.checked)}
+          onChange={(event) => onChange(event.currentTarget.checked)}
           className="sr-only"
         />
 
