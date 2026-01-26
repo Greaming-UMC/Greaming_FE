@@ -1,11 +1,19 @@
 
 import { useState } from "react";
 import { Button, Checkbox, SegmentedButton } from "./components/common/input";
+import { BaseField, SearchField } from "./components/common/input/InputField";
 
 function App() {
   const [segmentValue, setSegmentValue] = useState("all");
   const [checkedA, setCheckedA] = useState(true);
   const [checkedB, setCheckedB] = useState(false);
+  const [baseFixedValue, setBaseFixedValue] = useState("");
+  const [baseFillValue, setBaseFillValue] = useState("");
+  const [countFixedValue, setCountFixedValue] = useState("");
+  const [countFillValue, setCountFillValue] = useState("");
+  const [actionFixedValue, setActionFixedValue] = useState("");
+  const [actionFillValue, setActionFillValue] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const variants = [
     "primary",
     "secondary",
@@ -22,6 +30,93 @@ function App() {
   return (
     <div className="min-h-screen bg-surface text-on-surface p-8">
       <div className="mx-auto max-w-5xl space-y-10">
+        <section className="space-y-3">
+          <h2 className="label-xxxlarge-emphasized">Input Field</h2>
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <BaseField
+                headline="Base / fixed"
+                value={baseFixedValue}
+                onChange={setBaseFixedValue}
+                placeholder="기본 입력"
+              />
+              <div className="w-full max-w-md">
+                <BaseField
+                  headline="Base / fill"
+                  value={baseFillValue}
+                  onChange={setBaseFillValue}
+                  placeholder="가로 채우기"
+                  widthMode="fill"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <BaseField
+                headline="Count / fixed"
+                value={countFixedValue}
+                onChange={setCountFixedValue}
+                maxLength={20}
+                showCounter
+                placeholder="카운터"
+              />
+              <div className="w-full max-w-md">
+                <BaseField
+                  headline="Count / fill"
+                  value={countFillValue}
+                  onChange={setCountFillValue}
+                  maxLength={20}
+                  showCounter
+                  placeholder="가로 채우기"
+                  widthMode="fill"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <BaseField
+                headline="Action / fixed"
+                value={actionFixedValue}
+                onChange={setActionFixedValue}
+                placeholder="액션 입력"
+                action={{ label: "중복확인", onClick: () => {} }}
+              />
+              <div className="w-full max-w-md">
+                <BaseField
+                  headline="Action / fill"
+                  value={actionFillValue}
+                  onChange={setActionFillValue}
+                  placeholder="가로 채우기"
+                  action={{ label: "확인", onClick: () => {}, variant: "outlined" }}
+                  widthMode="fill"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="label-xxxlarge-emphasized">Search Field</h2>
+          <div className="flex flex-wrap gap-4 items-center">
+            <SearchField
+              value={searchValue}
+              onChange={setSearchValue}
+              placeholder="검색"
+              size="medium"
+              iconPosition="leading"
+              onSearch={() => {}}
+            />
+            <SearchField
+              value={searchValue}
+              onChange={setSearchValue}
+              placeholder="검색"
+              size="large"
+              iconPosition="trailing"
+              onSearch={() => {}}
+            />
+          </div>
+        </section>
+
         <section className="space-y-3">
           <h2 className="label-xxxlarge-emphasized">Checkbox</h2>
           <div className="flex flex-wrap gap-[8px] items-center">

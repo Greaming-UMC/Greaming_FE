@@ -14,13 +14,13 @@ export const BUTTON_SIZE_TOKENS: Record<
     heightClass: "h-[26px]",
     radiusClass: "rounded-small",
     textClass: "label-xlarge",
-    paddingXClass: "px-[32px]",
+    paddingXClass: "px-[16px]",
   },
   xs: {
     heightClass: "h-[32px]",
     radiusClass: "rounded-small",
     textClass: "label-large",
-    paddingXClass: "px-[32px]",
+    paddingXClass: "px-[16px]",
   },
   sm: {
     heightClass: "h-[36px]",

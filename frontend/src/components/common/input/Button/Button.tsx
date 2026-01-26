@@ -10,6 +10,7 @@ import {
 
 export type ButtonVariant =
   | "primary"
+  | "onPrimary"
   | "secondary"
   | "outlined"
   | "outlinedVariant"
@@ -30,6 +31,7 @@ export interface ButtonProps
   iconSize?: number;
   widthMode?: ButtonWidthMode;
   width?: number | string;
+  textClassName?: string;
 }
 
 const VARIANT_STYLES: Record<
@@ -38,6 +40,10 @@ const VARIANT_STYLES: Record<
 > = {
   primary: {
     base: "bg-primary text-secondary",
+    stateLayer: "surface-variant-opacity-16",
+  },
+  onPrimary: {
+    base: "bg-primary text-on-primary",
     stateLayer: "surface-variant-opacity-16",
   },
   secondary: {
@@ -74,10 +80,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       shape = "square",
       icon,
       iconPosition = "leading",
-      iconSize = 18,
+      iconSize = 24,
       children,
       widthMode = "hug",
       width,
+      textClassName,
       className,
       disabled,
       type = "button",
@@ -92,6 +99,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   const hasContent = Children.count(children) > 0;
   const isIconOnly = hasIcon && !hasContent;
   const variantStyle = VARIANT_STYLES[variant];
+  const textClass = textClassName ?? token.textClass;
   const mergedStyle =
     widthMode === "fixed" && width ? { ...style, width } : style;
   const ariaLabel = props["aria-label"];
@@ -123,7 +131,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         "disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none",
         token.paddingXClass,
         token.heightClass,
-        token.textClass,
+        textClass,
         radiusClass,
         widthMode === "fill" && "w-full",
         hasIcon && hasContent ? "gap-2" : "gap-0",
