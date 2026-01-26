@@ -1,6 +1,2 @@
-export { SegmentedButton } from "./SegmentedButton";
-export type {
-  SegmentedButtonProps,
-  SegmentedOption,
-  SegmentedButtonTone,
-} from "./SegmentedButton.types";
+export * from "./SegmentedButton";
+export * from "./SegmentedButton.types";

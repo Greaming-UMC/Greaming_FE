@@ -1,7 +1,9 @@
-export type SegmentedButtonTone = "neutral" | "accent";
+import type { ReactNode } from "react";
+
+export type SegmentedButtonVariant = "primary" | "secondary";
 
 export interface SegmentedOption {
-  label: string;
+  label: ReactNode;
   value: string;
   disabled?: boolean;
 }
@@ -10,7 +12,8 @@ export interface SegmentedButtonProps {
   options: SegmentedOption[];
   value: string;
   onChange: (value: string) => void;
-  tone?: SegmentedButtonTone;
+  variant?: SegmentedButtonVariant;
   disabled?: boolean;
   className?: string;
+  displayClassName?: string;
 }
