@@ -8,13 +8,15 @@ import Icon from "../Icon";
 
 const sizePresets = {
   xs: 24,
-  sm: 32,
-  md: 48,
-  lg: 112,
-  xl: 128,
+  sm: 28,
+  md: 44,
+  lg: 48,
+  xlg: 54,
+  xxl: 112,
+  xxxl: 128,
 };
 
-interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
+export interface AvatarProps extends HTMLAttributes<HTMLDivElement> {
   /** 사용자 프로필 이미지 URL */
   src?: string | null;
   /** 이미지 없을 때 보여줄 아이콘 이름 (기본값: 'person_filled') */

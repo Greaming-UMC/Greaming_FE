@@ -1,5 +1,3 @@
-import React from "react";
-import { TextAreaField } from "../common/input/TextAreaField/TextAreaField";
 // 큰 박스
 type WriteBodyFieldProps = {
   value: string;

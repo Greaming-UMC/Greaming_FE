@@ -12,7 +12,7 @@ import Icon from "../Icon";
  * />
  */
 
-interface EmptyStateProps {
+export interface EmptyStateProps {
   /** * 보여줄 아이콘 이름 
    * - 값을 넣으면 아이콘 렌더링
    * - 값을 안 넣으면(undefined) 아이콘 없이 텍스트만 나옴 
