@@ -10,7 +10,7 @@ const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(file
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const monoColor = '**/assets/icon/mono/*.svg?react';
-const multiColor = ['**/assets/icon/multi*.svg?react', '**/assets/logo/*.svg?react'];
+const multiColor = ['**/assets/icon/multi/*.svg?react', '**/assets/logo/*.svg?react',];
 export default defineConfig({
   plugins: [svgr({
     include: monoColor,
