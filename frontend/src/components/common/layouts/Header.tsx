@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-
-import Logo from '../../assets/logo/mono-white-wordmark.svg?react';
-import BellIcon from '../../assets/icon/bell.svg?react';
+import Logo from '../../../assets/logo/mono-white-wordmark.svg?react';
+import Bell from '../../../assets/icon/mono/bell.svg?react';
 import HeaderTabs from './HeaderTabs';
 
 interface HeaderProps {
@@ -10,11 +9,10 @@ interface HeaderProps {
 
 const Header = ({ mode = 'main' }: HeaderProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeNav, setActiveNav] = useState('my-room');
 
   useEffect(() => {
     const handleScroll = () => {
-      const triggerPoint = window.innerHeight - 100;
+      const triggerPoint = window.innerHeight - 100; 
       setIsScrolled(window.scrollY > triggerPoint);
     };
 
@@ -27,30 +25,23 @@ const Header = ({ mode = 'main' }: HeaderProps) => {
       className={`
         fixed top-0 z-50 w-full 
         flex flex-col justify-center items-center
-       transition-all duration-300 ease-in-out
-        ${isScrolled ? 'h-[62px] bg-primary shadow-md' : 'h-[82px] bg-gradient-to-b from-primary via-primary/60 to-transparent backdrop-blur-[3.3px]'}
+        transition-all duration-300 ease-in-out
+        ${isScrolled ? 'h-[62px] bg-primary shadow-md' : 'h-[82px] bg-gradient-to-b from-primary via-primary/70 to-transparent'}
       `}
-      
     >
       <div className="relative flex w-full items-center px-6">
         
-        {/* [LEFT] 로고 영역 */}
-        <div className="flex shrink-0 items-center gap-3 text-on-surface">
+        {/* [LEFT] 로고 영역*/}
           <Logo
             className={`
               transition-all duration-300 w-auto
               ${isScrolled ? 'h-15' : 'h-20'} 
             `}
           />
-        </div>
 
-        {/* [CENTER] 네비게이션 */}
+        {/* [CENTER] 네비게이션*/}
         {mode === 'main' && (
-          <HeaderTabs
-            isScrolled={isScrolled}
-            activeNav={activeNav}
-            onChange={setActiveNav}
-          />
+          <HeaderTabs isScrolled={isScrolled} />
         )}
 
         {/* [RIGHT] : 프로필, 알림 bell */}
@@ -58,9 +49,6 @@ const Header = ({ mode = 'main' }: HeaderProps) => {
           <div className="ml-auto flex items-center gap-4 text-on-surface">
             <button
               type="button"
-              onClick={() => {
-                // TODO: 프로필 모달 오픈
-              }}
               className="
                 h-7 w-7 rounded-full
                 bg-outline-variant
@@ -73,7 +61,7 @@ const Header = ({ mode = 'main' }: HeaderProps) => {
               type="button"
               className="rounded-full p-2 state-layer surface-variant-opacity-8"
             >
-              <BellIcon className="h-5 w-5 text-on-primary" />
+              <Bell className="h-7 w-7 text-on-primary" />
             </button>
           </div>
         )}
