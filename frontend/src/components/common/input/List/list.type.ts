@@ -5,10 +5,17 @@ import { type AvatarProps } from "../../display/Avatar";
 
 export type ListVariant = "onboarding" | "modal" | "notification" | "circle";
 export type ListAction = "none" | "acceptReject" | "follow" | "following" | "kick";
+export type ListSelectedStyle = "check" | "solid";
 export type ListSize = "sm" | "md" | "lg" | "xl";
 export type ListWidthMode = "fixed" | "fill";
 export type ListAlign = "left" | "center";
 export type ListRadius = "none" | "sm" | "md" | "lg";
+export type ListSubtitle =
+    | ReactNode
+    | { variant: "text"; value: ReactNode }
+    | { variant: "hashtags"; tags: string[] }
+    | { variant: "date"; value: string }
+    | { variant: "count"; current: number; max?: number };
 
 export interface ListProps extends HTMLAttributes<HTMLDivElement> {
     variant?: ListVariant;
@@ -28,6 +35,7 @@ export interface ListProps extends HTMLAttributes<HTMLDivElement> {
   
     selectable?: boolean;
     selected?: boolean;
+    selectionStyle?: ListSelectedStyle;
     onSelect?: () => void;
   
     onAccept?: () => void;
@@ -49,10 +57,19 @@ export const SIZE_CLASS: Record<ListSize, string> = {
     lg: "h-[80px] px-[20px] py-[20px]",
     xl: "h-[90px] px-[20px] py-[20px]",
 };  
+export const SIZE_TEXT_CLASS: Record<
+    ListSize,
+    { title: string; subtitle: string }
+> = {
+    sm: { title: "label-xlarge-emphasized", subtitle: "label-medium" },
+    md: { title: "label-xlarge-emphasized", subtitle: "label-medium" },
+    lg: { title: "sub-title-medium-emphasized", subtitle: "label-large" },
+    xl: { title: "sub-title-medium-emphasized", subtitle: "label-large" },
+};
 export const AVATAR_SIZE: Record<ListSize, AvatarProps["size"]> = {
     sm: "xs",
     md: "sm",
-    l: "md",
+    lg: "md",
     xl: "lg",
 };
 export const RADIUS_CLASS: Record<ListRadius, string> = {
@@ -78,3 +95,10 @@ export const ACTION_PRESET: Record<ListAction, ListActionPreset[]> = {
     following: [{ key: "unfollow", label: "팔로잉", variant: "secondary" }],
     kick: [{ key: "kick", label: "내보내기", variant: "onPrimary" }],
 };
+
+export const STATE_LAYER_CLASS = "state-layer surface-container-opacity-16";
+
+export const SELECTION_STYLE_CLASS: Record<ListSelectedStyle, string> = {
+    check: "",
+    solid: "bg-primary text-secondary",
+  };
