@@ -84,10 +84,14 @@ const ModalRoot = ({
     // 모달이 열리기 직전, 마지막으로 포커스하고 있던 요소를 저장
     triggerRef.current = document.activeElement as HTMLElement;
 
-    const html = document.documentElement;
+    // 1. 현재 스크롤 위치 저장 및 배경 고정
+    const scrollY = window.scrollY;
     const body = document.body;
-    html.style.overflow = 'hidden';
-    body.style.overflow = 'hidden';
+
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.width = '100%';
+    body.style.overflowY = 'scroll'; // 스크롤 바를 강제로 유지하여 밀림 방지
 
     //  이미 내부 요소에 포커스가 있는 경우(예: 리렌더링)는 건너뜀
     const focusTimer = requestAnimationFrame(() => {
@@ -128,18 +132,22 @@ const ModalRoot = ({
       window.removeEventListener('keydown', handleKeyDown);
       const openModals = document.querySelectorAll('[role="dialog"]');
       if (openModals.length <= 1) {
-        html.style.removeProperty('overflow');
-        body.style.removeProperty('overflow');
+        // 2. 고정 해제 및 원래 스크롤 위치로 복원
+      body.style.removeProperty('position');
+      body.style.removeProperty('top');
+      body.style.removeProperty('width');
+      body.style.removeProperty('overflow-y');
+      window.scrollTo(0, scrollY);
       }
     };
   }, [open, onClose]);
 
-  if (!shouldRender) return null;
+  if (!open) return null;
 
   const portalTarget = document.getElementById('modal-root') ?? document.body;
 
    {/* 기본모달 스타일링 (수정 예정)*/}
-  const defaultClasses = 'w-full max-w-md rounded-small';
+  const defaultClasses = 'w-full max-w-lg rounded-small';
 
    {/* 확인모달 스타일링 (수정 예정)*/}
   const confirmClasses = 'w-full max-w-sm pt-6 px-6 pb-0 text-center rounded-large'
@@ -188,8 +196,8 @@ const ModalHeader = ({ title, onClose: customOnClose }: ModalHeaderProps) => {
 
   return (
     <div
-      className={`mb-4 flex items-center
-        ${variant === 'confirm' ? 'justify-center' : 'justify-between p-3 border-b border-outline-variant'}
+      className={`mb-2 flex items-center
+        ${variant === 'confirm' ? 'justify-center' : 'justify-between p-3 pl-6 border-b border-outline-variant'}
       `}
     >
       <h2 className="sub-title-xlarge-emphasized text-on-surface">
@@ -223,7 +231,7 @@ const ModalBody = ({ children }: ModalSectionProps) => {
       className={`
         body-medium text-on-surface
         ${variant === 'default'
-          ? 'max-h-[60vh] overflow-y-auto px-4 py-2'
+          ? 'max-h-[60vh] overflow-y-auto px-2 py-2'
           : 'mt-2'}
       `}
     >

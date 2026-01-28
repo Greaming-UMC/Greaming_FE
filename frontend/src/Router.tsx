@@ -4,6 +4,7 @@ import JourneyPage from './pages/JourneyPage';
 import HomePage from './pages/HomePage';
 import { createBrowserRouter } from 'react-router-dom';
 import ErrorPage from './pages/ErrorPage';
+import SettingPage from './pages/SettingPage';
 
 /* TODO
 라우터 설정은 추후 변경해야 합니다. 또한, 나중에 API 연동할 때 로그인 여부 등.. 다시 리팩토링해야합니당
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: 'journey',
         element: <JourneyPage />,
+      },
+      {
+        path: 'setting',
+        element: <SettingPage />,
       },
     ],
   },
