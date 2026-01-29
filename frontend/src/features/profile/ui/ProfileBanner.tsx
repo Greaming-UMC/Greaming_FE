@@ -1,4 +1,4 @@
-const UserProfileSection = () => {
+const ProfileBanner = () => {
 
     return (
         <div className="mx-auto w-fit flex-col gap-[32px]">
@@ -7,4 +7,4 @@ const UserProfileSection = () => {
         </div>
     )
 
-}; export default UserProfileSection;
+}; export default ProfileBanner;

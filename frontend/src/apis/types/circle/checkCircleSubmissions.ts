@@ -12,7 +12,7 @@ export interface CheckCircleSubmissionsRequest {
 };
 
 
-// Response
-export type CheckCircleSubmissionsResponse = {
+// Result
+export type CheckCircleSubmissionsResult = {
     circle_list: CircleSubmissionMetadata[];
 };
