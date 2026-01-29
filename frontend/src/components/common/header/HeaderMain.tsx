@@ -2,8 +2,14 @@ import { useEffect, useRef, useState } from 'react';
 import HeaderTabs from './HeaderTabs';
 import { HeaderActions } from './HeaderActions';
 import Logo from '../Logo';
+import type { UserInfo } from './types';
 
-const HeaderMain = () => {
+interface HeaderMainProps {
+  userInfo?: UserInfo;
+  onLogout?: () => void;
+}
+
+const HeaderMain = ({ userInfo, onLogout }: HeaderMainProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
@@ -64,7 +70,7 @@ const HeaderMain = () => {
             </div>
           </div>
           <div className="ml-auto">
-             <HeaderActions />
+             <HeaderActions userInfo={userInfo} onLogout={onLogout} />
            </div>
           </div>
         </div>
