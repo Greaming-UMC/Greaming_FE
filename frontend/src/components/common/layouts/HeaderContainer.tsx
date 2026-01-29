@@ -1,25 +1,25 @@
 import { useUserProfile } from "../../../apis/hooks/useUser";
 import Header from "../header/Header";
+import type { HeaderVariant } from "../header/types";
 
 interface HeaderContainerProps {
-  variant: 'main' | 'default' | 'logo';
+  variant: HeaderVariant;
 }
 
 const HeaderContainer = ({ variant }: HeaderContainerProps) => {
-  const shouldFetchUser = variant !== 'logo';
-
   const { data } = useUserProfile();
-
   const userInfo = data?.result?.userInformation;
 
   const handleLogout = () => {
     console.log('logout');
+    // TODO : 실제 로그아웃 로직 추가 필요 (토큰 삭제 등.....)
   };
 
-  // 스웨거 나오면 API관련해서 리팩토링 할 예정입니다....!
   return (
     <Header
-      {...({ variant, userInfo, onLogout: handleLogout } as any)}
+      variant={variant}
+      userInfo={userInfo}
+      onLogout={handleLogout}
     />
   );
 };
