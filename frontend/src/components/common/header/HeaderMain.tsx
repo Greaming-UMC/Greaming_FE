@@ -38,7 +38,7 @@ const HeaderMain = ({ userInfo, onLogout }: HeaderMainProps) => {
        <header className={`fixed top-0 z-50 w-full transition-all duration-300 ease-in-out
           ${isScrolled
         ? 'bg-primary shadow-md'
-        : 'bg-gradient-to-b from-primary via-primary/60 to-transparent'}
+        : 'bg-linear-to-b from-primary via-primary/60 to-transparent'}
           `}
         style={{ height: isScrolled ? HEADER_HEIGHT.DEFAULT : HEADER_HEIGHT.MAIN }}
       >
