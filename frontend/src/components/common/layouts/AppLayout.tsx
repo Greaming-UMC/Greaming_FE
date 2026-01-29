@@ -1,26 +1,20 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import HeaderContainer from '../layouts/HeaderContainer';
-
-const HEADER_HEIGHT = {
-  main: 82,
-  default: 62,
-  logo: 62,
-} as const;
+import HeaderContainer from './HeaderContainer';
+import { HEADER_HEIGHT } from './layout';
 
 const AppLayout = () => {
   const { pathname } = useLocation();
-
-  const variant =
-    pathname === '/'
-      ? 'main'
-      : 'default';
+  const variant = pathname === '/' ? 'main' : 'default';
+  const currentHeaderHeight = variant === 'main' 
+    ? 0
+    : HEADER_HEIGHT.DEFAULT;
 
   return (
     <div className="min-h-screen bg-transparent">
       <HeaderContainer variant={variant} />
-     <main
+      <main
         style={{
-          paddingTop: variant === 'main' ? 0 : HEADER_HEIGHT[variant],
+          paddingTop: currentHeaderHeight,
         }}
       >
         <Outlet />

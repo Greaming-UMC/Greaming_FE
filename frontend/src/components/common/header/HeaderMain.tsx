@@ -3,6 +3,7 @@ import HeaderTabs from './HeaderTabs';
 import { HeaderActions } from './HeaderActions';
 import Logo from '../Logo';
 import type { UserInfo } from './types';
+import { HEADER_HEIGHT } from '../layouts/layout';
 
 interface HeaderMainProps {
   userInfo?: UserInfo;
@@ -34,17 +35,12 @@ const HeaderMain = ({ userInfo, onLogout }: HeaderMainProps) => {
   return (
     <>
       <div ref={sentinelRef} className="absolute top-[82px] h-px w-px" />
-
-      <header
-        className={`
-          fixed top-0 z-50 w-full
-          transition-all duration-300 ease-in-out
-          ${
-            isScrolled
-              ? 'h-[62px] bg-primary shadow-md'
-              : 'h-[82px] bg-gradient-to-b from-primary via-primary/60 to-transparent backdrop-blur-[3.3px]'
-          }
-        `}
+       <header className={`fixed top-0 z-50 w-full transition-all duration-300 ease-in-out
+          ${isScrolled
+        ? 'bg-primary shadow-md'
+        : 'bg-gradient-to-b from-primary via-primary/60 to-transparent'}
+          `}
+        style={{ height: isScrolled ? HEADER_HEIGHT.DEFAULT : HEADER_HEIGHT.MAIN }}
       >
         <div className="mx-auto h-full max-w-[1440px] px-6">
          <div className="flex h-full items-center">
