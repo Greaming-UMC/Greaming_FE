@@ -1,19 +1,27 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import Header from './Header';
+import HeaderContainer from '../layouts/HeaderContainer';
+
+const HEADER_HEIGHT = {
+  main: 82,
+  default: 62,
+  logo: 62,
+} as const;
 
 const AppLayout = () => {
   const { pathname } = useLocation();
-  const isHome = pathname === '/';
+
+  const variant =
+    pathname === '/'
+      ? 'main'
+      : 'default';
 
   return (
     <div className="min-h-screen bg-transparent">
-      <Header variant={isHome ? 'home' : 'default'} />
-      <main
-        className={
-          isHome
-            ? '' // 홈 : 헤더 겹침
-            : 'pt-[62px]' // 나머지 : 고정 헤더 높이만큼 패딩 추가
-        }
+      <HeaderContainer variant={variant} />
+     <main
+        style={{
+          paddingTop: variant === 'main' ? 0 : HEADER_HEIGHT[variant],
+        }}
       >
         <Outlet />
       </main>
