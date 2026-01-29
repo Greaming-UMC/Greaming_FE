@@ -5,8 +5,8 @@ export interface UserInfo {
 }
 
 export interface HeaderProps {
-  mode?: 'onboarding' | 'main';
-  variant?: 'home' | 'default';
+  variant: 'main' | 'default' | 'logo';
   userInfo?: UserInfo;
   onLogout?: () => void;
 }
+
