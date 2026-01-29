@@ -31,7 +31,7 @@ const Header = ({ mode = 'main', variant = 'default' }: HeaderProps) => {
         fixed top-0 z-50 w-full 
         flex flex-col justify-center items-center
         transition-all duration-300 ease-in-out
-        ${isScrolled ? 'h-[62px] bg-primary shadow-md' : 'h-[82px] bg-gradient-to-b from-primary via-primary/70 to-transparent'}
+        ${isScrolled ? 'h-[62px] bg-primary shadow-md' : 'h-[82px] bg-linear-to-b from-primary via-primary/70 to-transparent'}
       `}
     >
       <div className="relative flex w-full items-center px-6">
