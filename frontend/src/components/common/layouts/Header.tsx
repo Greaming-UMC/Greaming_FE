@@ -1,24 +1,29 @@
 import { useEffect, useState } from 'react';
+import HeaderTabs from './HeaderTabs';
+
 import Logo from '../../../assets/logo/mono-white-wordmark.svg?react';
 import Bell from '../../../assets/icon/mono/bell.svg?react';
-import HeaderTabs from './HeaderTabs';
+import Profile from '../../../assets/icon/multi/char_profile_red.svg?react';
 
 interface HeaderProps {
   mode?: 'onboarding' | 'main';
+  variant?: 'home' | 'default';
 }
 
-const Header = ({ mode = 'main' }: HeaderProps) => {
+const Header = ({ mode = 'main', variant = 'default' }: HeaderProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
+    if (variant !== 'home') return;
+
     const handleScroll = () => {
-      const triggerPoint = window.innerHeight - 100; 
+      const triggerPoint = window.innerHeight - 100;
       setIsScrolled(window.scrollY > triggerPoint);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [variant]);
 
   return (
     <header
@@ -31,7 +36,7 @@ const Header = ({ mode = 'main' }: HeaderProps) => {
     >
       <div className="relative flex w-full items-center px-6">
         
-        {/* [LEFT] 로고 영역*/}
+        {/* 왼쪽 : 로고 영역*/}
           <Logo
             className={`
               transition-all duration-300 w-auto
@@ -39,22 +44,22 @@ const Header = ({ mode = 'main' }: HeaderProps) => {
             `}
           />
 
-        {/* [CENTER] 네비게이션*/}
+        {/* 중앙 : 네비게이션*/}
         {mode === 'main' && (
           <HeaderTabs isScrolled={isScrolled} />
         )}
 
-        {/* [RIGHT] : 프로필, 알림 bell */}
+        {/* 오른쪽 : 프로필, 알림 bell */}
         {mode === 'main' && (
           <div className="ml-auto flex items-center gap-4 text-on-surface">
             <button
               type="button"
               className="
-                h-7 w-7 rounded-full
-                bg-outline-variant
+                rounded-full
                 overflow-hidden
                 state-layer surface-variant-opacity-8"
             >
+              <Profile className="h-7 w-7 text-on-primary" />
               {/* 나중에 API 연동 시 수정 필요 */}
             </button>
             <button
