@@ -10,3 +10,4 @@ export interface HeaderProps {
   onLogout?: () => void;
 }
 
+export type HeaderVariant = 'logo' | 'main' | 'default';
