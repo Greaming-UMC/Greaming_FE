@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import mainBackground from '../assets/background/main_background.svg';
-import Logo from '../assets/logo/favicon.svg?react';
 import PageContainer from '../components/common/layouts/PageContainer';
+import Logo from '../components/common/Logo';
 
 
 const HomePage = () => {
