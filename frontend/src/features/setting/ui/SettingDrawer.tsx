@@ -23,7 +23,7 @@ const SettingDrawer = ({ activeTab, onTabChange }: SettingDrawerProps) => {
             key={menu.id}
             onClick={() => onTabChange(menu.id)}
             className={`
-              flex items-center w-full py-[12px] px-4 rounded-[12px] transition-all gap-2 label-xlarge-emphasized
+              flex items-center w-full py-[12px] px-4 rounded-[12px] transition-all gap-2 label-xlarge-emphasized cursor-pointer
               ${activeTab === menu.id 
                 ? 'bg-surface-variant text-on-surface' 
                 : 'text-gray-400 state-layer opacity-80'}

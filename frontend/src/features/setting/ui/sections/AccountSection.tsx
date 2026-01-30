@@ -8,10 +8,11 @@ const AccountSection = () => {
   
   const initialEmail = "User@example.com";
   const [email, setEmail] = useState(initialEmail);
-  const [isEditing, setIsEditing] = useState(false);
+  const [tempEmail, setTempEmail] = useState(initialEmail); // 모달용 임시 이메일 상태
   const [isChanged, setIsChanged] = useState(false);
 
   // 모달 상태 관리
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [isSuspendedOpen, setIsSuspendedOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
@@ -20,10 +21,17 @@ const AccountSection = () => {
     setIsChanged(hasChanged);
   }, [email, visibility, initialEmail, initialVisibility]);
 
+  // 이메일 변경 확인 핸들러
+  const handleEmailConfirm = () => {
+    console.log("이메일 변경 확정:", tempEmail);
+    setEmail(tempEmail);
+    setIsEmailModalOpen(false);
+  };
+
   return (
-    <section className="flex flex-col gap-10">
+    <section className="flex flex-col gap-8">
       {/* 1. 헤더 영역 */}
-      <div className="flex justify-between items-center pb-4">
+      <div className="flex justify-between items-center">
         <h2 className="main-title-small-emphasized text-on-surface">계정</h2>
         <Button 
           variant="primary" 
@@ -31,7 +39,7 @@ const AccountSection = () => {
           width="80px" 
           disabled={!isChanged}
           onClick={() => {
-            console.log("저장됨");
+            console.log("최종 설정 저장됨");
             setIsChanged(false);
           }}
         >
@@ -42,21 +50,20 @@ const AccountSection = () => {
       {/* 2. 이메일 설정 */}
       <div className="flex flex-col gap-4">
         <h3 className="label-xlarge-emphasized text-on-surface">이메일</h3>
-        <div className="flex gap-3 items-center bg-surface-variant-high px-6 py-2 rounded-medium">
+        <div className="flex gap-3 items-center bg-surface-variant-high px-6 h-14 rounded-medium">
           <div className="flex-1">
-            {isEditing ? (
-              <BaseField
-                value={email}
-                onChange={(val) => setEmail(val)}
-                widthMode="fill"
-                className="bg-transparent border-none"
-              />
-            ) : (
-              <span className="label-large text-on-surface-variant">{email}</span>
-            )}
+            <span className="label-large text-on-surface">{email}</span>
           </div>
-          <Button variant="surface" size="sm" shape="round" onClick={() => setIsEditing(!isEditing)}>
-            {isEditing ? "취소" : "변경"}
+          <Button 
+            variant="surface" 
+            size="sm" 
+            shape="round" 
+            onClick={() => {
+              setTempEmail(email); // 현재 이메일을 임시 상태에 복사
+              setIsEmailModalOpen(true);
+            }}
+          >
+            변경
           </Button>
         </div>
       </div>
@@ -112,7 +119,37 @@ const AccountSection = () => {
         </Button>
       </div>
 
-      {/* 🟢 응용 1: 계정 일시정지 확인 모달 */}
+      {/* 🟢 이메일 변경 모달 */}
+      <Modal variant="confirm" open={isEmailModalOpen} onClose={() => setIsEmailModalOpen(false)}>
+        <Modal.Header title="이메일 주소 변경" />
+        <Modal.Body>
+          <div className="py-6 flex flex-col items-stretch gap-6 w-full px-2">
+            <p className="label-xlarge text-on-surface-variant text-center">
+              새로운 이메일 주소를 입력해 주세요.
+            </p>
+              <BaseField
+                value={tempEmail}
+                onChange={(val) => setTempEmail(val)}
+                widthMode="fill"
+                tone="surfaceVariantHigh"
+                placeholder="이메일을 입력하세요"
+                className="label-large"
+              />
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="flex justify-center gap-[16px] w-full">
+            <Button variant="primary" shape="square" width="150px" widthMode="fixed" onClick={() => setIsEmailModalOpen(false)}>
+              취소
+            </Button>
+            <Button variant="secondary" shape="square" width="150px" widthMode="fixed" textClassName="label-xlarge-emphasized" onClick={handleEmailConfirm}>
+              확인
+            </Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
+
+      {/* 🟢 계정 일시정지 모달 */}
       <Modal variant="confirm" open={isSuspendedOpen} onClose={() => setIsSuspendedOpen(false)}>
         <Modal.Header title="계정 일시정지" />
         <Modal.Body>
@@ -123,17 +160,18 @@ const AccountSection = () => {
         </Modal.Body>
         <Modal.Footer>
           <div className="flex justify-center gap-[16px] w-full">
-            <Button variant="primary" shape="square" width="500px" onClick={() => setIsSuspendedOpen(false)}>
+            <Button variant="primary" shape="square" width="150px" widthMode="fixed" onClick={() => setIsSuspendedOpen(false)}>
               취소
             </Button>
-            <Button variant="secondary" shape="square" width="150px" textClassName="label-xlarge-emphasized" onClick={() => setIsSuspendedOpen(false)}>
+            <Button variant="secondary" shape="square" width="150px" widthMode="fixed" textClassName="label-xlarge-emphasized" 
+                    onClick={() => { console.log("계정 일시정지 실행"); setIsSuspendedOpen(false); }}>
               일시정지
             </Button>
           </div>
         </Modal.Footer>
       </Modal>
 
-      {/* 🟢 응용 2: 계정 삭제 확인 모달 */}
+      {/* 🟢 계정 삭제 모달 */}
       <Modal variant="confirm" open={isDeleteOpen} onClose={() => setIsDeleteOpen(false)}>
         <Modal.Header title="계정 삭제" />
         <Modal.Body>
@@ -144,16 +182,11 @@ const AccountSection = () => {
         </Modal.Body>
         <Modal.Footer>
           <div className="flex justify-center gap-[16px] w-full">
-            <Button variant="primary" 
-                    shape="square"
-                    width="150px" 
-                    onClick={() => setIsDeleteOpen(false)}>
+            <Button variant="primary" shape="square" width="150px" widthMode="fixed" onClick={() => setIsDeleteOpen(false)}>
               취소
             </Button>
-            <Button variant="secondary" 
-                    shape="square" 
-                    width="150px" 
-                    textClassName="label-xlarge-emphasized" onClick={() => setIsDeleteOpen(false)}>
+            <Button variant="secondary" shape="square" width="150px" widthMode="fixed" textClassName="label-xlarge-emphasized" 
+                    onClick={() => { console.log("계정 삭제 실행"); setIsDeleteOpen(false); }}>
               삭제하기
             </Button>
           </div>
