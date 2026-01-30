@@ -1,6 +1,6 @@
+import { EmptyState } from "../../../components/common";
 import { useInfiniteScroll } from "../hooks/useInfiniteScroll";
 import { useMockInfiniteHomeCards } from "../hooks/useMockInfiniteHomeCards";
-import { EmptyState } from "../../../components/common";
 import HomeCardItem from "./HomeCardItem";
 import HomeCardSkeleton from "./HomeCardSkeleton";
 
