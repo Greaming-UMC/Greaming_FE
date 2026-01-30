@@ -10,10 +10,13 @@ const FollowingListSection = ({ users, onToggle }: FollowingListSectionProps) =>
   // 1. 데이터가 없을 경우 EmptyState 반환
   if (users.length === 0) {
     return (
+      <div className="flex flex-col items-center justify-center h-full min-h-[400px]">
       <EmptyState
-        icon="char_profile_blue"
-        title="팔로잉 중인 유저가 없어요"
+        icon="char_sad"
+        description="팔로잉 하는 사람이 없어요"
+        className="[&_svg]:w-[100px] [&_svg]:h-[100px] [&_svg]:opacity-100"
       />
+      </div>
     );
   }
 
@@ -33,7 +36,7 @@ const FollowingListSection = ({ users, onToggle }: FollowingListSectionProps) =>
           }}
           avatar={{ 
             src: user.profileImageUrl, 
-            icon: "person" 
+            icon: user.profileIcon || "person" 
           }}
           onUnfollow={() => onToggle(user.id)}
           onFollow={() => onToggle(user.id)}

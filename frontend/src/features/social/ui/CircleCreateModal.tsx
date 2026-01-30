@@ -1,16 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, Button } from '../../../components/common';
 import CircleFormSection from './sections/CircleFormSection';
 
 const CreateCircleModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const [circleName, setCircleName] = useState("");
   const [circleDescription, setCircleDescription] = useState("");
-  
-  // 1. 공개/비공개 상태 추가 (기본값: 공개)
   const [isPublic, setIsPublic] = useState(true);
 
+  const [memberOption, setMemberOption] = useState("직접입력");
+  const [maxMembers, setMaxMembers] = useState("");
+
+  useEffect(() => {
+    if (isOpen) {
+      setCircleName("");
+      setCircleDescription("");
+      setIsPublic(true);
+      setMemberOption("직접입력");
+      setMaxMembers("");
+    }
+  }, [isOpen]);
+
   const handleCreate = () => {
-    console.log("생성 데이터:", { circleName, circleDescription, isPublic });
+    const finalMaxMembers = memberOption === "제한없음" ? null : maxMembers;
+
+    console.log("생성 데이터:", { 
+      circleName, 
+      circleDescription, 
+      isPublic, 
+      maxMembers: finalMaxMembers 
+    });
+    
     onClose();
   };
 
@@ -26,13 +45,24 @@ const CreateCircleModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
           setCircleDescription={setCircleDescription}
           isPublic={isPublic}
           setIsPublic={setIsPublic}
+          memberOption={memberOption}
+          setMemberOption={setMemberOption}
+          maxMembers={maxMembers}
+          setMaxMembers={setMaxMembers}
         />
       </Modal.Body>
 
       <Modal.Footer>
         <Button 
-          widthMode="fill" 
-          disabled={!circleName} 
+          variant="onPrimary"
+          shape="round"
+          widthMode="fixed" 
+          width="100px"
+          disabled={
+            !circleName || 
+            !circleDescription || 
+            (memberOption === "직접입력" && !maxMembers)
+          }
           onClick={handleCreate}
         >
           만들기
