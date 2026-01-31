@@ -13,9 +13,10 @@ const ModalActionButton = ({ onEdit }: ModalActionButtonProps) => {
       <>
         <Button
           variant="text"
-          size="xs"
+          size="none"
           shape="round"
-          widthMode="hug"
+          widthMode="fixed"
+          width="40px"
           icon="dots"
           iconPosition="leading"
           aria-label="more actions"

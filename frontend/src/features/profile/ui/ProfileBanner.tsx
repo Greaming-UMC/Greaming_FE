@@ -1,9 +1,14 @@
+import mainBackground from "../../../assets/background/main_background.svg";
+
 const ProfileBanner = () => {
 
     return (
-        <div className="mx-auto w-fit flex-col gap-[32px]">
-            {/* User Informatin */}
-            {/* Challenge Date */}
+        <div className="h-[425px] w-full">
+            <img
+                src={mainBackground}
+                alt="profile banner"
+                className="h-full w-full object-cover"
+            />
         </div>
     )
 

@@ -22,6 +22,7 @@ export { EmptyState } from "./EmptyState";
 export type { EmptyStateProps } from "./EmptyState";
 
 export * from "./Counter"
+export * from "./SpeechBubble"
 
 //임포트 예시
 //import { Card, Avatar, Divider } from '@/components/Display';

@@ -1,5 +1,8 @@
 import ProfileBanner from "./ProfileBanner";
 import ProfileDashboard from "./ProfileDashboard";
+import Submissions from "./section/Submissions";
+
+import { ChallengeCalendar } from "../../../components/common/feedback";
 
 import { PROFILE_VIEW_CONFIG, type ProfileViewContext } from "../config/profileRoleConfig";
 
@@ -15,22 +18,22 @@ const ProfileView = ( { context }: ProfileViewProps) => {
 
 
     return (
-        <div className="w-full h-full flex flex-col">
+        <div className="w-full h-full flex flex-col items-center justify-center">
             
             {/* Banner */}
-            <div className="w-fit h-fit"> <ProfileBanner/> </div>
+            <ProfileBanner/>
             
             {/* Body */}
             <div className="mx-auto w-fit flex gap-[40px]">
 
-                {/* Dashboard */}
-                <ProfileDashboard />
-
-                {/* Content */}
-                <div className="flex min-w-0 flex-1 flex-col gap-6">
-
+                <div className="relative flex flex-col w-fit gap-[32px] -mt-[200px]">
+                    <ProfileDashboard context={context} />
+                    {ui.showCalendar && <ChallengeCalendar/>}
                 </div>
 
+                <div className="relative top-[64px]">
+                    <Submissions />
+                </div>
             </div>
 
         </div>

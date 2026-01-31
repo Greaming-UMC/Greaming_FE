@@ -10,7 +10,7 @@ export interface CounterProps extends HTMLAttributes<HTMLDivElement> {
   size?: CounterSize;
   count: number;
   label?: string;
-  leadingIcon?: IconName;
+  icon?: IconName;
 }
 
 const SIZE_CLASS: Record<CounterSize, string> = {
@@ -19,8 +19,8 @@ const SIZE_CLASS: Record<CounterSize, string> = {
 };
 
 const ICON_SIZE: Record<CounterSize, number> = {
-  sm: 12,
-  md: 16,
+  sm: 18,
+  md: 24,
 };
 
 export const Counter = ({
@@ -28,12 +28,12 @@ export const Counter = ({
   size = "md",
   count,
   label,
-  leadingIcon,
+  icon,
   className = "",
   ...props
 }: CounterProps) => {
   const hasLabel = typeof label === "string" && label.length > 0;
-  const hasIcon = !!leadingIcon;
+  const hasIcon = !!icon;
 
   return (
     <div
@@ -46,7 +46,7 @@ export const Counter = ({
     >
       {variant === "label" && hasLabel && <span>{label}</span>}
       {variant === "icon" && hasIcon && (
-        <Icon name={leadingIcon} size={ICON_SIZE[size]} />
+        <Icon name={icon} size={ICON_SIZE[size]} />
       )}
       <span>{count}</span>
     </div>

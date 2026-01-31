@@ -7,8 +7,15 @@
   border-radius: 8px !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   font-family: 'Pretendard', sans-serif !important;
-  padding: 12px 8px !important;
+  padding: 0 !important;
   overflow: hidden;
+}
+
+/* 인라인(챌린지 카드)에서는 외곽 라인/그림자 제거 */
+.variant-inline .react-datepicker {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 .react-datepicker__header {
@@ -23,14 +30,14 @@
 .react-datepicker__day-names {
   display: flex !important;
   justify-content: center !important;
-  margin-bottom: 12px !important;
+  margin-bottom: 8px !important;
 }
 
 .react-datepicker__day-name, 
 .react-datepicker__day {
-  width: 26px !important; 
-  height: 26px !important;
-  margin: 0 8px !important; 
+  width: 20px !important; 
+  height: 20px !important;
+  margin: 0 12px !important; 
   display: inline-flex !important;
   justify-content: center;
   align-items: center;
@@ -40,19 +47,23 @@
 
 .react-datepicker__day-name {
   color: var(--color-primary) !important;
-  font-size: 16px !important;
+  font-size: var(--text-label-xlarge) !important;
+  line-height: var(--text-label-xlarge--line-height) !important;
+  letter-spacing: var(--text-label-xlarge--letter-spacing) !important;
   font-weight: 600 !important;
 }
 
 .react-datepicker__day {
   color: var(--color-on-surface) !important;
-  font-size: 14px;
+  font-size: var(--text-label-medium) !important;
+  line-height: var(--text-label-medium--line-height) !important;
+  letter-spacing: var(--text-label-medium--letter-spacing) !important;
   cursor: pointer;
 }
 
-/* 6줄 높이 고정 */
+/* 높이는 콘텐츠에 맞춰 자동 (요일+날짜 7줄 기준) */
 .react-datepicker__month-container {
-  height: 290px !important;
+  height: auto !important;
   overflow: hidden;
 }
 
@@ -122,7 +133,7 @@
 .variant-inline .react-datepicker__day-name, 
 .variant-inline .react-datepicker__day {
   /* 세로(0)는 유지하고, 가로(8px -> 14px)만 늘립니다. */
-  margin: 0 14px !important; 
+  margin: 0 12px !important; 
 }
 
 /* [인라인 모드] 클릭 방지 및 커서 */
