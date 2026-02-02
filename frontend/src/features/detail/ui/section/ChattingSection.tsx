@@ -11,7 +11,6 @@ type Reply = {
 
 type Comment = Reply & { replies?: Reply[]; avatarSrc?: string | null };
 
-
 export interface ChattingSectionProps {
   comment_list?: commentMetaData[];
 }
@@ -21,16 +20,18 @@ const ChattingSection = ({ comment_list }: ChattingSectionProps) => {
   const [text, setText] = useState("");
 
   // Convert API comment_list to internal Comment[] (flat list, no replies)
-  const comments: Comment[] = (comment_list && comment_list.length
-    ? comment_list.map((c, i) => ({
-        id: i + 1,
-        nickname: c.writer_nickname,
-        avatarSrc: c.writer_profileImgUrl,
-        content: c.content,
-        date: "",
-        replies: [],
-      }))
-    : []) as Comment[];
+  const comments: Comment[] = (
+    comment_list && comment_list.length
+      ? comment_list.map((c, i) => ({
+          id: i + 1,
+          nickname: c.writer_nickname,
+          avatarSrc: c.writer_profileImgUrl,
+          content: c.content,
+          date: "",
+          replies: [],
+        }))
+      : []
+  ) as Comment[];
 
   const toggleReply = (id: number) => {
     setOpenReplyIds((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -44,7 +45,7 @@ const ChattingSection = ({ comment_list }: ChattingSectionProps) => {
   };
 
   return (
-    <div className="h-[820px] w-[334px]">
+    <div className="h-[820px] w-[344px] items-end gap-10px justify-flex">
       <Chatting.Root>
         <Chatting.Header />
         <Chatting.List>
@@ -55,7 +56,10 @@ const ChattingSection = ({ comment_list }: ChattingSectionProps) => {
             return (
               <div key={comment.id} className="flex flex-col">
                 <Chatting.Item
-                  avatarSrc={comment.avatarSrc ?? `https://i.pravatar.cc/150?u=${comment.id}`}
+                  avatarSrc={
+                    comment.avatarSrc ??
+                    `https://i.pravatar.cc/150?u=${comment.id}`
+                  }
                   nickname={comment.nickname}
                   content={comment.content}
                   date={comment.date}
