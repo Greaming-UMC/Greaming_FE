@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useInView } from "react-intersection-observer"; // 스크롤 감지
-import { useInfiniteQuery } from "@tanstack/react-query"; // 데이터 관리
-import { Card } from "../../../../components/common/display"; // 경로 확인 필요!
-import Icon from "../../../../components/common/Icon"; // 아이콘 경로 확인 필요!
+import { useInView } from "react-intersection-observer"; 
+import { useInfiniteQuery } from "@tanstack/react-query"; 
+import { Card } from "../../../../components/common/display"; 
+import Icon from "../../../../components/common/Icon"; 
 
 /* -------------------------------------------------------------------------- */
 /* 1. [Mock API] 백엔드 없이 테스트하기 위한 가짜 함수                           */
@@ -78,7 +78,7 @@ const RecommendedGrid = () => {
   if (status === "error") return <div>에러가 발생했습니다.</div>;
 
   return (
-    <div className="max-w-5xl mx-auto px-6">
+    <div className=" mx-auto">
       {/* 헤더 */}
       <h3 className="text-lg font-bold text-primary">다른 그림 추천</h3>
 

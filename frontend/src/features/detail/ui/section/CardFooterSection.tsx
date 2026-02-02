@@ -11,29 +11,29 @@ const CardFooter = ({ submission, className = "" }: CardFooterProps) => {
 
   return (
     <div
-      className={`flex flex-col gap-8 items-start self-stretch ${className}`}
+      className={`flex flex-col gap-2 items-start self-stretch ${className}`}
     >
       <div>
-        <h2 className="text-base font-semibold">{title}</h2>
+        <h2 className="text-sub-title-xlarge font-semibold py-2">{title}</h2>
         {caption ? (
-          <p className="text-sm text-on-surface-variant mt-1">{caption}</p>
+          <p className="text-body-xlarge text-on-surface-variant mt-1">{caption}</p>
         ) : null}
       </div>
 
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex gap-2 flex-wrap py-4">
         {Array.isArray(tags) && tags.length > 0
           ? tags.map((t) => (
               <Chip
                 key={t}
                 label={`#${t}`}
                 variant="filled"
-                className="pointer-events-none"
+                className="pointer-events-none !bg-on-surface-variant-lowest"
               />
             ))
           : null}
       </div>
 
-      <div className="text-xs text-on-surface-variant">{upload_at}</div>
+      <div className="text-label-large font-bold text-on-surface-variant-low">{upload_at}</div>
     </div>
   );
 };

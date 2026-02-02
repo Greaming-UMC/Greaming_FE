@@ -1,89 +1,75 @@
-import { Card } from "../../../components/common/display";
-import { CardCarousel } from "./section/CardCarousel";
-import Icon from "../../../components/common/Icon";
+import { useMemo } from "react";
+import { Card, EmptyState } from "../../../components/common"; 
+import Icon from "../../../components/common/Icon"
 
+/* -------------------------------------------------------------------------- */
+/* 1. [Type] 타입 정의                                                        */
+/* -------------------------------------------------------------------------- */
+
+// (기존에 쓰시던 타입 그대로 유지하시면 됩니다)
 export interface Artwork {
   id: number;
   title: string;
   src: string;
-  likes?: number;
-  comments?: number;
-  scraps?: number;
 }
 
 interface ArtistArtworkProps {
-  artworks: Artwork[];
-  userRole?: string;
+  artworks?: Artwork[]; // 부모에게 받는 작품 배열
+  userRole?: string;    // (필요하다면 유지)
 }
 
-const ArtistArtwork: React.FC<ArtistArtworkProps> = ({
-  artworks,
-  userRole,
-}) => {
-  // 데이터가 없으면 아예 섹션을 숨깁니다.
-  if (!artworks || artworks.length === 0) {
-    return null;
-  }
+/* -------------------------------------------------------------------------- */
+/* 2. [Component] 작가의 다른 그림                                             */
+/* -------------------------------------------------------------------------- */
+
+const ArtistArtwork = ({ artworks = [], userRole }: ArtistArtworkProps) => {
+  
+  // ✅ 1. 데이터가 비었는지 확인
+  const isEmpty = useMemo(() => {
+    return !artworks || artworks.length === 0;
+  }, [artworks]);
 
   return (
-    <div className="p-6 space-y-12 max-w-6xl mx-auto">
-      <CardCarousel
-        title="작가의 다른 그림"
-        onMoreClick={() => console.log("더보기 페이지로 이동")}
-      >
-        {artworks.map((art) => (
-          <div
-            key={art.id}
-            className="min-w-[160px] w-[160px] sm:w-[200px] snap-start"
-          >
-            <Card.Root
-              clickable
-              hoverEffect
-              className="bg-transparent shadow-none border-none group"
-            >
-              <Card.Media
-                src={art.src}
-                alt={art.title}
-                aspectRatio="aspect-square"
-                className="rounded-lg"
-              >
-                <Card.Overlay className="items-end pb-3 pr-3">
-                  {/* 아이콘 + 숫자 컨테이너 (우측 정렬) */}
-                  <div className="flex items-center justify-end gap-3 text-on-primary w-full">
-                    {/* 1. 좋아요 */}
-                    <div className="flex items-center gap-1">
-                      <Icon
-                        name="like"
-                        size={16}
-                        className="fill-whion-primaryte"
-                      />
-                      <span className="text-xs font-medium">
-                        {art.likes || 0}
-                      </span>
-                    </div>
+    <div className="w-full flex flex-col gap-6">
+      {/* 헤더 부분 */}
+      <div className="flex items-center justify-between">
+        <span className="text-lg font-bold text-on-surface">작가의 다른 그림</span>
+        
+        {/* 데이터가 있을 때만 '더보기' 버튼 표시 */}
+        {!isEmpty && (
+          <button className="flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors">
+            더보기 <Icon name="chevron_right" size={16} />
+          </button>
+        )}
+      </div>
 
-                    {/* 2. 댓글 */}
-                    <div className="flex items-center gap-1">
-                      <Icon name="chat" size={16} className="fill-on-primary" />
-                      <span className="text-xs font-medium">
-                        {art.comments || 0}
-                      </span>
-                    </div>
-
-                    {/* 3. 스크랩/추가 */}
-                    <div className="flex items-center gap-1">
-                      <Icon name="save" size={16} className="fill-white" />
-                      <span className="text-xs font-medium">
-                        {art.scraps || 0}
-                      </span>
-                    </div>
-                  </div>
-                </Card.Overlay>
-              </Card.Media>
-            </Card.Root>
-          </div>
-        ))}
-      </CardCarousel>
+      {/* ✅ 2. 조건부 렌더링: 비었으면 EmptyState, 있으면 리스트 출력 */}
+      {isEmpty ? (
+        <div className="py-10 w-full"> {/* 여백 좀 줘서 예쁘게 */}
+            <EmptyState 
+                title="작가가 등록한 다른 작품이 없습니다" 
+                icon="char_sad" // 아이콘 이름 확인 필요
+            />
+        </div>
+      ) : (
+        <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+          {artworks.map((art) => (
+            <div key={art.id} className="min-w-[200px] w-[200px] shrink-0">
+              <Card.Root clickable hoverEffect className="group">
+                <Card.Media
+                  src={art.src}
+                  alt={art.title}
+                  aspectRatio="aspect-square"
+                  className="rounded-lg bg-surface-variant-low"
+                />
+                <div className="mt-2 text-sm font-medium truncate text-on-surface">
+                  {art.title}
+                </div>
+              </Card.Root>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

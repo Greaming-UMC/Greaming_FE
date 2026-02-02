@@ -38,10 +38,10 @@ export const CardCarousel = ({
     >
       {/* 1. 헤더 영역 (제목 + 더보기) - 기존과 동일 */}
       <div className="flex items-center justify-between px-1">
-        <h2 className="text-lg font-bold text-[#121315]">{title}</h2>
+        <h2 className="text-lg font-bold text-primary">{title}</h2>
         <button
           onClick={onMoreClick}
-          className="text-sm font-medium text-gray-500 hover:text-primary transition-colors flex items-center gap-1 cursor-pointer"
+          className="text-sm font-medium text-on-surface-variant-lowest hover:text-primary transition-colors flex items-center gap-1 cursor-pointer"
         >
           더보기 <span className="text-lg leading-none">+</span>
         </button>

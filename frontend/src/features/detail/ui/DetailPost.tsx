@@ -14,24 +14,24 @@ export interface DetailPostProps {
 
 const DetailPost = ({ submission, comment_list }: DetailPostProps) => {
   return (
-    <div className="max-w-7xl mx-auto">
-      <div className="gap-[20px] items-start flex">
-        <div className="flex flex-wrap lg:flex-nowrap gap-x-[18px] gap-y-8">
+    <div className=" w-full mx-auto ">
+      <div className="items-start flex">
+        <div className="flex flex-wrap lg:flex-nowrap gap-y-8 w-full">
+          
           {/* Left: Post content */}
-          <div className="flex-1 flex-col items-start gap-[72px] relative">
+          <div className="flex-1 flex-col items-start gap-[72px] relative min-w-0">
             <CardHeader submission={submission} />
             <div className="mt-4 w-full">
               <CardMain submissions={[submission]} />
             </div>
 
-            <div className="mt-6">
+            <div className="mt-[72px]">
               <CardFooter submission={submission} />
             </div>
           </div>
 
-          {/* Right: Chat panel - fixed width, visually separated */}
-          <aside className="w-full lg:w-[360px] lg:shrink-0">
-            <div className="bg-white border border-gray-100 rounded-md shadow-sm overflow-hidden">
+          <aside className="w-full lg:w-[360px] shrink-0">
+            <div className="bg-surface border border-surface-variant-high rounded-md shadow-sm overflow-hidden h-fit  top-4">
               <ChattingSection comment_list={comment_list} />
             </div>
           </aside>

@@ -1,6 +1,8 @@
-import type { commentMetaData } from "../../../../apis/types/submission/checkSubmissionDetails";
+import type { commentMetaData } from "../../../apis/types/submission";
+import Icon from "../../../components/common/Icon";
 import ArtistArtwork from "./ArtistArtwork";
 import DetailPost from "./DetailPost";
+import ActionSideBar from "./section/ActionSideBar";
 import RecommendedGrid from "./section/RecommendedGrid";
 
 const DetailView = () => {
@@ -10,8 +12,9 @@ const DetailView = () => {
     level: "ARTIST",
     image_list: [
       "https://picsum.photos/400/300?random=1",
-      "https://picsum.photos/400/300?random=2",
-      "https://picsum.photos/400/300?random=3",
+      "https://picsum.photos/300/400?random=2",
+      "https://picsum.photos/400/400?random=3",
+      "https://picsum.photos/300/300?random=4",
     ],
     counters: { likesCount: 12, commentCount: 3, bookmarkCount: 5 },
     title: "샘플 작품 제목",
@@ -39,25 +42,85 @@ const DetailView = () => {
       content: "참고하고 싶은 스타일이네요.",
       isLike: false,
     },
+     {
+      writer_nickname: "유저C",
+      writer_profileImgUrl: "",
+      content: "참고하고 싶은 스타일이네요.",
+      isLike: false,
+    },
+     {
+      writer_nickname: "유저C",
+      writer_profileImgUrl: "",
+      content: "참고하고 싶은 스타일이네요.",
+      isLike: false,
+    }, 
+    {
+      writer_nickname: "유저C",
+      writer_profileImgUrl: "",
+      content: "참고하고 싶은 스타일이네요.",
+      isLike: false,
+    },
+     {
+      writer_nickname: "유저C",
+      writer_profileImgUrl: "",
+      content: "참고하고 싶은 스타일이네요.",
+      isLike: false,
+    },
+     {
+      writer_nickname: "유저C",
+      writer_profileImgUrl: "",
+      content: "참고하고 싶은 스타일이네요.",
+      isLike: false,
+    },
+     {
+      writer_nickname: "유저C",
+      writer_profileImgUrl: "",
+      content: "참고하고 싶은 스타일이네요.",
+      isLike: false,
+    },
+     {
+      writer_nickname: "유저C",
+      writer_profileImgUrl: "",
+      content: "참고하고 싶은 스타일이네요.",
+      isLike: false,
+    },
   ];
 
   const myArtData = [
-    { id: 101, title: "붉은 노을", src: "https://picsum.photos/id/10/400/400" },
-    { id: 102, title: "푸른 바다", src: "https://picsum.photos/id/11/400/400" },
-    { id: 103, title: "고요한 숲", src: "https://picsum.photos/id/12/400/400" },
-    { id: 104, title: "도시의 밤", src: "https://picsum.photos/id/13/400/400" },
-    { id: 105, title: "아침 햇살", src: "https://picsum.photos/id/14/400/400" },
-    { id: 106, title: "겨울 풍경", src: "https://picsum.photos/id/15/400/400" },
-    { id: 107, title: "봄의 정원", src: "https://picsum.photos/id/16/400/400" },
-    { id: 108, title: "가을 낙엽", src: "https://picsum.photos/id/17/400/400" },
+    {
+      id: 1,
+      title: "작품 1",
+      src: "https://picsum.photos/200/300?random=11",
+    },
+    {
+      id: 2,
+      title: "작품 2",
+      src: "https://picsum.photos/200/300?random=12",
+    }
+
+  
   ];
 
   return (
-    <div className="w-full min-h-screen h-fit flex flex-col items-center gap-12 pb-24 p-10 mt-16">
-      <div className="shrink-0">
-        <DetailPost submission={mockSubmission} comment_list={mockComments} />
+    <div className="relative w-full min-h-screen h-fit flex flex-col items-center gap-12 pb-24 p-10 mt-16 max-w-[1531px] mx-auto px-40">
+      <aside className="absolute left-1 top-0 h-full hidden lg:block pointer-events-none z-10">
+          <div className="sticky top-24 pt-[88px] pointer-events-auto">
+            <ActionSideBar 
+               likes={mockSubmission.counters.likesCount}
+               comments={mockSubmission.counters.commentCount}
+               scraps={mockSubmission.counters.bookmarkCount}
+            />
+          </div>
+      </aside>
+      <aside className="absolute right-1 top-0 h-full hidden lg:block pointer-events-none z-10">
+          <div className="sticky top-145 pt-[88px] pointer-events-auto">
+            <Icon name="upload_primary" size={64} />
+          </div>
+        </aside>
+      <div className="shrink-0 w-full relative">
+        <DetailPost submission={mockSubmission} comment_list={mockComments} />     
       </div>
-      <div className="shrink-0">
+      <div className="shrink-0  w-full">
         <ArtistArtwork artworks={myArtData} userRole="USER" />
       </div>
       <div className="w-full shrink-0">

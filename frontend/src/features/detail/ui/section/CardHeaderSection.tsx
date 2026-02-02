@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Avatar, Badge } from "../../../../components/common/display";
+import { Avatar, Badge, Chip } from "../../../../components/common/display";
 import Icon from "../../../../components/common/Icon";
 import type { SubmissionDetails } from "../../../../apis/types/submission/checkSubmissionDetails";
 
@@ -25,8 +25,7 @@ const CardHeader = ({
 
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="text-sm font-semibold truncate">{nickname}</h3>
-            {/* level 표시: 아이콘은 badge_{level} 네이밍을 사용 */}
+            <h3 className="text-sub-title-xlarge  font-semibold truncate">{nickname}</h3>
             <Badge
               variant="primary"
               size="sm"
@@ -34,38 +33,14 @@ const CardHeader = ({
             />
           </div>
 
-          <p className="text-xs text-on-surface-variant truncate">
-            {upload_at}
-          </p>
+        
         </div>
       </div>
 
       <div className="flex items-center gap-2">
-        {rightNode ?? (
-          <div className="flex items-center gap-2">
-            <Badge
-              label={String(counters.likesCount)}
-              variant="neutral"
-              size="sm"
-            />
-            <Badge
-              label={String(counters.commentCount)}
-              variant="neutral"
-              size="sm"
-            />
-            <Badge
-              label={String(counters.bookmarkCount)}
-              variant="neutral"
-              size="sm"
-            />
-            <button
-              type="button"
-              className="p-2 rounded-full hover:bg-surface-variant"
-              aria-label="open menu"
-            >
-              <Icon name="more-horizontal" size={18} className="fill-current" />
-            </button>
-          </div>
+        {rightNode ?? (<>
+          <Icon name="dots_vertical" size={20}/>
+        </> 
         )}
       </div>
     </div>
