@@ -50,7 +50,7 @@ export const EmptyState = ({
     >
       {icon && (
         <div className="mb-4">
-          <Icon name={icon} size={48} className="fill-current opacity-40" />
+          <Icon name={icon} size={48} className="fill-current" />
         </div>
       )}
 
