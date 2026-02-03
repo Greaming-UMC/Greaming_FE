@@ -1,7 +1,7 @@
-import { useState } from "react";
 import { Card } from "../../../../components/common/display";
 import type { SubmissionDetails } from "../../../../apis/types/submission/checkSubmissionDetails";
 import Icon from "../../../../components/common/Icon";
+import { useCarousel } from "../section/useCarousel"
 
 export interface CardMainProps {
   submissions?: SubmissionDetails["submission"][];
@@ -18,10 +18,7 @@ const CardItem = ({
     Array.isArray(image_list) && image_list.length > 0
       ? image_list
       : ["/sample.jpg"];
-  const [index, setIndex] = useState(0);
-
-  const prev = () => setIndex((i) => (i - 1 + images.length) % images.length);
-  const next = () => setIndex((i) => (i + 1) % images.length);
+  const { currentIndex: index, prev, next, goTo } = useCarousel(images.length);
 
   return (
     // 1️⃣ 너비를 최대 840px로 제한하고 중앙 정렬
@@ -30,7 +27,7 @@ const CardItem = ({
         {/* 2️⃣ 높이를 720px로 고정 (부모 상자 크기 확정) */}
         <div className="relative w-full h-[720px] bg-on-surface-variant-low rounded-lg overflow-hidden">
           <Card.Media
-            src={images[index]}
+            src={images[index] ?? "/sample.jpg"}
             alt={title ?? "image"}
             // 3️⃣ aspect-square 제거 (정사각형 아님)
             // aspectRatio="aspect-square" 
@@ -42,27 +39,23 @@ const CardItem = ({
           {/* Prev / Next buttons */}
           {images.length > 1 && (
             <>
-              {index > 0 && (
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant-lowest z-10">
-                  <Icon
-                    name="arrow_left"
-                    onClick={prev}
-                    size={32} // 크기 조금 키움 (박스가 커졌으므로)
-                    className="fill-current cursor-pointer drop-shadow-md hover:scale-110 transition-transform"
-                  />
-                </div>
-              )}
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant-lowest z-10">
+                <Icon
+                  name="arrow_left"
+                  onClick={prev}
+                  size={32} // 크기 조금 키움 (박스가 커졌으므로)
+                  className="fill-current cursor-pointer drop-shadow-md transition-transform"
+                />
+              </div>
 
-              {index < images.length - 1 && (
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant-lowest z-10">
-                  <Icon
-                    name="arrow_right"
-                    onClick={next}
-                    size={32}
-                    className="fill-current cursor-pointer drop-shadow-md hover:scale-110 transition-transform"
-                  />
-                </div>
-              )}
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant-lowest z-10">
+                <Icon
+                  name="arrow_right"
+                  onClick={next}
+                  size={32}
+                  className="fill-current cursor-pointer drop-shadow-md transition-transform"
+                />
+              </div>
             </>
           )}
         </div>
@@ -75,7 +68,8 @@ const CardItem = ({
             {images.map((_, i) => (
               <span
                 key={i}
-                className={`w-2 h-2 rounded-full transition-colors ${
+                onClick={() => goTo(i)}
+                className={`w-2 h-2 rounded-full transition-colors cursor-pointer ${
                   i === index ? "bg-on-surface" : "bg-surface-variant-lowest"
                 }`}
               />
