@@ -30,6 +30,9 @@ export interface EmptyStateProps {
   
   /** 스타일 오버라이딩 */
   className?: string;
+
+  /** 스타일 오버라이딩 */
+  iconSize?: number;
 }
 
 export const EmptyState = ({
@@ -38,6 +41,7 @@ export const EmptyState = ({
   description,
   action,
   className = '',
+  iconSize = 48,
 }: EmptyStateProps) => {
   return (
     <div 
@@ -50,7 +54,7 @@ export const EmptyState = ({
     >
       {icon && (
         <div className="mb-4">
-          <Icon name={icon} size={48} className="fill-current opacity-40" />
+          <Icon name={icon} size={iconSize} className="fill-current" />
         </div>
       )}
 
