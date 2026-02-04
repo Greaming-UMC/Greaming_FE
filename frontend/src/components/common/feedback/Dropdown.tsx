@@ -8,7 +8,7 @@ import {
 import type { ReactElement, ReactNode } from "react";
 
 type DropdownProps = {
-  trigger: ReactElement<{ onClick?: (event: any) => void }> | ReactNode;
+  trigger: ReactElement<any> | ReactNode;
   children: ReactNode;
   open?: boolean;
   defaultOpen?: boolean;
@@ -52,9 +52,9 @@ const Dropdown = ({
   }, [isOpen]);
 
   const triggerNode = isValidElement(trigger)
-    ? cloneElement(trigger as ReactElement, {
+    ? cloneElement(trigger as ReactElement<any>, {
         onClick: (event: any) => {
-          const original = (trigger as ReactElement).props?.onClick;
+          const original = (trigger as ReactElement<any>).props?.onClick;
           if (typeof original === "function") original(event);
           setOpen(!isOpen);
         },

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Avatar, Badge, Chip } from "../../../../components/common/display";
+import { Avatar, Badge } from "../../../../components/common/display";
 import Icon from "../../../../components/common/Icon";
 import type { SubmissionDetails } from "../../../../apis/types/submission/checkSubmissionDetails";
 

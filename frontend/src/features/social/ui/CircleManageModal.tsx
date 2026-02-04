@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { Button, Modal, SearchField } from '../../../components/common';
 import InviteSection from './sections/InviteSection';
 import KickSection from './sections/KickSection';
@@ -6,8 +6,7 @@ import KickSection from './sections/KickSection';
 // 🟢 목업 데이터 및 타입 임포트
 import { 
   MOCK_CIRCLE_MEMBER_LIST, 
-  MOCK_FOLLOWING_LIST, 
-  MOCK_CURRENT_CIRCLE_ID 
+  MOCK_FOLLOWING_LIST
 } from '../testing/mockdata';
 import type { CircleMemberItem, SocialUserItem } from '../types';
 import { useDebounce } from '../hooks/useDebounce';

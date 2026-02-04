@@ -20,7 +20,9 @@ export const useRecommendedArts = (artId: number) => {
   } = useInfiniteQuery<
     ApiResultResponse<GetRecommendedArtsResult>,
     Error,
-    InfiniteData<GetRecommendedArtsResult>
+    InfiniteData<GetRecommendedArtsResult>,
+    [string, number],
+    number
   >({
     queryKey: ["recommendedArts", artId],
     queryFn: ({ pageParam = 1 }) =>
@@ -28,14 +30,15 @@ export const useRecommendedArts = (artId: number) => {
     enabled: !!artId, // artId가 있을 때만 쿼리 실행
     initialPageParam: 1,
     getNextPageParam: (lastPage) =>
-      lastPage.isSuccess ? lastPage.result.nextPage : undefined,
+      lastPage.isSuccess ? lastPage.result?.nextPage : undefined,
     select: (data) => {
-      // 각 페이지의 isSuccess를 확인하고, 실패 시 에러 throw
-      data.pages.forEach((page) => {
-        if (!page.isSuccess) throw new Error(`${page.code}: ${page.message}`);
+      const pages = data.pages.map((page) => {
+        if (!page.isSuccess || !page.result) {
+          throw new Error(`${page.code}: ${page.message}`);
+        }
+        return page.result;
       });
-      // 성공 시 data.result만 pages 배열로 만들어 반환
-      return { ...data, pages: data.pages.map((p) => p.result) };
+      return { pages, pageParams: data.pageParams };
     },
   });
 

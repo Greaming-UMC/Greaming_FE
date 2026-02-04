@@ -18,14 +18,13 @@ export interface Artwork { // TODO: apis/types/work.ts 의 UserWork 타입과 �
 
 interface ArtistArtworkProps {
   artworks?: Artwork[]; // 부모에게 받는 작품 배열
-  userRole?: string;    // (필요하다면 유지)
 }
 
 /* -------------------------------------------------------------------------- */
 /* 2. [Component] 작가의 다른 그림                                             */
 /* -------------------------------------------------------------------------- */
 
-const ArtistArtwork = ({ artworks = [], userRole }: ArtistArtworkProps) => {
+const ArtistArtwork = ({ artworks = [] }: ArtistArtworkProps) => {
   
   const isEmpty = useMemo(() => {
     return !artworks || artworks.length === 0;

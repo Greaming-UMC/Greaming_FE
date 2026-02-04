@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import ProfileView from "../../features/profile/ui/ProfileView";
+import type { ProfileViewContext } from "../../features/profile/config/profileRoleConfig";
 
 type ProfilePageMode = "self" | "user" | "circle";
 
@@ -19,7 +20,7 @@ const ProfilePage = ({ mode }: ProfilePageProps) => {
     return null;
   }
 
-  const context =
+  const context: ProfileViewContext =
     mode === "self"
       ? { type: "user", role: "self" }
       : mode === "user"

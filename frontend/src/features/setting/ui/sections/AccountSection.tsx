@@ -1,15 +1,13 @@
 import { useState, useEffect } from "react";
-import { BaseField, Button, Modal } from "../../../../components/common";
+import { Button, Modal } from "../../../../components/common";
 import clsx from "clsx";
 import Icon from "../../../../components/common/Icon";
 
 const AccountSection = () => {
   // --- 1. 상태 및 상수 관리 ---
   const initialEmail = "User@example.com";
-  const [email, setEmail] = useState(initialEmail);
+  const [email] = useState(initialEmail);
   const [visibility, setVisibility] = useState<'public' | 'partial' | 'private'>('public');
-  
-  const [isEditing, setIsEditing] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
 
   const [isSuspendedOpen, setIsSuspendedOpen] = useState(false);

@@ -88,7 +88,7 @@
         setSearchTerm("");
         fetchMockData(1, false);
       }
-    }, [isOpen]); 
+    }, [isOpen, userId]); 
 
     // 페이지가 변경될 때마다 데이터를 추가로 가져옴
     useEffect(() => {

@@ -245,7 +245,7 @@ const DetailView = () => {
         <DetailPost submission={mockSubmission} comment_list={mockComments} />     
       </div>
       <div className="shrink-0  w-full">
-        <ArtistArtwork artworks={myArtData} userRole="USER" />
+        <ArtistArtwork artworks={myArtData} />
       </div>
       <div className="w-full shrink-0">
         <RecommendedGrid artworks={mockRecommendedArts} />
