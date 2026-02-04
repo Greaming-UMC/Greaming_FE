@@ -11,7 +11,7 @@ const AccountSection = () => {
   
   const [isEditing, setIsEditing] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-  
+
   const [isSuspendedOpen, setIsSuspendedOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
@@ -23,6 +23,7 @@ const AccountSection = () => {
     setIsChanged(email !== initialEmail || visibility !== 'public');
   }, [email, visibility]);
 
+  
   return (
     <section className="flex flex-col gap-11">
       
@@ -50,6 +51,7 @@ const AccountSection = () => {
               </span>
             </div>
           </div>
+
 
           <div className="flex items-center justify-between w-full bg-surface-variant-high px-6 py-4 rounded-xl">
             <span className="label-xlarge-emphasized text-on-surface">
@@ -122,6 +124,7 @@ const AccountSection = () => {
 
       {/* --- 모달 영역 (일시정지 / 삭제) --- */}
       {/* 1. 일시정지 모달 */}
+
       <Modal variant="confirm" open={isSuspendedOpen} onClose={() => setIsSuspendedOpen(false)}>
         <Modal.Header title="계정 일시정지" />
         <Modal.Body>
@@ -138,6 +141,7 @@ const AccountSection = () => {
         </Modal.Footer>
       </Modal>
 
+
       {/* 2. 삭제 모달 */}
       <Modal variant="confirm" open={isDeleteOpen} onClose={() => setIsDeleteOpen(false)}>
         <Modal.Header title="계정 삭제" />
@@ -151,6 +155,7 @@ const AccountSection = () => {
           <div className="flex justify-center gap-4 w-full">
             <Button variant="secondary" shape="square" className="flex-1" textClassName="label-xlarge-emphasized" onClick={() => setIsDeleteOpen(false)}>삭제하기</Button>
             <Button variant="primary" shape="square" className="flex-1" onClick={() => setIsDeleteOpen(false)}>취소</Button>
+
           </div>
         </Modal.Footer>
       </Modal>

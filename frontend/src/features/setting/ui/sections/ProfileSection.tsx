@@ -20,7 +20,7 @@ const ProfileSection = () => {
   const [nickname, setNickname] = useState(initialData.nickname);
   const [nicknameStatus, setNicknameStatus] = useState<"unchecked" | "valid" | "invalid">("unchecked");
   const [isChecking, setIsChecking] = useState(false);
-  
+
   const [bio, setBio] = useState(initialData.bio);
   const [selectedJourney, setSelectedJourney] = useState(initialData.selectedJourney);
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialData.previewUrl);
@@ -93,6 +93,7 @@ const ProfileSection = () => {
 
   return (
     <section className="flex flex-col gap-10 w-full">
+
       {/* 1. 헤더 */}
       <div className="flex justify-between items-center pb-2">
         <h2 className="main-title-small-emphasized text-on-surface">프로필 설정</h2>
@@ -140,12 +141,14 @@ const ProfileSection = () => {
             className: "!bg-surface-variant-lowest !text-white !w-[80px] !h-[32px] !rounded-full label-medium-emphasized"
           }} 
           className="label-large" 
+
         />
       </div>
 
       {/* 4. 소개글 */}
       <div className="flex flex-col gap-4">
         <label className="label-xlarge-emphasized text-on-surface px-1">소개글</label>
+
         <TextAreaField value={bio} onChange={setBio} widthMode="fill" height="154px" tone="surfaceVariantHigh" placeholder="자기소개를 입력해주세요." maxLength={350} showCounter={true} className="label-large" />
       </div>
 
@@ -187,10 +190,12 @@ const ProfileSection = () => {
                   >
                 {score}
             </Button>
+
             );
           })}
         </div>
       </div>
+
 
       {/* 7. 내 특기 선택 */}
       <div className="flex flex-col gap-8 mb-10">
@@ -341,7 +346,6 @@ const ProfileSection = () => {
           </div>
         </div>
       </div>
-
 
     </section>
   );

@@ -14,6 +14,7 @@ const PrivacySection = () => {
 
       {/* 2. 데이터 관리 섹션 - 원본 gap-4 유지 */}
       <div className="flex flex-col gap-4 pb-80">
+
         <h3 className="label-xlarge-emphasized text-on-surface">데이터 관리</h3>
         
         {/* 원본 gap-2 유지 */}
@@ -46,6 +47,7 @@ const PrivacySection = () => {
           </Button>
         </div>
       </div>
+
 
       {/* 3. 하단 푸터 링크 - 원본 레이아웃(mt-auto, pt-20, gap-4) 유지 */}
       <div className="mt-auto pt-20 flex justify-center gap-4">
