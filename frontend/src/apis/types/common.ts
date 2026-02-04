@@ -132,6 +132,13 @@ export type SubmissionMetadata = {
   isLiked: boolean;
 };
 
+// 메타데이터에 없어서 추가한 홈 카드 타입
+export interface HomeCardType extends SubmissionMetadata {
+  title: string;
+  nickname: string;
+  profileImgUrl: string;
+}
+
 // 작품 조회 타입 및 요청 인터페이스
 export type CheckMySubmissionType = 'ALL' | 'SAVED';
 export interface CheckSubmissionInterceptor {
