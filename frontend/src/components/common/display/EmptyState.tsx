@@ -20,7 +20,7 @@ export interface EmptyStateProps {
   icon?: string;
   
   /** 굵은 제목 (Required) */
-  title: string;
+  title?: string;
   
   /** 부가 설명 (Optional) */
   description?: string;

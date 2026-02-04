@@ -127,6 +127,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled}
         className={clsx(
         "inline-flex items-center justify-center",
+        "cursor-pointer", //cursor-pointer 추가
         "state-layer transition-colors duration-150",
         "disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none",
         token.paddingXClass,

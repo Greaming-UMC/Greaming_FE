@@ -22,7 +22,7 @@ export const BASE_FIELD_TONE_CLASS: Record<BaseFieldTone, string> = {
 
 export interface BaseFieldProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value"> {
-  headline: string;
+  headline?: string;
   value: string;
   onChange: (value: string) => void;
   widthMode?: BaseFieldWidthMode;
