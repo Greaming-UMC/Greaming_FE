@@ -30,7 +30,20 @@ const router = createBrowserRouter([
       },
       {
         path: 'profile',
-        element: <ProfilePage />,
+        children: [
+          {
+            path: 'self',
+            element: <ProfilePage mode="self" />,
+          },
+          {
+            path: 'user/:userId',
+            element: <ProfilePage mode="user" />,
+          },
+          {
+            path: 'circle/:circleId',
+            element: <ProfilePage mode="circle" />,
+          },
+        ],
       },
     ],
   },

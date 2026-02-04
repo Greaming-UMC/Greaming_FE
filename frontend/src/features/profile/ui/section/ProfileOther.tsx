@@ -3,15 +3,17 @@ import Icon from "../../../../components/common/Icon";
 import type { IconName } from "../../../../components/common/Icon";
 import SpeechBubble from "../../../../components/common/SpeechBubble";
 
-import { useMyProfile } from "../../hooks";
+import SocialButton from "../../components/SocialButton";
 
-import type { CheckMyProfileResult } from "../../../../apis/types/user";
+import { useUserProfile } from "../../hooks";
 
-const MOCK_PROFILE_RESULT: CheckMyProfileResult = {
+import type { CheckUserProfileResult } from "../../../../apis/types/user";
+
+const MOCK_PROFILE_RESULT: CheckUserProfileResult = {
   user_information: {
     nickname: "닉네임",
     profileImgUrl: "",
-    level: "SKETCHER",
+    level: "PAINTER",
     introduction: "소개글 내용",
     followerCount: 10,
     followingCount: 10,
@@ -24,8 +26,12 @@ const MOCK_PROFILE_RESULT: CheckMyProfileResult = {
   },
 };
 
-const ProfileSelf = () => {
-  const query = useMyProfile();
+type ProfileOtherProps = {
+  userId?: number;
+};
+
+const ProfileOther = ({ userId }: ProfileOtherProps) => {
+  const query = useUserProfile(userId);
 
   //if (query.isPending) return <div className="text-[14px]">Loading...</div>;
   //if (query.error) return <div className="text-[14px]">에러가 발생했어요.</div>;
@@ -36,6 +42,8 @@ const ProfileSelf = () => {
   const specialtyTags = info.specialtyTags ?? [];
   const interestTags = info.interestTags ?? [];
   const usageIcon = info.level as IconName;
+  const targetId = userId ?? 0;
+  const followState = info.followState;
 
   return (
     <section className="flex flex-col">
@@ -58,8 +66,13 @@ const ProfileSelf = () => {
           <Divider orientation="vertical" thickness={1} style={{ height: 16 }} />
           <Counter variant="label" size="sm" count={info.followingCount} label="팔로잉" />
         </div>
-        
-      </div>
+        {/* Button */}
+        <SocialButton
+          targetId={targetId}
+          followState={followState}
+          className="mt-[16px]"
+        />
+      </div>   
 
       {/* Hashtag */}
       <div className="mt-[48px] label-xlarge-emphasized text-on-surface">특기·취향</div>
@@ -101,4 +114,4 @@ const ProfileSelf = () => {
   );
 };
 
-export default ProfileSelf;
+export default ProfileOther;

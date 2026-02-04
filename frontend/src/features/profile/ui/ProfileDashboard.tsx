@@ -1,15 +1,19 @@
 import { useNavigate } from "react-router-dom";
 
-import ModalActionButton from "../components/modalActionButton";
+import DropdownButton from "../components/DropDownButton";
 import ProfileSelf from "./section/ProfileSelf";
+import ProfileOther from "./section/ProfileOther";
+import ProfileCircle from "./section/ProfileCircle";
 
 import { PROFILE_VIEW_CONFIG, type ProfileViewContext } from "../config/profileRoleConfig";
 
 interface ProfileViewProps {
     context: ProfileViewContext;
+    userId?: number;
+    circleId?: number;
 }
 
-const ProfileDashboard = ( { context }: ProfileViewProps) => {
+const ProfileDashboard = ( { context, userId, circleId }: ProfileViewProps) => {
 
     const ui = context.type === "user"
       ? PROFILE_VIEW_CONFIG.user[context.role]
@@ -21,14 +25,22 @@ const ProfileDashboard = ( { context }: ProfileViewProps) => {
         <div className="relative w-[400px] h-fit flex flex-col gap-[32px] bg-surface rounded-large shadow-xl px-[24px] py-[64px]">
 
             {/* Button */}
-            {/*{ui.showEditButton && */}
+            {ui.showEditButton && (
               <div className="absolute right-[24px] top-[16px]">
-                <ModalActionButton onEdit={() => navigator("/setting/Profile")}/>
+                <DropdownButton onEdit={() => navigator("/setting/Profile")} />
               </div>
-            {/*}*/}
+            )}
 
             {/* Profile */}
-            <ProfileSelf />
+            {context.type === "user" ? (
+              context.role === "self" ? (
+                <ProfileSelf />
+              ) : (
+                <ProfileOther userId={userId} />
+              )
+            ) : (
+              <ProfileCircle circleId={circleId} />
+            )}
 
         </div>
     )

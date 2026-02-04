@@ -10,6 +10,7 @@ import type {
     CheckCircleProfileResult, 
     CheckCircleSubmissionsRequest, CheckCircleSubmissionsResult 
 } from "../../../apis/types/circle";
+import type { FollowRequestResult } from "../../../apis/types/follow";
 
 
 export const getMyProfile = async () => {
@@ -53,5 +54,11 @@ export const getCircleSubmissions = async (circleId: number, params: CheckCircle
         `/circles/${circleId}/submissions`,
         { params },
     );
+    return data;
+};
+
+
+export const postFollowRequest = async (targetId: number) => {
+    const { data } = await http.post<ApiResultResponse<FollowRequestResult>>(`/users/${targetId}/follows`);
     return data;
 };

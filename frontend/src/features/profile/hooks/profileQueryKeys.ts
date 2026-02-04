@@ -13,12 +13,31 @@ export const profileQueryKeys = {
   circle: (circleId: number) => ["profile", "circle", circleId] as const,
 
   mySubmissions: (params?: CheckMySubmissionsRequest) =>
-    ["profile", "mySubmissions", params ?? {}] as const,
+    [
+      "profile",
+      "mySubmissions",
+      params?.type ?? null,
+      params?.page ?? null,
+      params?.size ?? null,
+    ] as const,
 
   userSubmissions: (userId: number, params?: CheckUserSubmissionsRequest) =>
-    ["profile", "userSubmissions", userId, params ?? {}] as const,
+    [
+      "profile",
+      "userSubmissions",
+      userId,
+      params?.type ?? null,
+      params?.page ?? null,
+      params?.size ?? null,
+    ] as const,
 
   circleSubmissions: (circleId: number, params?: CheckCircleSubmissionsRequest) =>
-    ["profile", "circleSubmissions", circleId, params ?? {}] as const,
+    [
+      "profile",
+      "circleSubmissions",
+      circleId,
+      params?.page ?? null,
+      params?.size ?? null,
+    ] as const,
   
 };
