@@ -1,14 +1,19 @@
-import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SettingDrawer from './SettingDrawer';
 import ProfileSection from './sections/ProfileSection';
 import AccountSection from './sections/AccountSection';
 import PrivacySection from './sections/PrivacySection';
+import clsx from "clsx";
 
-// 페이지 타입 정의
 export type SettingTab = 'profile' | 'account' | 'privacy';
 
 const SettingView = () => {
-  const [activeTab, setActiveTab] = useState<SettingTab>('profile');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = (searchParams.get('tab') as SettingTab) || 'profile';
+
+  const handleTabChange = (tab: SettingTab) => {
+    setSearchParams({ tab });
+  };
 
   const renderSection = () => {
     switch (activeTab) {
@@ -20,21 +25,31 @@ const SettingView = () => {
   };
 
   return (
-    <div className="flex justify-center w-full min-h-screen bg-surface-variant-high">
-      <div className="flex w-full max-w-[1280px] gap-[40px] py-[145px]"> {/* 상단 여백을 컨테이너에 주어 사이드바를 내림 */}
+    // 🛠️ 배경색: 시스템 토큰 bg-surface-variant-high 적용
+    <div className="flex flex-col items-center w-full min-h-screen bg-surface-variant-high">
+      <div className="flex w-full max-w-[1280px] gap-[56px] py-[145px] items-stretch">
         
-        {/* 사이드바: h-screen 제거, 상단 고정 위치 조정, 사방 라운드 적용 */}
-        <nav className="flex flex-col items-start w-[266px] min-w-[266px] bg-surface pt-[80px] px-[19px] pb-[89px] rounded-[24px] shadow-sm">
-          <SettingDrawer activeTab={activeTab} onTabChange={setActiveTab} />
+        {/* 사이드바 */}
+        <nav className={clsx(
+          "flex flex-col w-[266px] min-w-[266px] bg-surface px-5",
+          "rounded-extra-large"
+        )}>
+          <SettingDrawer activeTab={activeTab} onTabChange={handleTabChange} />
         </nav>
 
-        {/* 메인 콘텐츠: 사이드바와 나란히 배치 */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="w-full max-w-[1110px] min-h-[000px] bg-surface rounded-[24px] border border-gray-100 p-12 shadow-sm">
+        {/* 메인 콘텐츠 */}
+        <main className="flex-1">
+          <div className={clsx(
+            "h-full w-full max-w-[1110px] bg-surface px-15 py-12",
+            "rounded-extra-large",
+
+          )}>
             {renderSection()}
           </div>
         </main>
       </div>
+
+      <div className="h-[600px] rounded-large bg-surface-variant-low" />
     </div>
   );
 };

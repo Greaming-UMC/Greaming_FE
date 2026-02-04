@@ -1,20 +1,17 @@
-import { ActionItem, EmptyState } from "../../../../components/common";
-import type { Circle } from "../../types";
+import { ActionItem, EmptyState, Button } from "../../../../components/common";
+import type { CircleItem } from "../../types";
+import clsx from "clsx";
 
 interface CircleSearchSectionProps {
-  circles: Circle[];
-  onToggle: (id: number) => void;
+  circles: CircleItem[];
+  onToggle: (circleId: number) => void;
 }
 
 const CircleSearchSection = ({ circles, onToggle }: CircleSearchSectionProps) => {
   if (circles.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full min-h-[400px]">
-        <EmptyState
-          icon="char_sad"
-          description="검색된 써클이 없어요"
-          className="[&_svg]:w-[100px] [&_svg]:h-[100px] [&_svg]:opacity-100"
-        />
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <EmptyState icon="char_sad" description="검색된 써클이 없어요"  className="[&_svg]:w-[100px] [&_svg]:h-[100px] [&_svg]:opacity-100" />
       </div>
     );
   }
@@ -22,22 +19,44 @@ const CircleSearchSection = ({ circles, onToggle }: CircleSearchSectionProps) =>
   return (
     <div className="flex flex-col">
       {circles.map((circle) => {
-        // 인원수 표시 텍스트 생성
-        const maxText = circle.maxMembers === 'unlimited' ? '제한없음' : `${circle.maxMembers}명`;
-        const membersInfo = `${circle.memberCount} / ${maxText}`;
+        const isFullNotJoined = circle.isFull && !circle.isJoined;
+        const maxText = circle.capacity >= 1000 ? '제한없음' : `${circle.capacity}명`;
+        const membersText = `${circle.memberCount}명 / ${maxText}`;
 
         return (
           <ActionItem
-            key={circle.id}
+            key={circle.circleId}
             size="lg"
-            action="join" 
             title={circle.name}
-            subtitle={membersInfo}
-            avatar={{ 
-              src: circle.circleImageUrl, 
-              icon: circle.CircleIcon || "char_default" 
+            // 🟢 variant: "text"를 사용하여 커스텀 포맷팅된 문자열 전달
+            subtitle={{
+              variant: "text",
+              value: membersText
             }}
-            onAccept={() => onToggle(circle.id)}
+            subtitleClassName={isFullNotJoined ? "text-status-error" : ""}
+            avatar={{ src: circle.profileUrl, icon: "char_default" }}
+            action={isFullNotJoined ? "none" : (circle.isJoined ? "joined" : "join")}
+            
+            className={clsx(
+              circle.isJoined && "cursor-default pointer-events-none"
+            )}
+            
+            trailing={
+              isFullNotJoined ? (
+                <Button
+                  size="xs"
+                  variant="surface"
+                  shape="round"
+                  widthMode="hug"
+                  disabled
+                  textClassName="label-large-emphasized text-gray-400"
+                >
+                  정원 초과
+                </Button>
+              ) : undefined
+            }
+            onJoin={() => onToggle(circle.circleId)}
+            onLeave={undefined} 
             widthMode="fill"
           />
         );

@@ -1,8 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { Button, Modal, SearchField } from '../../../components/common';
-import type { Circle } from '../types';
+import type { CircleItem } from '../types';
 import CircleSearchSection from './sections/CircleSearchSection';
-import CircleCreateModal from './CircleCreateModal'; // 🟢 생성 모달 임포트
+import CircleCreateModal from './CircleCreateModal';
+
+/** 🛠️ [MODE A] 목업 데이터 */
+import { MOCK_CIRCLE_LIST } from '../testing/mockdata'; 
+import { useDebounce } from '../hooks/useDebounce';
+
+/** 🌐 [MODE B] 실제 API (연결 시 주석 해제) */
+// import { useInfiniteCircles, useCircleAction } from '../hooks/useCircle';
 
 interface CircleSearchModalProps {
   isOpen: boolean;
@@ -10,47 +17,110 @@ interface CircleSearchModalProps {
 }
 
 const CircleSearchModal = ({ isOpen, onClose }: CircleSearchModalProps) => {
-  // 1. 써클 목업 데이터
-  const [circleList, setCircleList] = useState<Circle[]>([
-    { id: 1, name: '그리밍 공식', description: '함께', isPublic: true, memberCount: 30, maxMembers: 'unlimited', CircleIcon: 'char_imoge'},
-    { id: 2, name: '밍밍 공식 써클', description: '함께 그림 그려요', isPublic: true, memberCount: 10, maxMembers: 20 },
-    { id: 3, name: '그리기 공식 써클', description: '함께 그림 그려요', isPublic: true, memberCount: 13, maxMembers: 15 },
-    { id: 4, name: '하하하 공식 써클', description: '함께 그림 그려요', isPublic: true, memberCount: 49, maxMembers: 50 },
-    { id: 5, name: '그리밍 써클', description: '함께 그림 그려요', isPublic: true, memberCount: 50, maxMembers: 60 },
-    { id: 6, name: '그려그려', description: '함께 그림 그려요', isPublic: true, memberCount: 50, maxMembers: 'unlimited' },
-    { id: 7, name: '뭘그려', description: '함께 그림 그려요', isPublic: true, memberCount: 50, maxMembers: 'unlimited' },
-  ]);
-
+  // UI용 즉각적인 검색어 상태
   const [searchTerm, setSearchTerm] = useState("");
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false); // 🟢 생성 모달 열림 상태
+  // 🟢 서버 요청용 디바운스 검색어 (0.5초 지연)
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  // 검색 모달이 열릴 때 검색어 초기화
-  useEffect(() => {
-    if (isOpen) {
-      setSearchTerm("");
-    }
-  }, [isOpen]);
+  // ==========================================================
+  // 🟢 [SECTION 1] 데이터 제어 섹션 (목업 모드)
+  // ==========================================================
 
-  const handleJoinCircle = (id: number) => {
-    console.log(`${id}번 써클에 가입 신청/입장 로직 실행`);
+  const [circleList, setCircleList] = useState<CircleItem[]>([]);
+  const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
+  
+  const pageSize = 10;
+  // 전체 목록 중 검색어에 맞는 것만 필터링한 데이터의 총 길이 계산 (hasNextPage용)
+  const totalFilteredCount = MOCK_CIRCLE_LIST.filter(c => 
+    c.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+  ).length;
+  
+  const hasNextPage = circleList.length < totalFilteredCount;
+
+  // 데이터 페칭 로직
+  const fetchMockData = useCallback((isNext: boolean = false) => {
+    if (isNext) setIsFetchingNextPage(true);
+    else setIsLoading(true);
+
+    setTimeout(() => {
+      // 디바운스된 검색어로 필터링된 전체 리스트에서 슬라이싱
+      const filteredAll = MOCK_CIRCLE_LIST.filter(c => 
+        c.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+      );
+      const end = page * pageSize;
+      setCircleList(filteredAll.slice(0, end));
+      
+      setIsLoading(false);
+      setIsFetchingNextPage(false);
+    }, 400); // 실제 네트워크 체감을 위한 딜레이
+  }, [page, debouncedSearchTerm]);
+
+  const handleFetchNext = () => {
+    if (hasNextPage && !isFetchingNextPage) setPage(prev => prev + 1);
   };
 
-  // 검색 필터링
-  const filteredList = circleList.filter((circle) =>
-    circle.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // 🟢 디바운스 검색어나 모달 오픈 상태가 바뀔 때 리셋 후 페칭
+  useEffect(() => {
+    if (isOpen) {
+      setPage(1);
+      fetchMockData(false);
+    }
+  }, [debouncedSearchTerm, isOpen]);
+
+  // 페이지가 바뀔 때만 추가 페칭
+  useEffect(() => {
+    if (page > 1 && isOpen) fetchMockData(true);
+  }, [page, isOpen, fetchMockData]);
+
+  // 목업 전용 상태 변경 핸들러
+  const toggleCircleMock = (id: number) => {
+    setCircleList(prev => prev.map(circle => 
+      circle.circleId === id 
+        ? { 
+            ...circle, 
+            isJoined: !circle.isJoined, 
+            memberCount: circle.isJoined ? circle.memberCount - 1 : circle.memberCount + 1 
+          } 
+        : circle
+    ));
+  };
+
+  /** 🌐 [MODE B] 실제 API 섹션 예시 */
+  /*
+  const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage } = useInfiniteCircles(debouncedSearchTerm);
+  const circleList = useMemo(() => data?.pages.flatMap(p => p.data?.data ?? []) ?? [], [data]);
+  const handleFetchNext = fetchNextPage;
+  */
+
+  // ==========================================================
+  // 🟢 [SECTION 2] 무한 스크롤 & UI
+  // ==========================================================
+  
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const onIntersect = useCallback(([entry]: IntersectionObserverEntry[]) => {
+    if (entry.isIntersecting) handleFetchNext();
+  }, [handleFetchNext]);
+
+  useEffect(() => {
+    if (!loadMoreRef.current) return;
+    const observer = new IntersectionObserver(onIntersect, { threshold: 0.1 });
+    observer.observe(loadMoreRef.current);
+    return () => observer.disconnect();
+  }, [onIntersect]);
 
   return (
     <>
-      {/* 써클 검색 모달 본체 */}
       <Modal open={isOpen} onClose={onClose} variant="default">
         <Modal.Header title="써클 검색" />
         <Modal.Body>
-          {/* 상단 검색바 + 만들기 버튼 영역 */}
           <div className="mb-4 px-2 flex items-center gap-2">
             <div className="flex-1">
               <SearchField
-                value={searchTerm}
+                value={searchTerm} // 사용자는 즉각적인 입력 확인
                 onChange={setSearchTerm}
                 placeholder="써클 이름을 입력하세요"
                 customSize="large"
@@ -69,15 +139,27 @@ const CircleSearchModal = ({ isOpen, onClose }: CircleSearchModalProps) => {
             </Button>
           </div>
 
-          {/* 결과 리스트 섹션 */}
-          <CircleSearchSection 
-            circles={filteredList} 
-            onToggle={handleJoinCircle} 
-          />
+          {isLoading ? (
+            <div className="py-20 text-center text-label-medium">데이터를 검색하는 중...</div>
+          ) : (
+            <>
+              <CircleSearchSection 
+                circles={circleList} 
+                onToggle={toggleCircleMock} 
+              />
+              
+              <div ref={loadMoreRef} className="h-[20px] w-full" />
+              
+              {isFetchingNextPage && (
+                <div className="text-center py-2 text-label-small text-gray-400">
+                  추가 결과 불러오는 중...
+                </div>
+              )}
+            </>
+          )}
         </Modal.Body>
       </Modal>
 
-      {/* 🟢 써클 만들기 모달 (검색 모달 위 레이어) */}
       <CircleCreateModal 
         isOpen={isCreateModalOpen} 
         onClose={() => setIsCreateModalOpen(false)} 

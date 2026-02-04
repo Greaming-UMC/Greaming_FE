@@ -1,72 +1,74 @@
-import { useEffect, useState } from 'react';
-import { Modal, SearchField } from '../../../components/common';
-import type { CircleMember } from '../types';
-import CircleMemberListSection from './sections/CircleMemberListSection';
+import { useEffect, useState, useMemo } from 'react';
+import { Button, Modal, SearchField } from '../../../components/common';
+import type { CircleItem } from '../types';
+import CircleSearchSection from './sections/CircleSearchSection';
+import CircleCreateModal from './CircleCreateModal';
+import { MOCK_CIRCLE_LIST } from '../testing/mockdata';
 
-interface CircleMemberModalProps {
+interface CircleSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const CircleMemberModal = ({ isOpen, onClose }: CircleMemberModalProps) => {
-  // 1. 목업 데이터 한 줄 정리 (디자인 가이드 반영)
-  const [memberList, setMemberList] = useState<CircleMember[]>([
-    { id: 1, nickname: 'Sketcher_King', bio: '# 드로잉 # 일러스트 # 캐릭터', isFollowing: false, badgeImage: 'badge_artist', profileIcon:'char_sad' },
-    { id: 2, nickname: 'Master_Dev', bio: '# 코딩 # 리액트 # 타입스크립트', isFollowing: true, badgeImage: 'badge_master' },
-    { id: 3, nickname: 'Greaming_Fan', bio: '# 그리밍 # 팬아트 # 수채화', isFollowing: false, profileIcon: 'char_profile_blue' },
-    { id: 4, nickname: 'Art_Lover', bio: '# 전시회 # 풍경화 # 오일파스텔', isFollowing: true, badgeImage: 'badge_artist' },
-    { id: 5, nickname: 'Sketcher_King', bio: '# 드로잉 # 일러스트 # 캐릭터', isFollowing: false, badgeImage: 'badge_artist', profileIcon:'char_sad' },
-    { id: 6, nickname: 'Master_Dev', bio: '# 코딩 # 리액트 # 타입스크립트', isFollowing: true, badgeImage: 'badge_master' },
-    { id: 7, nickname: 'Greaming_Fan', bio: '# 그리밍 # 팬아트 # 수채화', isFollowing: false, profileIcon: 'char_profile_blue' },
-    { id: 8, nickname: 'Art_Lover', bio: '# 전시회 # 풍경화 # 오일파스텔', isFollowing: true, badgeImage: 'badge_artist' },
-    { id: 9, nickname: 'Sketcher_King', bio: '# 드로잉 # 일러스트 # 캐릭터', isFollowing: false, badgeImage: 'badge_artist', profileIcon:'char_sad' },
-    { id: 11, nickname: 'Master_Dev', bio: '# 코딩 # 리액트 # 타입스크립트', isFollowing: true, badgeImage: 'badge_master' },
-    { id: 12, nickname: 'Greaming_Fan', bio: '# 그리밍 # 팬아트 # 수채화', isFollowing: false, profileIcon: 'char_profile_blue'},
-    { id: 41, nickname: 'Art_Lover', bio: '# 전시회 # 풍경화 # 오일파스텔', isFollowing: true, badgeImage: 'badge_artist' },
-  ]);
-
+const CircleSearchModal = ({ isOpen, onClose }: CircleSearchModalProps) => {
+  const [circleList] = useState<CircleItem[]>(MOCK_CIRCLE_LIST);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-  // 모달 열릴 때 검색어 초기화
   useEffect(() => {
     if (isOpen) setSearchTerm("");
   }, [isOpen]);
 
-  // 팔로우 토글 로직
-  const handleToggleFollow = (id: number) => {
-    setMemberList((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, isFollowing: !m.isFollowing } : m))
-    );
+  const handleJoinCircle = (circleId: number) => {
+    console.log(`${circleId}번 써클에 가입 신청/입장 로직 실행`);
   };
 
-  // 필터링 로직 (닉네임 기준)
-  const filteredList = memberList.filter((member) =>
-    member.nickname.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredList = useMemo(() => {
+    return circleList.filter((circle) =>
+      circle.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [circleList, searchTerm]);
 
   return (
-    <Modal open={isOpen} onClose={onClose} variant="default">
-      <Modal.Header title="써클 멤버" />
-      <Modal.Body>
-        {/* 검색 필드 */}
-        <div className="mb-4 px-2">
-          <SearchField
-            value={searchTerm}
-            onChange={setSearchTerm}
-            placeholder="멤버 닉네임 검색"
-            customSize="large"
-            iconPosition="leading"
+    <>
+      <Modal open={isOpen} onClose={onClose} variant="default">
+        <Modal.Header title="써클 검색" />
+        <Modal.Body>
+          <div className="mb-4 px-2 flex items-center gap-2">
+            <div className="flex-1">
+              <SearchField
+                value={searchTerm}
+                onChange={setSearchTerm}
+                placeholder="써클 이름을 입력하세요"
+                customSize="large"
+                iconPosition="leading"
+              />
+            </div>
+            <Button 
+                variant="onPrimary"
+                size="xs"
+                shape="round"
+                widthMode="hug"
+                textClassName="label-large-emphasized"
+                onClick={() => setIsCreateModalOpen(true)}
+            >
+              만들기
+            </Button>
+          </div>
+
+          <CircleSearchSection 
+            circles={filteredList} 
+            onToggle={handleJoinCircle} 
           />
-        </div>
-        
-        {/* 멤버 리스트 섹션 (EmptyState는 섹션 내부에서 처리됨) */}
-        <CircleMemberListSection 
-          members={filteredList} 
-          onToggleFollow={handleToggleFollow} 
-        />
-      </Modal.Body>
-    </Modal>
+        </Modal.Body>
+      </Modal>
+
+      <CircleCreateModal 
+        isOpen={isCreateModalOpen} 
+        onClose={() => setIsCreateModalOpen(false)} 
+      />
+    </>
   );
 };
 
-export default CircleMemberModal;
+export default CircleSearchModal;

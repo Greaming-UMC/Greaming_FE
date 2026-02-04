@@ -9,11 +9,12 @@ import {
 
 export interface TextAreaFieldProps
   extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "onChange" | "value"> {
-  headline: string;
+  headline?: string;
   value: string;
   onChange: (value: string) => void;
   widthMode?: BaseFieldWidthMode;
   heightMode?: BaseFieldHeightMode;
+  height?: string; // 높이 직접 지정 프롭
   tone?: BaseFieldTone;
   showCounter?: boolean;
   className?: string;
@@ -27,6 +28,7 @@ export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>
       onChange,
       widthMode = "fixed",
       heightMode = "fixed",
+      height,
       tone = "surfaceVariantHigh",
       showCounter = false,
       className,
@@ -37,24 +39,33 @@ export const TextAreaField = forwardRef<HTMLTextAreaElement, TextAreaFieldProps>
   ) => {
     const hasCounter = showCounter && typeof maxLength === "number";
 
+    // 높이 결정 우선순위: height 프롭 > heightMode fill > 기본 240px
+    const containerStyle = height 
+      ? { height } 
+      : heightMode === "fill" 
+        ? { height: "100%" } 
+        : { height: "240px" };
+
     return (
       <div className={clsx("flex flex-col gap-[8px]", widthMode === "fill" && "w-full")}>
-        <div className="sub-title-large-emphasized text-on-surface">{headline}</div>
+        {headline && <div className="sub-title-large-emphasized text-on-surface">{headline}</div>}
         
-        <div className={clsx(
-          BASE_FIELD_TONE_CLASS[tone],
-          heightMode === "fill" ? "h-full" : "h-[240px]",
-          "rounded-medium px-[24px] py-[20px]", 
-          "flex items-start gap-2 relative", 
-          widthMode === "fill" && "w-full",
-        )}>
+        <div 
+          style={containerStyle}
+          className={clsx(
+            BASE_FIELD_TONE_CLASS[tone],
+            "rounded-medium px-[24px] py-[20px]", 
+            "flex items-start gap-2 relative", 
+            widthMode === "fill" && "w-full",
+          )}
+        >
           <textarea
             ref={ref}
             value={value}
             onChange={(event) => onChange(event.target.value)}
             maxLength={maxLength}
             className={clsx(
-              "flex-1 bg-transparent outline-none resize-none min-h-full",
+              "flex-1 bg-transparent outline-none resize-none min-h-full label-large",
               "placeholder:text-on-surface-variant-lowest",
               className,
             )}

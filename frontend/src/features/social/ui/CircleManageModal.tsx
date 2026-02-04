@@ -29,6 +29,11 @@ const CircleManageModal = ({ isOpen, onClose }: CircleManageModalProps) => {
     { id: 16, nickname: '그리밍12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
     { id: 17, nickname: '그리밍1', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
     { id: 18, nickname: '그리밍12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
+    { id: 1244, nickname: '그리리리리밍12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
+    { id: 1212, nickname: '그리밍리리리1243121', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
+    { id: 162, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
+    { id: 174, nickname: '그리밍235231', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
+    { id: 186, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
   ]);
 
   const [Allusers] = useState<SocialUser[]>([
@@ -40,6 +45,14 @@ const CircleManageModal = ({ isOpen, onClose }: CircleManageModalProps) => {
     { id: 16, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
     { id: 17, nickname: '그리밍235231', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
     { id: 18, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
+    { id: 151, nickname: '아리리리밍1', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
+    { id: 122, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
+    { id: 141, nickname: '그리밍리리리1', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
+    { id: 1244, nickname: '그리리리리밍12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
+    { id: 1212, nickname: '그리밍리리리1243121', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
+    { id: 162, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
+    { id: 174, nickname: '그리밍235231', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
+    { id: 186, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
   ]);
 
   // 4. 모달 초기화 로직
