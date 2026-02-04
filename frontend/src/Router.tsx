@@ -1,7 +1,9 @@
 import AppLayout from './components/common/layouts/AppLayout';
-import MyRoomPage from './pages/MyRoomPage';
 import JourneyPage from './pages/JourneyPage';
 import HomePage from './pages/HomePage';
+import SettingPage from './pages/SettingPage';
+import DetailPage from './pages/DetailPage';
+import ModalPracticePage from './pages/ModalPracticePage';
 import { createBrowserRouter } from 'react-router-dom';
 import ErrorPage from './pages/ErrorPage';
 import ProfilePage from './pages/ProfilePage';
@@ -21,14 +23,6 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: 'my-room',
-        element: <MyRoomPage />,
-      },
-      {
-        path: 'journey',
-        element: <JourneyPage />,
-      },
-      {
         path: 'profile',
         children: [
           {
@@ -44,6 +38,22 @@ const router = createBrowserRouter([
             element: <ProfilePage mode="circle" />,
           },
         ],
+      },
+      {
+        path: 'journey',
+        element: <JourneyPage />,
+      },
+      {
+        path: 'setting',
+        element: <SettingPage />,
+      },
+      {
+        path: 'detail/:postId',
+        element: <DetailPage />,
+      },
+      {
+        path: 'modal-practice',
+        element: <ModalPracticePage />,
       },
     ],
   },
