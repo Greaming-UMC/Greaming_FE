@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Chatting } from "../../../../components/chatting";
-import type { commentMetaData } from "../../../../apis/types/submission/checkSubmissionDetails";
+import type { CommentDetail } from "../../../../apis/types/submission/checkSubmissionDetails";
 
 type Reply = {
   id: number;
@@ -12,7 +12,7 @@ type Reply = {
 type Comment = Reply & { replies?: Reply[]; avatarSrc?: string | null };
 
 export interface ChattingSectionProps {
-  comment_list?: commentMetaData[];
+  comment_list?: CommentDetail[];
 }
 
 const ChattingSection = ({ comment_list }: ChattingSectionProps) => {

@@ -1,16 +1,7 @@
 import { Card } from "../../../../components/common/display"; 
 import Icon from "../../../../components/common/Icon"; 
+import type { RecommendedArt } from "../../../../apis/types/art";
 
-// TODO: 아래 타입은 `apis/types/art.ts`의 RecommendedArt와 동기화되어야 합니다.
-// 현재 `ArtistArtwork`와 데이터 일관성을 맞추기 위해 임시 정의합니다.
-interface RecommendedArt {
-  id: number;
-  src: string;
-  title: string;
-  likes_count: number;
-  comment_count: number;
-  bookmark_count: number;
-}
 interface RecommendedGridProps {
   /** 추천 작품 목록 데이터 */
   artworks: RecommendedArt[];

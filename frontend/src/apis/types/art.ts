@@ -6,8 +6,9 @@ export interface RecommendedArt {
   id: number;
   title: string;
   src: string;
-  likes: number;
-  comments: number;
+  likes_count: number;    // likes -> likes_count
+  comment_count: number;  // comments -> comment_count
+  bookmark_count: number; // 새로 추가
 }
 
 /**

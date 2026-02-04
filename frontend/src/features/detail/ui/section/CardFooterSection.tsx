@@ -2,7 +2,7 @@ import { Chip } from "../../../../components/common/display";
 import type { SubmissionDetails } from "../../../../apis/types/submission/checkSubmissionDetails";
 
 export interface CardFooterProps {
-  submission: SubmissionDetails["submission"];
+  submission: SubmissionDetails["work"];
   className?: string;
 }
 

@@ -4,7 +4,7 @@ import Icon from "../../../../components/common/Icon";
 import type { SubmissionDetails } from "../../../../apis/types/submission/checkSubmissionDetails";
 
 export interface CardHeaderSectionProps {
-  submission: SubmissionDetails["submission"];
+  submission: SubmissionDetails["work"];
   rightNode?: ReactNode;
   className?: string;
 }
@@ -14,7 +14,7 @@ const CardHeader = ({
   rightNode,
   className = "",
 }: CardHeaderSectionProps) => {
-  const { nickname, profileImageUrl, level, counters, upload_at } = submission;
+  const { nickname, profileImageUrl, level } = submission;
   return (
     <div
       className={`flex items-center justify-between self-stretch ${className}`}

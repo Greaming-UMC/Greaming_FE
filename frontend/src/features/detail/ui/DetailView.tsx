@@ -1,13 +1,13 @@
-import type { commentMetaData } from "../../../apis/types/submission";
+import type { CommentDetail } from "../../../apis/types/submission/checkSubmissionDetails";
 import Icon from "../../../components/common/Icon";
 import ArtistArtwork from "./ArtistArtwork";
 import DetailPost from "./DetailPost";
 import ActionSideBar from "./section/ActionSideBar";
 import RecommendedGrid from "./section/RecommendedGrid";
+import type { RecommendedArt } from "../../../apis/types/art";
 
 const DetailView = () => {
   const mockSubmission = {
-    id: 1, // 추천 작품을 가져오기 위한 현재 작품 ID
     nickname: "테스트 작가",
     profileImageUrl: "sample-profile.jpg",
     level: "ARTIST",
@@ -17,14 +17,16 @@ const DetailView = () => {
       "https://picsum.photos/400/400?random=3",
       "https://picsum.photos/300/300?random=4",
     ],
-    counters: { likesCount: 12, commentCount: 3, bookmarkCount: 5 },
+    likes_count: 12,
+    comment_count: 3,
+    bookmark_count: 5,
     title: "샘플 작품 제목",
     caption: "간단한 작품 설명입니다.",
     tags: ["digital", "illustration"],
     upload_at: "2023-01-01T12:00:00Z",
   };
 
-  const mockComments: commentMetaData[] = [
+  const mockComments: CommentDetail[] = [
     {
       writer_nickname: "유저A",
       writer_profileImgUrl: "https://i.pravatar.cc/150?img=1",
@@ -228,9 +230,9 @@ const DetailView = () => {
       <aside className="absolute left-1 top-0 h-full hidden lg:block pointer-events-none z-10">
           <div className="sticky top-24 pt-[88px] pointer-events-auto">
             <ActionSideBar 
-               likes={mockSubmission.counters.likesCount}
-               comments={mockSubmission.counters.commentCount}
-               scraps={mockSubmission.counters.bookmarkCount}
+               likes={mockSubmission.likes_count}
+               comments={mockSubmission.comment_count}
+               scraps={mockSubmission.bookmark_count}
             />
           </div>
       </aside>

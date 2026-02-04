@@ -4,12 +4,12 @@ import CardMain from "./section/CardMainSection";
 import ChattingSection from "./section/ChattingSection";
 import type {
   SubmissionDetails,
-  commentMetaData,
+  CommentDetail,
 } from "../../../apis/types/submission/checkSubmissionDetails";
 
 export interface DetailPostProps {
-  submission: SubmissionDetails["submission"];
-  comment_list?: commentMetaData[];
+  submission: SubmissionDetails["work"];
+  comment_list?: CommentDetail[];
 }
 
 const DetailPost = ({ submission, comment_list }: DetailPostProps) => {

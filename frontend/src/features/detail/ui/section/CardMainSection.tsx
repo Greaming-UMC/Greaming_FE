@@ -4,14 +4,14 @@ import Icon from "../../../../components/common/Icon";
 import { useCarousel } from "../section/useCarousel"
 
 export interface CardMainProps {
-  submissions?: SubmissionDetails["submission"][];
+  submissions?: SubmissionDetails["work"][];
   className?: string;
 }
 
 const CardItem = ({
   submission,
 }: {
-  submission: SubmissionDetails["submission"];
+  submission: SubmissionDetails["work"];
 }) => {
   const { image_list, title } = submission;
   const images =
