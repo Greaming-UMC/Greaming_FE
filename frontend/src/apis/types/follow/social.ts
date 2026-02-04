@@ -8,7 +8,7 @@ import type { FollowState } from "../common";
 
 // Response
 // ./common.ts 에서 ApiDataResponse<T> 사용
-export type FollowRequestData = {
+export type FollowRequestResult = {
     followId: number;
     followState: FollowState;
     createdAt: string;

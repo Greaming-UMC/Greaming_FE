@@ -80,3 +80,10 @@
   font-style: normal;
   font-display: swap;
 }
+
+@layer utilities {
+  .submissions-grid {
+    @apply grid grid-cols-4 gap-x-[24px] gap-y-[24px]
+      max-[1440px]:grid-cols-2 max-[1440px]:gap-x-[8px] max-[1440px]:gap-y-[24px];
+  }
+}

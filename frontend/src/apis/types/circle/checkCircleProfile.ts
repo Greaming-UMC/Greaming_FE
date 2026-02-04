@@ -13,7 +13,7 @@ export type CheckCircleProfileResult = {
         leader_name: string;
         introduction: string;
         member_count: number;
-        isleader: boolean;
+        isLeader: boolean;
         isJoining: boolean;
     }
 };
