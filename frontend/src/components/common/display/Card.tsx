@@ -18,6 +18,7 @@ export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   clickable?: boolean;
   /** 호버 시 둥둥 뜨는 애니메이션 사용 여부 (기본: true) */
   hoverEffect?: boolean;
+  
 }
 
 /* -------------------------------------------------------------------------- */
@@ -95,6 +96,7 @@ interface CardMediaProps extends HTMLAttributes<HTMLDivElement> {
   aspectRatio?: string;
   /** 뱃지 타입: 'weekly' | 'daily' | undefined */
   badge?: string | null;
+  hoverEffect?: boolean;
 }
 
 export const CardMedia = ({
@@ -104,6 +106,7 @@ export const CardMedia = ({
   badge,
   className = "",
   children,
+  hoverEffect = false,
   ...props
 }: CardMediaProps) => {
   // 뱃지 타입에 따른 아이콘/색상 매핑
@@ -128,7 +131,9 @@ export const CardMedia = ({
       <img
         src={src}
         alt={alt}
-        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        className={`h-full w-full object-cover transition-transform duration-500 ${
+          hoverEffect ? "group-hover:scale-105" : ""
+        }`}
       />
 
       {/* 우측 상단 뱃지 렌더링 */}

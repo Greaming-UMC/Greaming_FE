@@ -83,6 +83,8 @@ export type UserInformations = {
   followingCount: number;
   specialtyTags: string[];
   interestTags: string[];
+  followState?: FollowState;
+  visibility?: VisibilityType;
 };
 
 // 프로필 헤더 정보 타입

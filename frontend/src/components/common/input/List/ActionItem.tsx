@@ -9,6 +9,9 @@ export interface ActionItemProps extends ListBaseProps {
   onFollow?: () => void;
   onUnfollow?: () => void;
   onKick?: () => void;
+  onJoin?: () => void;
+  onLeave?: () => void;
+  onInvite?: () => void;
 }
 
 export const ActionItem = ({
@@ -18,6 +21,9 @@ export const ActionItem = ({
   onFollow,
   onUnfollow,
   onKick,
+  onJoin,  
+  onLeave,  
+  onInvite,
   trailing,
   ...rest
 }: ActionItemProps) => {
@@ -27,6 +33,9 @@ export const ActionItem = ({
     follow: onFollow,
     unfollow: onUnfollow,
     kick: onKick,
+    join: onJoin,
+    leave: onLeave,
+    invite: onInvite,
   };
 
   const actionVariantMap = {
@@ -48,7 +57,10 @@ export const ActionItem = ({
                 variant={actionVariantMap[config.variant]}
                 shape="round"
                 widthMode="hug"
-                onClick={actionHandlers[config.key]}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  actionHandlers[config.key as keyof typeof actionHandlers]?.();
+                }}
                 textClassName="label-large-emphasized"
               >
                 {config.label}

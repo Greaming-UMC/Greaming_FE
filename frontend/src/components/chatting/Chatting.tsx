@@ -1,6 +1,7 @@
 import type { HTMLAttributes, InputHTMLAttributes } from 'react';
 import Icon from '../common/Icon'; 
-import { Divider, Avatar } from '../common/display';
+import { Avatar, Divider } from '../common/display';
+
 
 /* -------------------------------------------------------------------------- */
 /* 1. Root & List (레이아웃)                                                 */

@@ -4,7 +4,7 @@ import { type BadgeProps } from "../../display/Badge";
 import { type AvatarProps } from "../../display/Avatar";
 
 export type ListVariant = "onboarding" | "modal" | "notification" | "circle";
-export type ListAction = "none" | "acceptReject" | "follow" | "following" | "kick";
+export type ListAction = "none" | "acceptReject" | "follow" | "following" | "kick" | "join" | "joined" | "invite";
 export type ListSelectedStyle = "check" | "solid";
 export type ListSize = "sm" | "md" | "lg" | "xl";
 export type ListWidthMode = "fixed" | "fill";
@@ -43,6 +43,8 @@ export interface ListProps extends HTMLAttributes<HTMLDivElement> {
     onFollow?: () => void;
     onUnfollow?: () => void;
     onKick?: () => void;
+    onJoin?: () => void;
+    onLeave?: () => void;
 };
 
 export const LIST_COLOR = {
@@ -81,7 +83,7 @@ export const RADIUS_CLASS: Record<ListRadius, string> = {
 
 
 export type ListActionPreset = {
-    key: "accept" | "reject" | "follow" | "unfollow" | "kick";
+    key: "accept" | "reject" | "follow" | "unfollow" | "kick" | "join" | "leave" | "invite";
     label: string;
     variant: "Primary" | "onPrimary" | "secondary" | "surface";
 };
@@ -94,6 +96,10 @@ export const ACTION_PRESET: Record<ListAction, ListActionPreset[]> = {
     follow: [{ key: "follow", label: "팔로우", variant: "onPrimary" }],
     following: [{ key: "unfollow", label: "팔로잉", variant: "secondary" }],
     kick: [{ key: "kick", label: "내보내기", variant: "onPrimary" }],
+    // 🟢 써클 관련 액션 추가
+    join: [{ key: "follow", label: "가입하기", variant: "onPrimary" }], // 가입 신청 전
+    joined: [{ key: "unfollow", label: "가입완료", variant: "secondary" }], // 가입 완료 상태
+    invite: [{ key: "invite", label: "초대하기", variant: "onPrimary" }],
 };
 
 export const STATE_LAYER_CLASS = "state-layer surface-container-opacity-16";
