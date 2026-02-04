@@ -8,14 +8,11 @@ import { Button } from "../../../../components/common/input/Button/Button";
 
 export function Step1Welcome({ onNext }: { onNext: () => void }) {
   return (
-    
     <div className="w-full h-full flex flex-col items-center">
-    
       <div className="flex flex-col items-center gap-[20px]">
         <h2
-          className="text-center"
+          className="text-center text-on-surface"
           style={{
-            color: "var(--Schemes-Primary, #121315)",
             fontFamily: "Pretendard",
             fontSize: "28px",
             fontWeight: 700,
@@ -27,9 +24,8 @@ export function Step1Welcome({ onNext }: { onNext: () => void }) {
         </h2>
 
         <p
-          className="text-center"
+          className="text-center text-on-surface"
           style={{
-            color: "var(--Schemes-Primary, #121315)",
             fontFamily: "Pretendard",
             fontSize: "20px",
             fontWeight: 500,

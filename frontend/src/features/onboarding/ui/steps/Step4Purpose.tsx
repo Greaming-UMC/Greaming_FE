@@ -62,44 +62,37 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
     return { journey: selectedJourney!, weeklyGoal: weeklyGoal! };
   }, [canNext, selectedJourney, weeklyGoal]);
 
-  // 여정 카드 박스
+
   const journeyBoxBase =
     "w-[666px] h-[77px] rounded-[16px] border box-border flex items-center";
-  const journeyBoxDefault =
-    "bg-[var(--Schemes-Surface,#FCFCFC)] border-[rgba(18,19,21,0.10)]";
-  const journeyBoxHovered =
-    "bg-[var(--Schemes-Surface,#FCFCFC)] border-[var(--Schemes-On-Surface-Variant-Low,#B6B6B7)]";
-  const journeyBoxSelected =
-    "bg-[var(--Schemes-Primary,#121315)] border-transparent";
 
-  // SelectItem 내부는 레이아웃만
+  const journeyBoxDefault = "bg-surface border-[rgba(18,19,21,0.10)]";
+  const journeyBoxHovered = "bg-surface border-outline-variant"; // = var(--color-outline-variant)
+  const journeyBoxSelected = "bg-primary border-transparent";
+
   const selectItemInner = "w-full h-full bg-transparent border-0 rounded-none px-[16px]";
 
-  // 선택 상태 텍스트 색
   const titleSelected = "text-secondary";
   const subtitleSelected = "text-on-surface-variant-low";
 
   // 주간 목표 박스 
   const goalBox =
-    "w-[666px] h-[111px] rounded-[16px] bg-[var(--Schemes-Surface,#FCFCFC)] border border-[rgba(18,19,21,0.10)]";
+    "w-[666px] h-[111px] rounded-[16px] bg-surface border border-[rgba(18,19,21,0.10)]";
   const goalShadow = "shadow-[0_0_4px_0_rgba(18,19,21,0.25)]";
 
-  // 점수 원
+  // 점수 원 
   const goalCircleBase =
     "w-[34px] h-[34px] rounded-full inline-flex items-center justify-center border";
-  const goalCircleOff =
-    "bg-[var(--Schemes-Surface,#FCFCFC)] border-[rgba(18,19,21,0.12)]";
-  const goalCircleOn = "bg-[var(--Schemes-Primary,#121315)] border-transparent";
+  const goalCircleOff = "bg-surface border-[rgba(18,19,21,0.12)]";
+  const goalCircleOn = "bg-primary border-transparent";
 
-  // 트랙(회색 pill)
+  // 트랙 
   const goalTrack =
-    "w-full h-[44px] rounded-full p-[4px] flex items-center justify-between " +
-    "bg-[var(--Schemes-Surface-Variant-low,#E7E7E7)]";
+    "w-full h-[44px] rounded-full p-[4px] flex items-center justify-between bg-surface-variant-low";
 
-  // 이전 버튼 (Step3와 동일: 배경만 버튼에, 텍스트는 span에서)
+  // 이전 버튼
   const prevBtnClass =
-    "w-[82px] h-[60px] rounded-[10px] flex items-center justify-center " +
-    "bg-[var(--Schemes-On-Surface-Variant-Low,#B6B6B7)]";
+    "w-[82px] h-[60px] rounded-[10px] flex items-center justify-center bg-on-surface-variant-low";
 
   return (
     <div className="w-full flex flex-col items-center gap-[18px]">
@@ -108,7 +101,7 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
         <h2
           className="text-center"
           style={{
-            color: "var(--Schemes-Primary, #121315)",
+            color: "var(--color-primary, #121315)",
             fontFamily: "Pretendard",
             fontSize: "28px",
             fontWeight: 700,
@@ -121,7 +114,7 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
         <p
           className="text-center"
           style={{
-            color: "var(--Schemes-Primary, #121315)",
+            color: "var(--color-primary, #121315)",
             fontFamily: "Pretendard",
             fontSize: "16px",
             fontWeight: 500,
@@ -137,7 +130,7 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
       <p
         className="w-[666px]"
         style={{
-          color: "var(--Schemes-Primary,#121315)",
+          color: "var(--color-primary, #121315)",
           fontFamily: "Pretendard",
           fontSize: "12px",
           fontWeight: 500,
@@ -163,7 +156,11 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
               className={clsx(
                 journeyBoxBase,
                 "relative overflow-hidden",
-                selected ? journeyBoxSelected : hovered ? journeyBoxHovered : journeyBoxDefault
+                selected
+                  ? journeyBoxSelected
+                  : hovered
+                    ? journeyBoxHovered
+                    : journeyBoxDefault,
               )}
               onMouseEnter={() => setHoveredJourney(key)}
               onMouseLeave={() => setHoveredJourney(null)}
@@ -204,15 +201,13 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
                 className={clsx(
                   goalCircleBase,
                   "p-0 flex-none shrink-0",
-                  selected ? goalCircleOn : goalCircleOff
+                  selected ? goalCircleOn : goalCircleOff,
                 )}
               >
                 <span
                   className="label-medium"
                   style={{
-                    color: selected
-                      ? "var(--Schemes-Secondary,#C8FF2E)"
-                      : "rgba(18,19,21,0.35)",
+                    color: selected ? "var(--color-secondary)" : "rgba(18,19,21,0.35)",
                     fontWeight: 700,
                   }}
                 >
@@ -234,7 +229,9 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
               text-[16.161px]
               font-[500]
               leading-[21.01px]
-              text-[var(--Schemes-On-Surface-Variant-Lowest,#858586)]">
+              text-on-surface-variant-lowest
+            "
+          >
             이전
           </span>
         </button>
@@ -247,7 +244,7 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
           className={[
             "w-[572px] h-[60px]",
             "rounded-[6.465px]",
-            !canNext ? "bg-[var(--Schemes-Surface-Variant-Low,#E7E7E7)]" : "",
+            !canNext ? "bg-surface-variant-low" : "",
           ].join(" ")}
           disabled={!canNext}
           onClick={() => payload && onSubmit(payload)}
