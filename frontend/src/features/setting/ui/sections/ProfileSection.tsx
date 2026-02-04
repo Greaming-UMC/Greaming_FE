@@ -212,6 +212,7 @@ const ProfileSection = () => {
           <div className="flex flex-wrap gap-x-2 gap-y-3">
             {categoryOptions.map((tag) => {
               const isSelected = selectedCategories.includes(tag);
+              const isDisableMode = !isSelected && selectedCategories.length >= 4;
               return (
                 <Button
                   key={tag}
@@ -220,13 +221,14 @@ const ProfileSection = () => {
                   size="sm"
                   widthMode="fixed"
                   width="110px"
+                  disabled={isDisableMode}
                   onClick={() => {
                     if (isSelected) setSelectedCategories(selectedCategories.filter(t => t !== tag));
                     else if (selectedCategories.length < 4) setSelectedCategories([...selectedCategories, tag]);
                   }}
                   className={clsx(
                     "h-10 px-5 transition-all !rounded-small",
-                    !isSelected && clsx("bg-surface text-on-surface", testCardStyle)
+                    !isSelected && clsx("bg-surface text-on-surface", testCardStyle),
                   )}
                 >
                   {tag}
@@ -236,13 +238,11 @@ const ProfileSection = () => {
           </div>
         </div>
 
-        {/* --- 스타일 선택 섹션 --- */}
+        {/* --- 스타일 (무조건 1개만) --- */}
         <div className="flex flex-col gap-4">
           <div className="flex justify-between items-center px-1">
             <span className="label-large-emphasized text-on-surface">스타일</span>
-            <span className="text-[11px] text-on-surface-variant-lowest">
-              최소 1개 최대 4개 ({selectedStyles.length}/4)
-            </span>
+            <span className="text-[11px] text-on-surface-variant-lowest">1개 선택</span>
           </div>
           <div className="flex flex-wrap gap-x-2 gap-y-3">
             {styleOptions.map((tag) => {
@@ -251,13 +251,10 @@ const ProfileSection = () => {
                 <Button
                   key={tag}
                   variant={isSelected ? "primary" : "surface"}
-                  shape="square"
-                  size="sm"
-                  widthMode="fixed"
-                  width="110px"
+                  shape="square" size="sm" widthMode="fixed" width="110px"
                   onClick={() => {
-                    if (isSelected) setSelectedStyles(selectedStyles.filter(t => t !== tag));
-                    else if (selectedStyles.length < 4) setSelectedStyles([...selectedStyles, tag]);
+                    if (isSelected) setSelectedStyles([]);
+                    else setSelectedStyles([tag]);
                   }}
                   className={clsx(
                     "h-10 px-5 transition-all !rounded-small",
@@ -287,6 +284,7 @@ const ProfileSection = () => {
           <div className="flex flex-wrap gap-x-2 gap-y-3">
             {categoryOptions.map((tag) => {
               const isSelected = selectedCategories2.includes(tag);
+              const isDisableMode = !isSelected && selectedCategories2.length >= 4;
               return (
                 <Button
                   key={tag}
@@ -295,6 +293,7 @@ const ProfileSection = () => {
                   size="sm"
                   widthMode="fixed"
                   width="110px"
+                  disabled={isDisableMode}
                   onClick={() => {
                     if (isSelected) setSelectedCategories2(selectedCategories2.filter(t => t !== tag));
                     else if (selectedCategories2.length < 4) setSelectedCategories2([...selectedCategories2, tag]);
@@ -331,8 +330,8 @@ const ProfileSection = () => {
                   widthMode="fixed"
                   width="110px"
                   onClick={() => {
-                    if (isSelected) setSelectedStyles2(selectedStyles2.filter(t => t !== tag));
-                    else if (selectedStyles2.length < 4) setSelectedStyles2([...selectedStyles2, tag]);
+                    if (isSelected) setSelectedStyles2([]);
+                    else setSelectedStyles2([tag]);
                   }}
                   className={clsx(
                     "h-10 px-5 transition-all !rounded-small",
