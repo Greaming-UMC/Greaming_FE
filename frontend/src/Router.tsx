@@ -4,13 +4,8 @@ import JourneyPage from './pages/JourneyPage';
 import HomePage from './pages/HomePage';
 import { createBrowserRouter } from 'react-router-dom';
 import ErrorPage from './pages/ErrorPage';
-import OnboardingWelcomePage from './pages/OnboardingWelcomePage';
-import LoginPage from './pages/LoginPage';
-import OnboardingPage from './pages/OnboardingPage';
-import UploadPageRoute from './pages/UploadPage';
-import WeeklyChallengeUploadPage from './features/upload/ui/pages/WeeklyChallengeUploadPage';
-import CircleUploadPage from './features/upload/ui/pages/CircleUploadPage';
-import DailyUploadPage from './features/upload/ui/pages/DailyUploadPage';
+
+import ExamplePage from './pages/ExamplePage';
 
 /* TODO
 라우터 설정은 추후 변경해야 합니다. 또한, 나중에 API 연동할 때 로그인 여부 등.. 다시 리팩토링해야합니당
@@ -24,6 +19,10 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
+        element: <ExamplePage />,
+      },
+      {
+        path: 'home',
         element: <HomePage />,
       },
       {
@@ -33,37 +32,7 @@ const router = createBrowserRouter([
       {
         path: 'journey',
         element: <JourneyPage />,
-      },
-      {
-        path: '/onboardingstart',
-        element: <OnboardingWelcomePage />,
-      },
-      {
-        path:'/onboarding',
-        element:<OnboardingPage/>,
-      },
-      {
-        path: '/login',
-        element: <LoginPage />,
-      },
-      {
-        path: '/upload',
-        element: <UploadPageRoute />,
-      },
-      
-      {
-        path: "/upload/weekly",
-        element: <WeeklyChallengeUploadPage />,
-      },
-      {
-        path: "/upload/circle",
-        element: <CircleUploadPage />,
-      },
-      {
-        path:"/upload/daily",
-        element:<DailyUploadPage />
       }
-
       
     ],
   },
