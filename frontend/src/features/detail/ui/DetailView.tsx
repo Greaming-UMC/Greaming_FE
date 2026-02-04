@@ -7,6 +7,7 @@ import RecommendedGrid from "./section/RecommendedGrid";
 
 const DetailView = () => {
   const mockSubmission = {
+    id: 1, // 추천 작품을 가져오기 위한 현재 작품 ID
     nickname: "테스트 작가",
     profileImageUrl: "sample-profile.jpg",
     level: "ARTIST",
@@ -60,30 +61,6 @@ const DetailView = () => {
       content: "참고하고 싶은 스타일이네요.",
       isLike: false,
     },
-     {
-      writer_nickname: "유저C",
-      writer_profileImgUrl: "",
-      content: "참고하고 싶은 스타일이네요.",
-      isLike: false,
-    },
-     {
-      writer_nickname: "유저C",
-      writer_profileImgUrl: "",
-      content: "참고하고 싶은 스타일이네요.",
-      isLike: false,
-    },
-     {
-      writer_nickname: "유저C",
-      writer_profileImgUrl: "",
-      content: "참고하고 싶은 스타일이네요.",
-      isLike: false,
-    },
-     {
-      writer_nickname: "유저C",
-      writer_profileImgUrl: "",
-      content: "참고하고 싶은 스타일이네요.",
-      isLike: false,
-    },
   ];
 
   const myArtData = [
@@ -91,14 +68,159 @@ const DetailView = () => {
       id: 1,
       title: "작품 1",
       src: "https://picsum.photos/200/300?random=11",
+      likes_count: 120,
+      comment_count: 12,
+      bookmark_count: 3,
     },
     {
       id: 2,
       title: "작품 2",
       src: "https://picsum.photos/200/300?random=12",
+      likes_count: 88,
+      comment_count: 5,
+      bookmark_count: 1,
     }
 
   
+  ];
+
+  const mockRecommendedArts: RecommendedArt[] = [
+    {
+      id: 101,
+      src: "https://picsum.photos/300/300?random=21",
+      title: "추천 작품 1: 고요한 호수",
+      likes_count: 123,
+      comment_count: 4,
+      bookmark_count: 15,
+    },
+    {
+      id: 102,
+      src: "https://picsum.photos/300/300?random=22",
+      title: "추천 작품 2: 도시의 밤",
+      likes_count: 45,
+      comment_count: 12,
+      bookmark_count: 2,
+    },
+    {
+      id: 103,
+      src: "https://picsum.photos/300/300?random=23",
+      title: "추천 작품 3: 숲속의 아침",
+      likes_count: 99,
+      comment_count: 8,
+      bookmark_count: 22,
+    },
+    {
+      id: 104,
+      src: "https://picsum.photos/300/300?random=24",
+      title: "추천 작품 4: 겨울 산책",
+      likes_count: 256,
+      comment_count: 23,
+      bookmark_count: 45,
+    },
+    {
+      id: 105,
+      src: "https://picsum.photos/300/300?random=25",
+      title: "추천 작품 5: 해변의 노을",
+      likes_count: 180,
+      comment_count: 15,
+      bookmark_count: 30,
+    },
+    {
+      id: 106,
+      src: "https://picsum.photos/300/300?random=26",
+      title: "추천 작품 6: 오래된 골목",
+      likes_count: 77,
+      comment_count: 3,
+      bookmark_count: 7,
+    },
+    {
+      id: 107,
+      src: "https://picsum.photos/300/300?random=27",
+      title: "추천 작품 7: 별이 빛나는 밤",
+      likes_count: 301,
+      comment_count: 35,
+      bookmark_count: 50,
+    },
+    {
+      id: 108,
+      src: "https://picsum.photos/300/300?random=28",
+      title: "추천 작품 8: 비 오는 거리",
+      likes_count: 112,
+      comment_count: 9,
+      bookmark_count: 11,
+    },
+     {
+      id: 108,
+      src: "https://picsum.photos/300/300?random=28",
+      title: "추천 작품 8: 비 오는 거리",
+      likes_count: 112,
+      comment_count: 9,
+      bookmark_count: 11,
+    },
+     {
+      id: 108,
+      src: "https://picsum.photos/300/300?random=29",
+      title: "추천 작품 8: 비 오는 거리",
+      likes_count: 112,
+      comment_count: 9,
+      bookmark_count: 11,
+    },
+     {
+      id: 108,
+      src: "https://picsum.photos/300/300?random=28",
+      title: "추천 작품 8: 비 오는 거리",
+      likes_count: 112,
+      comment_count: 9,
+      bookmark_count: 11,
+    },
+    {
+      id: 108,
+      src: "https://picsum.photos/300/300?random=28",
+      title: "추천 작품 8: 비 오는 거리",
+      likes_count: 112,
+      comment_count: 9,
+      bookmark_count: 11,
+    },
+    {
+      id: 108,
+      src: "https://picsum.photos/300/300?random=28",
+      title: "추천 작품 8: 비 오는 거리",
+      likes_count: 112,
+      comment_count: 9,
+      bookmark_count: 11,
+    },
+    {
+      id: 108,
+      src: "https://picsum.photos/300/300?random=28",
+      title: "추천 작품 8: 비 오는 거리",
+      likes_count: 112,
+      comment_count: 9,
+      bookmark_count: 11,
+    },
+    {
+      id: 108,
+      src: "https://picsum.photos/300/300?random=28",
+      title: "추천 작품 8: 비 오는 거리",
+      likes_count: 112,
+      comment_count: 9,
+      bookmark_count: 11,
+    },
+    {
+      id: 108,
+      src: "https://picsum.photos/300/300?random=28",
+      title: "추천 작품 8: 비 오는 거리",
+      likes_count: 112,
+      comment_count: 9,
+      bookmark_count: 11,
+    },
+    {
+      id: 108,
+      src: "https://picsum.photos/300/300?random=28",
+      title: "추천 작품 8: 비 오는 거리",
+      likes_count: 112,
+      comment_count: 9,
+      bookmark_count: 11,
+    },
   ];
 
   return (
@@ -124,7 +246,7 @@ const DetailView = () => {
         <ArtistArtwork artworks={myArtData} userRole="USER" />
       </div>
       <div className="w-full shrink-0">
-        <RecommendedGrid />
+        <RecommendedGrid artworks={mockRecommendedArts} />
       </div>
     </div>
   );

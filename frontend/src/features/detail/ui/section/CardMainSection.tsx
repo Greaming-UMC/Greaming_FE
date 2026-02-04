@@ -20,6 +20,9 @@ const CardItem = ({
       : ["/sample.jpg"];
   const { currentIndex: index, prev, next, goTo } = useCarousel(images.length);
 
+  const isFirstSlide = index === 0;
+  const isLastSlide = index === images.length - 1;
+
   return (
     // 1️⃣ 너비를 최대 840px로 제한하고 중앙 정렬
     <div className="w-full max-w-[840px] mx-auto">
@@ -39,23 +42,27 @@ const CardItem = ({
           {/* Prev / Next buttons */}
           {images.length > 1 && (
             <>
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant-lowest z-10">
-                <Icon
-                  name="arrow_left"
-                  onClick={prev}
-                  size={32} // 크기 조금 키움 (박스가 커졌으므로)
-                  className="fill-current cursor-pointer drop-shadow-md transition-transform"
-                />
-              </div>
+              {!isFirstSlide && (
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant-lowest z-10">
+                  <Icon
+                    name="arrow_left"
+                    onClick={prev}
+                    size={32} 
+                    className="fill-current cursor-pointer drop-shadow-md transition-transform"
+                  />
+                </div>
+              )}
 
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant-lowest z-10">
-                <Icon
-                  name="arrow_right"
-                  onClick={next}
-                  size={32}
-                  className="fill-current cursor-pointer drop-shadow-md transition-transform"
-                />
-              </div>
+              {!isLastSlide && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant-lowest z-10">
+                  <Icon
+                    name="arrow_right"
+                    onClick={next}
+                    size={32}
+                    className="fill-current cursor-pointer drop-shadow-md transition-transform"
+                  />
+                </div>
+              )}
             </>
           )}
         </div>

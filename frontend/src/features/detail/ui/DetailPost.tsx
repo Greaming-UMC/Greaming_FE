@@ -29,7 +29,7 @@ const DetailPost = ({ submission, comment_list }: DetailPostProps) => {
               <CardFooter submission={submission} />
             </div>
           </div>
-
+          <div className="w-[20px]"></div>
           <aside className="w-full lg:w-[360px] shrink-0">
             <div className="bg-surface border border-surface-variant-high rounded-md shadow-sm overflow-hidden h-fit  top-4">
               <ChattingSection comment_list={comment_list} />

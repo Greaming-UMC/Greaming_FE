@@ -7,10 +7,13 @@ import Icon from "../../../components/common/Icon"
 /* -------------------------------------------------------------------------- */
 
 // (기존에 쓰시던 타입 그대로 유지하시면 됩니다)
-export interface Artwork {
+export interface Artwork { // TODO: apis/types/work.ts 의 UserWork 타입과 통합을 고려해보세요.
   id: number;
   title: string;
   src: string;
+  likes_count: number;
+  comment_count: number;
+  bookmark_count: number;
 }
 
 interface ArtistArtworkProps {
@@ -24,7 +27,6 @@ interface ArtistArtworkProps {
 
 const ArtistArtwork = ({ artworks = [], userRole }: ArtistArtworkProps) => {
   
-  // ✅ 1. 데이터가 비었는지 확인
   const isEmpty = useMemo(() => {
     return !artworks || artworks.length === 0;
   }, [artworks]);
@@ -43,12 +45,13 @@ const ArtistArtwork = ({ artworks = [], userRole }: ArtistArtworkProps) => {
         )}
       </div>
 
-      {/* ✅ 2. 조건부 렌더링: 비었으면 EmptyState, 있으면 리스트 출력 */}
+      {/* 2. 조건부 렌더링: 비었으면 EmptyState, 있으면 리스트 출력 */}
       {isEmpty ? (
-        <div className="py-10 w-full"> {/* 여백 좀 줘서 예쁘게 */}
+        <div className="py-10 w-full"> 
             <EmptyState 
                 title="작가가 등록한 다른 작품이 없습니다" 
-                icon="char_sad" // 아이콘 이름 확인 필요
+                icon="char_sad" 
+                iconSize={132}
             />
         </div>
       ) : (
@@ -61,7 +64,27 @@ const ArtistArtwork = ({ artworks = [], userRole }: ArtistArtworkProps) => {
                   alt={art.title}
                   aspectRatio="aspect-square"
                   className="rounded-lg bg-surface-variant-low"
-                />
+                >
+                  <Card.Overlay className="items-end pb-3 pr-3">
+                    <div className="flex items-center justify-end gap-3 text-on-primary">
+                      {/* 좋아요 */}
+                      <div className="flex items-center gap-1">
+                        <Icon name="like" size={16} className="fill-on-primary" />
+                        <span className="text-xs font-medium">{art.likes_count}</span>
+                      </div>
+                      {/* 댓글 */}
+                      <div className="flex items-center gap-1">
+                        <Icon name="chat" size={16} className="fill-on-primary" />
+                        <span className="text-xs font-medium">{art.comment_count}</span>
+                      </div>
+                      {/* 저장 */}
+                      <div className="flex items-center gap-1">
+                        <Icon name="save" size={16} className="fill-on-primary" />
+                        <span className="text-xs font-medium">{art.bookmark_count}</span>
+                      </div>
+                    </div>
+                  </Card.Overlay>
+                </Card.Media>
                 <div className="mt-2 text-sm font-medium truncate text-on-surface">
                   {art.title}
                 </div>

@@ -1,25 +1,30 @@
 import { Card } from "../../../../components/common/display"; 
 import Icon from "../../../../components/common/Icon"; 
-import { useRecommendedArts } from "../../hooks/useRecommendedArts";
+
+// TODO: 아래 타입은 `apis/types/art.ts`의 RecommendedArt와 동기화되어야 합니다.
+// 현재 `ArtistArtwork`와 데이터 일관성을 맞추기 위해 임시 정의합니다.
+interface RecommendedArt {
+  id: number;
+  src: string;
+  title: string;
+  likes_count: number;
+  comment_count: number;
+  bookmark_count: number;
+}
+interface RecommendedGridProps {
+  /** 추천 작품 목록 데이터 */
+  artworks: RecommendedArt[];
+}
 
 /* -------------------------------------------------------------------------- */
 /* 2. [Component]                                 */
 /* -------------------------------------------------------------------------- */
 
-const RecommendedGrid = () => {
-  const {
-    artworks,
-    status,
-    error,
-    isFetchingNextPage,
-    hasNextPage,
-    bottomRef,
-  } = useRecommendedArts();
-
-  // 로딩 중이거나 에러 처리
-  if (status === "pending")
-    return <div className="p-10 text-center">초기 데이터 로딩 중...</div>;
-  if (status === "error") return <div>에러가 발생했습니다: {error.message}</div>;
+const RecommendedGrid = ({ artworks }: RecommendedGridProps) => {
+  // 데이터가 비어있으면 아무것도 렌더링하지 않음
+  if (!artworks || artworks.length === 0) {
+    return null;
+  }
 
   return (
     <div className=" mx-auto">
@@ -44,45 +49,39 @@ const RecommendedGrid = () => {
                 {/* 오버레이 (아이콘 정보) */}
                 <Card.Overlay className="items-end pb-3 pr-3">
                   <div className="flex items-center justify-end gap-3 text-on-primary">
+                    {/* 좋아요 */}
                     <div className="flex items-center gap-1">
                       <Icon
-                        name="heart"
+                        name="like"
                         size={16}
                         className="fill-on-primary"
                       />
-                      <span className="text-xs font-medium">{art.likes}</span>
+                      <span className="text-xs font-medium">{art.likes_count}</span>
                     </div>
+                    {/* 댓글 */}
                     <div className="flex items-center gap-1">
                       <Icon
-                        name="message"
+                        name="chat"
                         size={16}
                         className="fill-on-primary"
                       />
-                      <span className="text-xs font-medium">{art.comments}</span>
+                      <span className="text-xs font-medium">{art.comment_count}</span>
+                    </div>
+                    {/* 저장 */}
+                    <div className="flex items-center gap-1">
+                      <Icon name="save" size={16} className="fill-on-primary" />
+                      <span className="text-xs font-medium">{art.bookmark_count}</span>
                     </div>
                   </div>
                 </Card.Overlay>
               </Card.Media>
 
-              {/* 하단 제목 (스크린샷에는 없지만 필요하면 사용) */}
+    
               {/* <div className="mt-2 text-sm font-medium">{art.title}</div> */}
             </Card.Root>
           </div>
         ))}
       </div>
-
-      {/* E. 무한 스크롤 트리거 (감지 센서) */}
-      {/* 다음 페이지가 있을 때만 렌더링 */}
-      {hasNextPage && (
-        <div ref={bottomRef} className="h-20 flex justify-center items-center mt-4">
-          {isFetchingNextPage ? (
-            // 로딩 스피너 (임시 텍스트)
-            <span className="text-gray-400 text-sm">불러오는 중</span>
-          ) : (
-            <span className="h-10" /> // 투명한 공간 확보
-          )}
-        </div>
-      )}
     </div>
   );
 };
