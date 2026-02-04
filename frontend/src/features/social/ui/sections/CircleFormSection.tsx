@@ -59,8 +59,14 @@ const CircleFormSection = ({
               {memberOption === "직접입력" ? (
                 <input
                   type="number"
-                  value={maxMembers} // props 값 사용
-                  onChange={(e) => setMaxMembers(e.target.value)} // props 함수 사용
+                  min="1"        // 최소 1명
+                  value={maxMembers}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    // 음수 입력 방지 등 간단한 전처리 가능
+                    if (Number(val) < 0) return;
+                    setMaxMembers(val);
+                  }}
                   placeholder="직접입력"
                   className="w-full bg-transparent outline-none text-on-surface placeholder:text-on-surface-variant-lowest"
                   onFocus={() => setIsSelectOpen(false)} 

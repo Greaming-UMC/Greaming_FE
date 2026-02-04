@@ -1,58 +1,79 @@
-/* 타입은 다시 수정 예정 입니다. */
+import type { 
+  FollowUserInfo, 
+  ApiDataSuccessResponse, 
+  FollowState,
+  CheckCircleMemberInfo,
+  ExploreCircleInfo,
+  UsagePurpose
+} from "../../apis/types/common";
+import type { CheckFollowersData, CheckFollowingsData } from "../../apis/types/follow";
 
-/**
- * 유저 관련 타입 (팔로잉/팔로워)
- */
-export interface SocialUser {
-  id: number;
-  nickname: string;           // ActionItem의 'title'로 사용
-  bio: string;                // ActionItem의 'subtitle'로 사용
-  profileImageUrl?: string;   // ActionItem의 'avatar.src'로 사용
-  profileIcon?: string;       // ActionItem의 'avatar'로 사용
-  isFollowing: boolean;       // 팔로우 상태 여부
-  badgeImage?: string;        // 뱃지 이미지 경로 또는 아이콘 이름
+/** 1. 팔로우 요청 응답 (POST /api/users/{targetId}/follows) */
+// 명세에 직접적인 Result 타입이 없으므로, FollowState를 포함한 응답 객체 정의
+export interface FollowActionData {
+  followId: number;
+  followState: FollowState; // 'REQUESTED' | 'COMPLETED'
+  createdAt: string;
+}
+export type FollowRequestResponse = ApiDataSuccessResponse<FollowActionData>;
+
+/** 2. 팔로우/팔로워 리스트 UI 타입 */
+export interface SocialUserItem extends FollowUserInfo {
+  bio?: string;
+  level?: UsagePurpose;
+  badgeImage?: string;
+  profileIcon?: string;
 }
 
-export interface GetFollowingListResponse {
-  users: SocialUser[];
-  totalCount: number;
-  nextCursor?: number | null;
+// 응답 래퍼
+export interface SocialFollowerList extends Omit<CheckFollowersData, 'data'> {
+  data: SocialUserItem[];
+}
+export type GetSocialFollowersResponse = ApiDataSuccessResponse<SocialFollowerList>;
+
+export interface SocialFollowingList extends Omit<CheckFollowingsData, 'data'> {
+  data: SocialUserItem[];
+}
+export type GetSocialFollowingsResponse = ApiDataSuccessResponse<SocialFollowingList>;
+
+export type ApiErrorResponse = 
+  | { isSuccess: boolean; code: string; message: string; data: null; }
+  | { status: number; error: string; message: string; code?: string; };
+
+/** 3. 써클 관련 타입 */
+export interface CircleItem extends ExploreCircleInfo {
+  description?: string;
+  isPublic?: boolean;
 }
 
-/**
- * 써클(Circle) 관련 타입
- */
-export interface Circle {
-  id: number;
-  name: string;
-  description: string;
-  isPublic: boolean;
-  memberCount: number;
-  maxMembers: number | 'unlimited';
-  circleImageUrl?: string;
-  CircleIcon?: string;
+export interface CircleMemberItem extends CheckCircleMemberInfo {
+  role?: 'owner' | 'member';
+  introduction?: string;
+  profileIcon?: string;   
+  badgeImage?: string;     
 }
 
-/**
- * 써클 생성 폼 데이터 (API 전송용)
- */
+export type GetCircleMembersResponse = ApiDataSuccessResponse<{
+  isLeader: boolean;
+  members: CircleMemberItem[];
+  hasNext: boolean;
+  nextCursor: number | null;
+}>;
+
+export type GetCirclesResponse = ApiDataSuccessResponse<CircleItem[]>;
+
+/** 🟢 써클 생성 요청 타입 (POST /api/circles) */
 export interface CreateCircleRequest {
   name: string;
   description: string;
   isPublic: boolean;
-  maxMembers: number; // 혹은 'unlimited'를 처리하는 백엔드 규격에 맞춤
+  capacity: number | null; // 제한없음일 때 null
 }
 
-/**
- * 써클 멤버 전용 타입
- */
-export interface CircleMember {
-  id: number;
-  nickname: string;           // ActionItem title
-  bio: string;                // #태그 #태그 형태의 문자열
-  profileImageUrl?: string;   // ActionItem avatar.src
-  profileIcon?: string;       // ActionItem의 'avatar'로 사용
-  isFollowing: boolean;       // 내가 이 멤버를 팔로우 중인지 여부
-  badgeImage?: string;        // 닉네임 옆의 초록색 뱃지 아이콘
-  role?: 'owner' | 'member';  // 방장 여부 (필요 시 UI에서 왕관 아이콘 등 표시)
+// 써클 생성 응답 데이터 타입 (필요 시)
+export interface CreateCircleResponseData {
+  circleId: number;
+  createdAt: string;
 }
+
+export type GetCreateCircleResponse = ApiDataSuccessResponse<CreateCircleResponseData>;

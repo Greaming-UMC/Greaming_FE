@@ -1,19 +1,29 @@
 import { ActionItem } from "../../../../components/common";
-import type { SocialUser } from "../../types";
+// 🟢 SocialUserItem 임포트 확인
+import type { SocialUserItem } from "../../types";
 
-const InviteSection = ({ users, onInvite }: { users: SocialUser[], onInvite: (id: number) => void }) => {
+// 🟢 props 타입을 SocialUserItem으로 변경
+interface InviteSectionProps {
+  users: SocialUserItem[]; 
+  onInvite: (userId: number) => void;
+}
+
+const InviteSection = ({ users, onInvite }: InviteSectionProps) => {
   return (
     <div className="flex flex-col">
       {users.map((user) => (
         <ActionItem
-          key={user.id}
+          key={user.userId}
           size="lg"
-          action="invite" // 🟢 버튼 라벨: "초대하기"
+          action="invite"
           title={user.nickname}
-          subtitle={user.bio}
-          avatar={{ src: user.profileImageUrl, icon: "person" }}
+          subtitle={user.bio} // SocialUserItem은 bio를 사용
+          avatar={{ 
+            src: user.profileImgUrl, 
+            icon: "person" 
+          }}
           badge={{ icon: user.badgeImage, size: "md" }}
-          onInvite={() => onInvite(user.id)}
+          onInvite={() => onInvite(user.userId)}
           widthMode="fill"
         />
       ))}

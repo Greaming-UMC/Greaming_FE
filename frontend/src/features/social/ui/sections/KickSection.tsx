@@ -1,19 +1,25 @@
 import { ActionItem } from "../../../../components/common";
-import type { CircleMember } from "../../types";
+import type { CircleMemberItem } from "../../types";
 
-const KickSection = ({ users, onKick }: { users: CircleMember[], onKick: (id: number) => void }) => {
+const KickSection = ({ users, onKick }: { users: CircleMemberItem[], onKick: (userId: number) => void }) => {
   return (
     <div className="flex flex-col">
       {users.map((user) => (
         <ActionItem
-          key={user.id}
+          // 🟢 key를 userId로 변경 (중복 방지)
+          key={user.userId} 
           size="lg"
-          action="kick" // 🟢 버튼 라벨: "내보내기"
+          action="kick"
           title={user.nickname}
-          subtitle={user.bio}
-          avatar={{ src: user.profileImageUrl, icon: "person" }}
+          // 🟢 명세에 맞는 subtitle 우선순위 적용
+          subtitle={user.introduction || user.tags?.map(t => `#${t}`).join(' ')}
+          avatar={{ 
+            src: user.profileImgUrl, 
+            icon: user.profileIcon || "person" 
+          }}
           badge={{ icon: user.badgeImage, size: "md" }}
-          onKick={() => onKick(user.id)}
+          // 🟢 ActionItem 내부 버튼 핸들러에 id 전달
+          onKick={() => onKick(user.userId)}
           widthMode="fill"
         />
       ))}

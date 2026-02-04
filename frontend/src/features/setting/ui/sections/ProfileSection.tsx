@@ -227,7 +227,7 @@ const ProfileSection = () => {
                     else if (selectedCategories.length < 4) setSelectedCategories([...selectedCategories, tag]);
                   }}
                   className={clsx(
-                    "h-10 px-5 transition-all !rounded-small",
+                    "h-10 px-5 transition-all",
                     !isSelected && clsx("bg-surface text-on-surface", testCardStyle),
                   )}
                 >
@@ -257,7 +257,7 @@ const ProfileSection = () => {
                     else setSelectedStyles([tag]);
                   }}
                   className={clsx(
-                    "h-10 px-5 transition-all !rounded-small",
+                    "h-10 px-5 transition-all",
                     !isSelected && clsx("bg-surface text-on-surface", testCardStyle)
                   )}
                 >
@@ -299,7 +299,7 @@ const ProfileSection = () => {
                     else if (selectedCategories2.length < 4) setSelectedCategories2([...selectedCategories2, tag]);
                   }}
                   className={clsx(
-                    "h-10 px-5 transition-all !rounded-small",
+                    "h-10 px-5 transition-all",
                     !isSelected && clsx("bg-surface text-on-surface", testCardStyle)
                   )}
                 >
@@ -315,7 +315,7 @@ const ProfileSection = () => {
           <div className="flex justify-between items-center px-1">
             <span className="label-large-emphasized text-on-surface">스타일</span>
             <span className="text-[11px] text-on-surface-variant-lowest">
-              최소 1개 최대 4개 ({selectedStyles2.length}/4)
+              1개 선택
             </span>
           </div>
           <div className="flex flex-wrap gap-x-2 gap-y-3">
@@ -334,7 +334,7 @@ const ProfileSection = () => {
                     else setSelectedStyles2([tag]);
                   }}
                   className={clsx(
-                    "h-10 px-5 transition-all !rounded-small",
+                    "h-10 px-5 transition-all",
                     !isSelected && clsx("bg-surface text-on-surface", testCardStyle)
                   )}
                 >

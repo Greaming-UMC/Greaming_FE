@@ -1,8 +1,16 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { Button, Modal, SearchField } from '../../../components/common';
 import InviteSection from './sections/InviteSection';
 import KickSection from './sections/KickSection';
-import type { CircleMember, SocialUser } from '../types';
+
+// 🟢 목업 데이터 및 타입 임포트
+import { 
+  MOCK_CIRCLE_MEMBER_LIST, 
+  MOCK_FOLLOWING_LIST, 
+  MOCK_CURRENT_CIRCLE_ID 
+} from '../testing/mockdata';
+import type { CircleMemberItem, SocialUserItem } from '../types';
+import { useDebounce } from '../hooks/useDebounce';
 
 interface CircleManageModalProps {
   isOpen: boolean;
@@ -10,79 +18,76 @@ interface CircleManageModalProps {
 }
 
 const CircleManageModal = ({ isOpen, onClose }: CircleManageModalProps) => {
-  // 1. 상태 관리
   const [activeTab, setActiveTab] = useState<'invite' | 'kick'>('invite');
   const [searchTerm, setSearchTerm] = useState("");
-  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<CircleMember | null>(null);
+  
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  // 2. 검색창 포커스 제어를 위한 Ref
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<CircleMemberItem | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // 3. 목업 데이터 관리 (setMember를 통해 내보내기 기능 구현)
-  const [member, setMember] = useState<CircleMember[]>([
-    { id: 1, nickname: '그리밍1', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 12, nickname: '그리밍12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 14, nickname: '그리밍1', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 124, nickname: '그리밍12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 121, nickname: '그리밍1', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 16, nickname: '그리밍12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 17, nickname: '그리밍1', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 18, nickname: '그리밍12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 1244, nickname: '그리리리리밍12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 1212, nickname: '그리밍리리리1243121', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 162, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 174, nickname: '그리밍235231', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 186, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-  ]);
+  // 1. 내보내기용 상태 (userId 기반)
+  const [members, setMembers] = useState<CircleMemberItem[]>(MOCK_CIRCLE_MEMBER_LIST);
+  
+  // 2. 초대하기용 검색 결과 상태
+  const [searchedUsers, setSearchedUsers] = useState<SocialUserItem[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
 
-  const [Allusers] = useState<SocialUser[]>([
-    { id: 1, nickname: '아리리리밍1', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 12, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 14, nickname: '그리밍리리리1', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 124, nickname: '그리리리리밍12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 121, nickname: '그리밍리리리1243121', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 16, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 17, nickname: '그리밍235231', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 18, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 151, nickname: '아리리리밍1', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 122, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 141, nickname: '그리밍리리리1', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 1244, nickname: '그리리리리밍12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 1212, nickname: '그리밍리리리1243121', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 162, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 174, nickname: '그리밍235231', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-    { id: 186, nickname: '그리밍리리리12', bio: '# 특기태그 # 특기태그 # 특기태그', isFollowing: false, badgeImage: 'badge_artist' },
-  ]);
+  // ==========================================================
+  // 🟢 [SECTION 1] 초대하기 검색 로직
+  // ==========================================================
+  useEffect(() => {
+    if (activeTab === 'invite' && debouncedSearchTerm.trim()) {
+      setIsSearching(true);
+      const timer = setTimeout(() => {
+        // MOCK_FOLLOWING_LIST의 userId가 유니크한지 확인 필요
+        const results = MOCK_FOLLOWING_LIST.filter(user =>
+          user.nickname.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+        );
+        setSearchedUsers(results);
+        setIsSearching(false);
+      }, 400);
 
-  // 4. 모달 초기화 로직
+      return () => clearTimeout(timer);
+    } else {
+      setSearchedUsers([]);
+      setIsSearching(false);
+    }
+  }, [debouncedSearchTerm, activeTab]);
+
+  // ==========================================================
+  // 🟢 [SECTION 2] 내보내기 필터링 로직
+  // ==========================================================
+  const filteredMembers = useMemo(() => {
+    if (activeTab !== 'kick') return [];
+    return members.filter(m => 
+      m.nickname.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [members, searchTerm, activeTab]);
+
+  // ==========================================================
+  // 🟢 [SECTION 3] 이벤트 핸들러
+  // ==========================================================
+  
   useEffect(() => {
     if (isOpen) {
       setActiveTab('invite');
       setSearchTerm("");
+      setMembers(MOCK_CIRCLE_MEMBER_LIST); 
     }
   }, [isOpen]);
 
-  // 5. 탭 전환 시 검색어 초기화 및 포커스 복구
   useEffect(() => {
-    setSearchTerm("");
     if (isOpen) {
+      setSearchTerm("");
       setTimeout(() => searchInputRef.current?.focus(), 0);
     }
   }, [activeTab, isOpen]);
 
-  // 6. 필터링 로직
-  const filteredAllUsers = Allusers.filter(user => 
-    user.nickname.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const filteredMembers = member.filter(m => 
-    m.nickname.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  // 7. 이벤트 핸들러
-  const handleKickClick = (id: number) => {
-    const target = member.find(m => m.id === id);
+  // id -> userId 파라미터명 통일
+  const handleKickClick = (userId: number) => {
+    const target = members.find(m => m.userId === userId);
     if (target) {
       setSelectedMember(target);
       setIsConfirmOpen(true);
@@ -91,7 +96,7 @@ const CircleManageModal = ({ isOpen, onClose }: CircleManageModalProps) => {
 
   const confirmKick = () => {
     if (selectedMember) {
-      setMember(prev => prev.filter(m => m.id !== selectedMember.id));
+      setMembers(prev => prev.filter(m => m.userId !== selectedMember.userId));
       setIsConfirmOpen(false);
       setSelectedMember(null);
     }
@@ -102,26 +107,21 @@ const CircleManageModal = ({ isOpen, onClose }: CircleManageModalProps) => {
       <Modal open={isOpen} onClose={onClose}>
         <Modal.Header title="써클 관리" />
         
-        {/* 탭 메뉴 */}
         <div className="flex border-b border-surface-variant-lowest">
-          <button
-            onClick={() => setActiveTab('invite')}
-            className={`flex-1 py-3 label-large-emphasized transition-colors relative ${
-              activeTab === 'invite' ? 'text-on-surface' : 'text-on-surface-variant-lowest'
-            }`}
-          >
-            초대하기
-            {activeTab === 'invite' && <div className="absolute bottom-0 left-0 w-full h-[2px] bg-on-surface" />}
-          </button>
-          <button
-            onClick={() => setActiveTab('kick')}
-            className={`flex-1 py-3 label-large-emphasized transition-colors relative ${
-              activeTab === 'kick' ? 'text-on-surface' : 'text-on-surface-variant-lowest'
-            }`}
-          >
-            내보내기
-            {activeTab === 'kick' && <div className="absolute bottom-0 left-0 w-full h-[2px] bg-on-surface" />}
-          </button>
+          {(['invite', 'kick'] as const).map((tab) => (
+            <button
+              key={tab} // 고유 키
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 py-3 label-large-emphasized transition-colors relative ${
+                activeTab === tab ? 'text-on-surface' : 'text-on-surface-variant-lowest'
+              }`}
+            >
+              {tab === 'invite' ? '초대하기' : '내보내기'}
+              {activeTab === tab && (
+                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-on-surface" />
+              )}
+            </button>
+          ))}
         </div>
 
         <Modal.Body>
@@ -130,26 +130,37 @@ const CircleManageModal = ({ isOpen, onClose }: CircleManageModalProps) => {
               ref={searchInputRef}
               value={searchTerm} 
               onChange={setSearchTerm} 
-              placeholder="닉네임 검색하기" 
+              placeholder={activeTab === 'invite' ? "초대할 유저 검색" : "내보낼 멤버 검색"} 
               customSize="large"
               iconPosition="trailing"
             />
           </div>
 
-          {activeTab === 'invite' ? (
-            <InviteSection users={filteredAllUsers} onInvite={(id) => console.log(id, '초대하기')} />
-          ) : (
-            <KickSection users={filteredMembers} onKick={handleKickClick} />
-          )}
+          <div className="max-h-[480px] min-h-[300px] overflow-y-auto custom-scrollbar px-1">
+            {activeTab === 'invite' ? (
+              <>
+                {isSearching ? (
+                  <div className="py-20 text-center label-medium text-on-surface-variant-lowest animate-pulse">
+                    유저 정보를 찾는 중입니다...
+                  </div>
+                ) : (
+                  <InviteSection 
+                    users={debouncedSearchTerm ? searchedUsers : []} 
+                    onInvite={(userId) => console.log(`User ${userId} 초대`)} 
+                  />
+                )}
+              </>
+            ) : (
+              <KickSection 
+                users={filteredMembers} 
+                onKick={handleKickClick} 
+              />
+            )}
+          </div>
         </Modal.Body>
       </Modal>
 
-      {/* 🟢 써클 멤버 내보내기 확인 컨펌 모달 */}
-      <Modal 
-        variant="confirm" 
-        open={isConfirmOpen} 
-        onClose={() => setIsConfirmOpen(false)}
-      >
+      <Modal variant="confirm" open={isConfirmOpen} onClose={() => setIsConfirmOpen(false)}>
         <Modal.Header title="멤버를 내보내시겠습니까?" />
         <Modal.Body>
           <div className="flex flex-col items-center text-center pt-4">
@@ -159,24 +170,10 @@ const CircleManageModal = ({ isOpen, onClose }: CircleManageModalProps) => {
         </Modal.Body>
         <Modal.Footer>
           <div className="flex justify-center gap-[16px] w-full">
-            <Button
-              variant="secondary"
-              shape="square"
-              widthMode="fixed"
-              width="170px"
-              textClassName="label-large-emphasized"
-              onClick={confirmKick}
-            >
+            <Button variant="secondary" shape="square" widthMode="fixed" textClassName="label-xlarge-emphasized" width="150px" onClick={confirmKick}>
               예
             </Button>
-            <Button 
-              variant="primary"
-              shape="square"
-              widthMode="fixed" 
-              width="170px"
-              textClassName="label-large-emphasized"
-              onClick={() => setIsConfirmOpen(false)}
-            >
+            <Button variant="primary" shape="square" widthMode="fixed" width="150px" onClick={() => setIsConfirmOpen(false)}>
               아니요
             </Button>
           </div>

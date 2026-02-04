@@ -98,7 +98,7 @@ export const ACTION_PRESET: Record<ListAction, ListActionPreset[]> = {
     kick: [{ key: "kick", label: "내보내기", variant: "onPrimary" }],
     // 🟢 써클 관련 액션 추가
     join: [{ key: "follow", label: "가입하기", variant: "onPrimary" }], // 가입 신청 전
-    joined: [{ key: "unfollow", label: "가입됨", variant: "secondary" }], // 가입 완료 상태
+    joined: [{ key: "unfollow", label: "가입완료", variant: "secondary" }], // 가입 완료 상태
     invite: [{ key: "invite", label: "초대하기", variant: "onPrimary" }],
 };
 

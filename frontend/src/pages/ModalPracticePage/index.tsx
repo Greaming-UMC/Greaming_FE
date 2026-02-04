@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Button } from '../../components/common';
-import SettingView from '../../features/setting/ui/SettingView';
 import FollowingModal from '../../features/social/ui/FollowingModal';
 import FollowerModal from '../../features/social/ui/FollowerModal';
 import CreateCircleModal from '../../features/social/ui/CircleCreateModal';
 import CircleSearchModal from '../../features/social/ui/CircleSearchModal';
 import CircleMemberModal from '../../features/social/ui/CircleMemberMoal';
 import CircleManageModal from '../../features/social/ui/CircleManageModal';
+import { MOCK_CURRENT_CIRCLE_ID, MOCK_MY_INFO } from '../../features/social/testing/mockdata';
 
 const ModalPracticePage = () => {
   const [isFollowingModalOpen, setIsFollowingModalOpen] = useState(false);
@@ -50,8 +50,8 @@ const ModalPracticePage = () => {
 
 
       {/* 모달들 */}
-      <FollowingModal isOpen={isFollowingModalOpen} onClose={() => setIsFollowingModalOpen(false)} />
-      <FollowerModal isOpen={isFollowerModalOpen} onClose={() => setIsFollowerModalOpen(false)} />
+      <FollowingModal isOpen={isFollowingModalOpen} onClose={() => setIsFollowingModalOpen(false)} userId={MOCK_MY_INFO.userId}/>
+      <FollowerModal isOpen={isFollowerModalOpen} onClose={() => setIsFollowerModalOpen(false)} userId={MOCK_MY_INFO.userId} />
       
       <CircleSearchModal 
         isOpen={isCircleSearchModalOpen} 
@@ -61,6 +61,7 @@ const ModalPracticePage = () => {
       <CircleMemberModal
         isOpen={isCircleMemberModalOpen} 
         onClose={() => setIsCircleMemberModalOpen(false)} 
+        circleId={MOCK_CURRENT_CIRCLE_ID}
       />
 
       {/* 🟢 써클 관리 모달 추가 */}

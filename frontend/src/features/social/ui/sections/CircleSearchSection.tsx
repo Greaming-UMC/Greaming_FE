@@ -7,6 +7,8 @@ interface CircleSearchSectionProps {
   onToggle: (circleId: number) => void;
 }
 
+const testCardStyle = "shadow-[0_0_4px_0_rgba(18,19,21,0.25)] border-none";
+
 const CircleSearchSection = ({ circles, onToggle }: CircleSearchSectionProps) => {
   if (circles.length === 0) {
     return (
@@ -28,14 +30,15 @@ const CircleSearchSection = ({ circles, onToggle }: CircleSearchSectionProps) =>
             key={circle.circleId}
             size="lg"
             title={circle.name}
-            // 🟢 variant: "text"를 사용하여 커스텀 포맷팅된 문자열 전달
             subtitle={{
               variant: "text",
               value: membersText
             }}
             subtitleClassName={isFullNotJoined ? "text-status-error" : ""}
             avatar={{ src: circle.profileUrl, icon: "char_default" }}
-            action={isFullNotJoined ? "none" : (circle.isJoined ? "joined" : "join")}
+            
+            // 🟢 가입됨(joined)과 정원초과(none) 상태일 때만 ActionItem 기본 기능을 사용
+            action={isFullNotJoined ? "none" : (circle.isJoined ? "joined" : "none")}
             
             className={clsx(
               circle.isJoined && "cursor-default pointer-events-none"
@@ -50,13 +53,30 @@ const CircleSearchSection = ({ circles, onToggle }: CircleSearchSectionProps) =>
                   widthMode="hug"
                   disabled
                   textClassName="label-large-emphasized text-gray-400"
+                  className={testCardStyle}
                 >
-                  정원 초과
+                  정원 마감
                 </Button>
-              ) : undefined
+              ) : circle.isJoined ? (
+                undefined // ActionItem의 action="joined"가 처리함
+              ) : (
+                // 🟢 '가입하기' 버튼만 직접 렌더링하여 클릭 이벤트를 확실히 잡음
+                <Button
+                  size="xs"
+                  variant="primary"
+                  shape="round"
+                  widthMode="hug"
+                  textClassName="label-large-emphasized text-surface"
+                  className={testCardStyle}
+                  onClick={(e) => {
+                    e.stopPropagation(); // 이벤트 전파 방지
+                    onToggle(circle.circleId);
+                  }}
+                >
+                  가입하기
+                </Button>
+              )
             }
-            onJoin={() => onToggle(circle.circleId)}
-            onLeave={undefined} 
             widthMode="fill"
           />
         );
