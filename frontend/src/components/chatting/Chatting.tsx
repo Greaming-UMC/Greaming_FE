@@ -182,7 +182,7 @@ export const ChattingInput = ({
           disabled={!value || disabled}
           className={`ml-2 transition-colors ${value ? 'text-primary' : 'text-gray-300'}`}
         >
-          <Icon name="arrow-up-circle" size={24} className="fill-current" />
+          <Icon name="arrow-up-circle" size={35} className="fill-current" />
         </button>
       </div>
     </div>
