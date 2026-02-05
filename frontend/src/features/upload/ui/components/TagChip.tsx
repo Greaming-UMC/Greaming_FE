@@ -1,8 +1,8 @@
 import clsx from "clsx";
 
 type Props = {
-  label: string;           // "#태그"
-  onDelete?: () => void;   // x 클릭
+  label: string; // "#태그"
+  onDelete?: () => void; // x 클릭
   className?: string;
 };
 
@@ -13,8 +13,8 @@ export function TagChip({ label, onDelete, className }: Props) {
         "inline-flex items-center justify-center",
         "h-[32px] rounded-[28px]",
         "px-[14px] gap-[8px]",
-        "bg-[var(--Schemes-Surface-Variant-lowest,#545556)]",
-        "text-[var(--Schemes-On-Surface-Variant-Bright,#FCFCFC)]",
+        "bg-surface-variant-lowest",
+        "text-on-surface-variant-bright",
         className,
       )}
     >

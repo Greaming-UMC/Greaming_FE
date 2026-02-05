@@ -13,7 +13,7 @@ export function UploadOptions({
 }: Props) {
   return (
     <div className="flex items-center gap-[24px]">
-      <label className="inline-flex items-center gap-2 text-sm text-on-surface">
+      <label className="inline-flex items-center gap-2 label-large text-on-surface">
         <input
           type="checkbox"
           checked={isPrivate}
@@ -22,7 +22,7 @@ export function UploadOptions({
         비공개
       </label>
 
-      <label className="inline-flex items-center gap-2 text-sm text-on-surface">
+      <label className="inline-flex items-center gap-2 label-large text-on-surface">
         <input
           type="checkbox"
           checked={allowComments}

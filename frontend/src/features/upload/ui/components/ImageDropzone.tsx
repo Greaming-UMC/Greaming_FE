@@ -30,17 +30,16 @@ export function ImageDropzone({ onPickFiles, className }: Props) {
       onDrop={onDrop}
       aria-label="이미지 업로드"
       className={clsx(
-        "rounded-[16px] bg-[#5a5a5a]",
+        "rounded-large bg-surface-variant-lowest",
         "flex items-center justify-center",
         "cursor-pointer select-none",
         className,
       )}
     >
-      {/* GDS 아이콘 사용 */}
       <ImportIcon
         width={28}
         height={28}
-        className="text-white fill-current"
+        className="text-on-surface-variant-bright fill-current"
         aria-hidden
       />
 
