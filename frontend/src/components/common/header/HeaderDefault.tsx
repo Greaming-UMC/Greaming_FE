@@ -13,15 +13,19 @@ const HeaderDefault = ({ userInfo, onLogout }: HeaderDefaultProps) => {
   return (
     <header
       className="fixed top-0 w-full bg-primary shadow-md transition-all"
-      style={{ 
+      style={{
         height: HEADER_HEIGHT.DEFAULT,
-        zIndex: Z_INDEX.HEADER 
+        zIndex: Z_INDEX.HEADER
       }}
     >
-      <div className="relative h-full max-w-[1440px] mx-auto px-6">
+      <div className="relative h-full max-w-[1440px] mx-auto px-4">
         <div className="flex h-full items-center pt-1 gap-6">
-          <Logo name="mono_white_wordmark" size={80} />
-          <HeaderTabs isScrolled />
+          <div className="shrink-0 scale-90 origin-left">
+             <Logo name="mono_white_wordmark" size={100} />
+          </div>
+          
+          <HeaderTabs isScrolled={true} />
+          
           <HeaderActions userInfo={userInfo} onLogout={onLogout} />
         </div>
       </div>

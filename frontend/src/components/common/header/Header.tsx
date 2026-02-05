@@ -1,9 +1,9 @@
 import HeaderDefault from "./HeaderDefault";
 import HeaderLogo from "./HeaderLogo";
 import HeaderMain from "./HeaderMain";
-import type { HeaderProps as SharedHeaderProps } from "./types";
+import type { HeaderProps } from "./types";
 
-const Header = ({ variant, userInfo, onLogout }: SharedHeaderProps) => {
+const Header = ({ variant, userInfo, onLogout }: HeaderProps) => {
   switch (variant) {
     case 'logo':
       return <HeaderLogo />;

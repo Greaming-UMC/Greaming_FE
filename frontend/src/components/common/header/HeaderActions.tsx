@@ -1,52 +1,48 @@
-import { useState, useRef } from 'react';
-import Icon from '../Icon';
-import type { UserInfo } from './types';
-import NotificationPopup from './popups/NotificationPopup';
-import { useOnClickOutside } from '../../../hooks/useOnClickOutside';
-import ProfilePopup from './popups/ProfilePopups';
+import { useRef, useState } from "react";
+import type { UserInfo } from "./types";
+import { useOnClickOutside } from "./hooks/useOnClickOutside";
+import { Avatar } from "../display";
+import ProfilePopup from "./popups/ProfilePopups";
+import Icon from "../Icon";
+import NotificationPopup from "./popups/NotificationPopup";
+import { Button } from "../input";
+
 interface HeaderActionsProps {
   userInfo?: UserInfo;
   onLogout?: () => void;
 }
 
-export const HeaderActions = ({ userInfo, onLogout }: HeaderActionsProps) => {
-  const [activePopup, setActivePopup] =
-    useState<'notification' | 'profile' | null>(null);
+type PopupType = 'notification' | 'profile';
 
+export const HeaderActions = ({ userInfo, onLogout }: HeaderActionsProps) => {
+  const [activePopup, setActivePopup] = useState<PopupType | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
   useOnClickOutside(containerRef, () => setActivePopup(null));
 
-  const togglePopup = (type: 'notification' | 'profile') => {
-    setActivePopup(prev => (prev === type ? null : type));
+  const togglePopup = (type: PopupType) => {
+    setActivePopup((prev) => (prev === type ? null : type));
   };
 
   return (
     <div
-      className="ml-auto flex items-center gap-4 relative"
-      ref={containerRef}
-    >
+      className="ml-auto flex items-center gap-3 relative"
+      ref={containerRef}>
       <div className="relative">
         <button
           type="button"
           onClick={() => togglePopup('profile')}
-          className="rounded-full w-9 h-9 overflow-hidden"
+          className="block rounded-full hover:opacity-80 transition-opacity"
         >
-          {userInfo?.profileImgUrl ? (
-            <img
-              src={userInfo.profileImgUrl}
-              alt={userInfo.nickname}
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <Icon name="char_profile_red" size={28} />
-          )}
+          <Avatar
+            src={userInfo?.profileImgUrl}
+            alt={userInfo?.nickname ?? 'User'}
+            size="sm"
+          />
         </button>
 
         {activePopup === 'profile' && (
-          <ProfilePopup
-            userInfo={userInfo}
-            onLogout={onLogout}
-          />
+          <ProfilePopup userInfo={userInfo} onLogout={onLogout} />
         )}
       </div>
 
@@ -54,13 +50,23 @@ export const HeaderActions = ({ userInfo, onLogout }: HeaderActionsProps) => {
         <button
           type="button"
           onClick={() => togglePopup('notification')}
-          className="rounded-full p-2"
+          className="rounded-full p-1.5 hover:bg-white/10 transition-colors flex items-center justify-center"
         >
-          <Icon name="bell" size={28} className="text-on-primary" />
+          <Icon name="bell" size={24} className="text-on-primary" />
         </button>
 
         {activePopup === 'notification' && <NotificationPopup />}
       </div>
+
+      <Button
+        variant="surface"
+        size="sm"
+        shape="round"
+        className="font-medium text-primary shadow-none ml-1"
+        onClick={() => console.log('그림 업로드')}
+      >
+        그림 업로드
+      </Button>
     </div>
   );
 };

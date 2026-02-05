@@ -4,10 +4,10 @@ export interface UserInfo {
   level?: string;
 }
 
+export type HeaderVariant = 'logo' | 'main' | 'default';
+
 export interface HeaderProps {
-  variant: 'main' | 'default' | 'logo';
+  variant: HeaderVariant;
   userInfo?: UserInfo;
   onLogout?: () => void;
 }
-
-export type HeaderVariant = 'logo' | 'main' | 'default';
