@@ -34,12 +34,12 @@ const ArtistArtwork = ({ artworks = [] }: ArtistArtworkProps) => {
     <div className="w-full flex flex-col gap-6">
       {/* 헤더 부분 */}
       <div className="flex items-center justify-between">
-        <span className="text-lg font-bold text-on-surface">작가의 다른 그림</span>
+        <span className="text-main-title-small font-semi-bold text-on-surface pretendard mt-20">작가의 다른 그림</span>
         
         {/* 데이터가 있을 때만 '더보기' 버튼 표시 */}
         {!isEmpty && (
-          <button className="flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors">
-            더보기 <Icon name="chevron_right" size={16} />
+          <button className="flex items-center gap-1 text-on-surface-variant hover:text-primary transition-colors text-label-xxlarge">
+            더보기 <Icon name="ad" size={24} />
           </button>
         )}
       </div>

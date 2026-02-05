@@ -21,11 +21,11 @@ const CardHeader = ({
       role="group"
     >
       <div className="flex items-center gap-3 min-w-0">
-        <Avatar src={profileImageUrl} size="md" />
+        <Avatar src={profileImageUrl} size={32} />
 
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="text-sub-title-xlarge  font-semibold truncate">{nickname}</h3>
+            <p className="text-sub-title-xlarge text-primary font-semibold Pretendard truncate">{nickname}</p>
             <Badge
               variant="primary"
               size="sm"
