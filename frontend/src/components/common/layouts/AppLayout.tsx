@@ -1,22 +1,20 @@
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import HeaderContainer from './HeaderContainer';
 import { HEADER_HEIGHT } from './layout';
+import type { HeaderVariant } from '../header/types';
 
-const AppLayout = () => {
-  const { pathname } = useLocation();
-  const variant = pathname === '/' ? 'main' : 'default';
-  const currentHeaderHeight = variant === 'main' 
-    ? 0
-    : HEADER_HEIGHT.DEFAULT;
+interface AppLayoutProps {
+  variant: HeaderVariant;
+}
+
+const AppLayout = ({ variant }: AppLayoutProps) => {
+  const currentHeaderHeight =
+    variant === 'main' ? 0 : HEADER_HEIGHT.DEFAULT;
 
   return (
     <div className="min-h-screen bg-transparent">
       <HeaderContainer variant={variant} />
-      <main
-        style={{
-          paddingTop: currentHeaderHeight,
-        }}
-      >
+      <main style={{ paddingTop: currentHeaderHeight }}>
         <Outlet />
       </main>
     </div>

@@ -10,25 +10,36 @@ import ErrorPage from './pages/ErrorPage';
 지금은 정말 기초적인 라우팅만 설정해둔 상태이고, 각 상세 페이지 구현 여부 확인할 때 라우팅 추가하셔서 사용하시면 될 것 같습니다. */
 
 const router = createBrowserRouter([
+  // MAIN 헤더 그룹 (홈)
   {
     path: '/',
-    element: <AppLayout />,
+    element: <AppLayout variant="main" />,
     errorElement: <ErrorPage />,
     children: [
-      {
-        index: true,
-        element: <HomePage />,
-      },
-      {
-        path: 'my-room',
-        element: <MyRoomPage />,
-      },
-      {
-        path: 'journey',
-        element: <JourneyPage />,
-      },
+      { index: true, element: <HomePage /> },
     ],
   },
+
+  // DEFAULT 헤더 그룹 (앱 내부 페이지들)
+  {
+    path: '/',
+    element: <AppLayout variant="default" />,
+    errorElement: <ErrorPage />,
+    children: [
+      { path: 'my-room', element: <MyRoomPage /> },
+      { path: 'journey', element: <JourneyPage /> },
+    ],
+  },
+
+  /* LOGO 헤더 그룹
+  {
+  path: '/onboarding',
+  element: <AppLayout variant="logo" />,
+  errorElement: <ErrorPage />,
+  children: [
+  { index: true, element: <OnboardingPage /> },
+  ],
+  },*/
 ]);
 
 export default router;
