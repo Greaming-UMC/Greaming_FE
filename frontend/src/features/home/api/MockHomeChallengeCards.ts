@@ -1,10 +1,12 @@
 import type { HomeCardType } from "../../../apis/types/common";
+import MockFeedJpg from "../../../assets/background/mock_feed.jpg";
 
 export const DAILY_CHALLENGE_CARDS: HomeCardType[] = Array.from(
   { length: 12 },
   (_, i) => ({
     submissionId: i + 1,
-    thumbnailUrl: "https://via.placeholder.com/250",
+    // API 연동 전 확인용 jpg
+    thumbnailUrl: MockFeedJpg,
     title: `Daily ${i + 1}`,
     nickname: `닉네임 ${i + 1}`,
     profileImgUrl: "",
@@ -21,7 +23,8 @@ export const WEEKLY_CHALLENGE_CARDS: HomeCardType[] = Array.from(
   { length: 12 },
   (_, i) => ({
     submissionId: i + 101,
-    thumbnailUrl: "https://via.placeholder.com/250",
+    // API 연동 전 확인용 jpg
+    thumbnailUrl: MockFeedJpg,
     title: `Weekly ${i + 1}`,
     nickname: `닉네임 ${i + 1}`,
     profileImgUrl: "",
