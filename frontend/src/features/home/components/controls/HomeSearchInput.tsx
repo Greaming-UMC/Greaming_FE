@@ -1,4 +1,4 @@
-import { SearchField } from "../../../components/common";
+import { SearchField } from "../../../../components/common";
 
 interface Props {
   value: string;
@@ -14,7 +14,7 @@ const HomeSearchInput = ({ value, onChange }: Props) => {
       customSize="large"
       icon="search"
       iconPosition="trailing"
-      className="w-full max-w-[405px] text-primary"
+      className="w-full max-w-[405px]"
       onSearch={() => {}}
     />
   );

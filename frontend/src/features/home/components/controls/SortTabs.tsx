@@ -1,4 +1,4 @@
-import { Button } from "../../../components/common";
+import { Button } from "../../../../components/common";
 
 interface Props {
   value: "LATEST" | "POPULAR" | "RECOMMEND";
@@ -11,7 +11,7 @@ const SORT_LABEL: Record<Props["value"], string> = {
   RECOMMEND: "추천",
 };
 
-const HomeSortTabs = ({ value, onChange }: Props) => {
+const SortTabs = ({ value, onChange }: Props) => {
   return (
     <div className="flex items-center gap-2">
       {(Object.keys(SORT_LABEL) as Props["value"][]).map((key) => {
@@ -25,6 +25,7 @@ const HomeSortTabs = ({ value, onChange }: Props) => {
             shape="round"
             variant={isSelected ? "primary" : "outlined"}
             onClick={() => onChange(key)}
+            className={`font-medium px-4 ${isSelected ? "font-bold" : "outline-on-surface text-on-surface"}`}
           >
             {SORT_LABEL[key]}
           </Button>
@@ -34,4 +35,4 @@ const HomeSortTabs = ({ value, onChange }: Props) => {
   );
 };
 
-export default HomeSortTabs;
+export default SortTabs;
