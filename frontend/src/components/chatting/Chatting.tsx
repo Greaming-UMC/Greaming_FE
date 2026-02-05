@@ -27,7 +27,9 @@ export const ChattingHeader = ({ className = '' }: { className?: string }) => (
 
 // 댓글 리스트 영역 (스크롤)
 export const ChattingList = ({ children, className = '' }: HTMLAttributes<HTMLDivElement>) => (
-  <div className={`flex-1 overflow-y-auto px-4 pb-4 space-y-4 ${className}`}>
+  <div className={`flex-1 overflow-y-auto px-4 pb-4 space-y-4 [&::-webkit-scrollbar]:hidden 
+      [-ms-overflow-style:none] 
+      [scrollbar-width:none] ${className}`}>
     {children}
   </div>
 );

@@ -33,7 +33,7 @@ const CardFooter = ({ submission, className = "" }: CardFooterProps) => {
           : null}
       </div>
 
-      <div className="text-label-large font-bold text-on-surface-variant-low">{upload_at}</div>
+      <div className="text-label-large font-medium text-on-surface-variant-lowest">{upload_at}</div>
     </div>
   );
 };

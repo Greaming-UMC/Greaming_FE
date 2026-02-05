@@ -25,10 +25,10 @@ const CardItem = ({
 
   return (
     // 1️⃣ 너비를 최대 840px로 제한하고 중앙 정렬
-    <div className="w-full max-w-[840px] mx-auto">
+    <div className="w-full max-w-[51.25rem] mx-auto">
       <Card.Root className="w-full">
         {/* 2️⃣ 높이를 720px로 고정 (부모 상자 크기 확정) */}
-        <div className="relative w-full h-[720px] bg-on-surface-variant-low rounded-lg overflow-hidden">
+        <div className="relative w-full h-[51.25rem] bg-on-surface-variant-low rounded-lg overflow-hidden">
           <Card.Media
             src={images[index] ?? "/sample.jpg"}
             alt={title ?? "image"}
@@ -76,8 +76,8 @@ const CardItem = ({
               <span
                 key={i}
                 onClick={() => goTo(i)}
-                className={`w-2 h-2 rounded-full transition-colors cursor-pointer ${
-                  i === index ? "bg-on-surface" : "bg-surface-variant-lowest"
+                className={`w-3.25 h-3.25 rounded-full transition-colors cursor-pointer ${
+                  i === index ? "bg-surface-variant-lowest" : "bg-surface-variant-low"
                 }`}
               />
             ))}

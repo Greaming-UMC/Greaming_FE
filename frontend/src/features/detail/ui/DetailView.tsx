@@ -63,6 +63,18 @@ const DetailView = () => {
       content: "참고하고 싶은 스타일이네요.",
       isLike: false,
     },
+    {
+      writer_nickname: "유저C",
+      writer_profileImgUrl: "",
+      content: "참고하고 싶은 스타일이네요.",
+      isLike: false,
+    },
+    {
+      writer_nickname: "유저C",
+      writer_profileImgUrl: "",
+      content: "참고하고 싶은 스타일이네요.",
+      isLike: false,
+    },
   ];
 
   const myArtData = [
@@ -226,8 +238,8 @@ const DetailView = () => {
   ];
 
   return (
-    <div className="relative w-full min-h-screen h-fit flex flex-col items-center gap-12 pb-24 p-10 mt-16 max-w-[1531px] mx-auto px-40">
-      <aside className="absolute left-1 top-0 h-full hidden lg:block pointer-events-none z-10">
+    <div className="bg-surface-variant-high relative w-full min-h-screen h-fit flex flex-col items-center gap-12 pb-24 p-10 mt-16 max-w-[1531px] mx-auto px-40">
+      <aside className="absolute left-10 top-0 h-full hidden lg:block pointer-events-none z-10">
           <div className="sticky top-24 pt-[88px] pointer-events-auto">
             <ActionSideBar 
                likes={mockSubmission.likes_count}
@@ -236,11 +248,7 @@ const DetailView = () => {
             />
           </div>
       </aside>
-      <aside className="absolute right-1 top-0 h-full hidden lg:block pointer-events-none z-10">
-          <div className="sticky top-145 pt-[88px] pointer-events-auto">
-            <Icon name="upload_primary" size={64} />
-          </div>
-        </aside>
+      
       <div className="shrink-0 w-full relative">
         <DetailPost submission={mockSubmission} comment_list={mockComments} />     
       </div>

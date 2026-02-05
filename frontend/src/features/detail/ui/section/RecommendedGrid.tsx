@@ -20,12 +20,12 @@ const RecommendedGrid = ({ artworks }: RecommendedGridProps) => {
   return (
     <div className=" mx-auto">
       {/* 헤더 */}
-      <h3 className="text-lg font-bold text-primary">다른 그림 추천</h3>
+      <h3 className="text-main-title-small font-semi-bold text-primary mt-6">다른 그림 추천</h3>
 
       {/* D. 그리드 레이아웃 (모바일 2열, PC 4열) */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-x-4 gap-y-8 mt-8">
         {artworks.map((art) => (
-          <div key={art.id} className="w-full">
+          <div key={art.id} className="w-[286px]">
             <Card.Root
               clickable
               hoverEffect
@@ -34,8 +34,7 @@ const RecommendedGrid = ({ artworks }: RecommendedGridProps) => {
               <Card.Media
                 src={art.src}
                 alt={art.title}
-                aspectRatio="aspect-square"
-                className="rounded-lg bg-on-surface-variant-lowest"
+                className="w-full h-[290px] rounded-lg bg-on-surface-variant-lowest"
               >
                 {/* 오버레이 (아이콘 정보) */}
                 <Card.Overlay className="items-end pb-3 pr-3">

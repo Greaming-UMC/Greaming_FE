@@ -45,7 +45,7 @@ const ChattingSection = ({ comment_list }: ChattingSectionProps) => {
   };
 
   return (
-    <div className="h-[820px] w-[344px] items-end gap-10px justify-flex">
+    <div className="h-[51.25rem] w-[21.5rem] items-end gap-10px justify-flex bg-on-primary">
       <Chatting.Root>
         <Chatting.Header />
         <Chatting.List>
