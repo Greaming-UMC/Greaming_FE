@@ -1,6 +1,7 @@
 import type { HTMLAttributes, InputHTMLAttributes } from 'react';
 import Icon from '../common/Icon'; 
-import { Divider, Avatar } from '../common/display';
+import { Avatar, Divider } from '../common/display';
+
 
 /* -------------------------------------------------------------------------- */
 /* 1. Root & List (레이아웃)                                                 */
@@ -26,7 +27,9 @@ export const ChattingHeader = ({ className = '' }: { className?: string }) => (
 
 // 댓글 리스트 영역 (스크롤)
 export const ChattingList = ({ children, className = '' }: HTMLAttributes<HTMLDivElement>) => (
-  <div className={`flex-1 overflow-y-auto px-4 pb-4 space-y-4 ${className}`}>
+  <div className={`flex-1 overflow-y-auto px-4 pb-4 space-y-4 [&::-webkit-scrollbar]:hidden 
+      [-ms-overflow-style:none] 
+      [scrollbar-width:none] ${className}`}>
     {children}
   </div>
 );
@@ -179,7 +182,7 @@ export const ChattingInput = ({
           disabled={!value || disabled}
           className={`ml-2 transition-colors ${value ? 'text-primary' : 'text-gray-300'}`}
         >
-          <Icon name="arrow-up-circle" size={24} className="fill-current" />
+          <Icon name="arrow-up-circle" size={35} className="fill-current" />
         </button>
       </div>
     </div>

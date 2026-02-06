@@ -1,13 +1,12 @@
 import AppLayout from './components/common/layouts/AppLayout';
-import MyRoomPage from './pages/MyRoomPage';
 import JourneyPage from './pages/JourneyPage';
 import HomePage from './pages/HomePage';
+import SettingPage from './pages/SettingPage';
+import DetailPage from './pages/DetailPage';
+import ModalPracticePage from './pages/ModalPracticePage';
 import { createBrowserRouter } from 'react-router-dom';
 import ErrorPage from './pages/ErrorPage';
-
-import ExamplePage from './pages/ExamplePage';
-import { WelcomeScreen } from './features/onboarding/ui/WelcomeScreen';
-import { OnboardingSteps } from './features/onboarding/ui/OnboardingSteps';
+import ProfilePage from './pages/ProfilePage';
 
 /* TODO
 라우터 설정은 추후 변경해야 합니다. 또한, 나중에 API 연동할 때 로그인 여부 등.. 다시 리팩토링해야합니당
@@ -20,24 +19,30 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        index: true,
-        element: <ExamplePage />,
-      },
-      {
         path: 'home',
         element: <HomePage />,
       },
       {
-        path: 'my-room',
-        element: <MyRoomPage />,
+        path: 'profile',
+        children: [
+          {
+            path: 'self',
+            element: <ProfilePage mode="self" />,
+          },
+          {
+            path: 'user/:userId',
+            element: <ProfilePage mode="user" />,
+          },
+          {
+            path: 'circle/:circleId',
+            element: <ProfilePage mode="circle" />,
+          },
+        ],
       },
       {
         path: 'journey',
         element: <JourneyPage />,
       },
-<<<<<<< HEAD
-     
-=======
       {
         path: 'onboarding',
         element: <WelcomeScreen />,
@@ -46,8 +51,18 @@ const router = createBrowserRouter([
         path: 'onboarding/step1',
         element: <OnboardingSteps />,
       },
-      
->>>>>>> 1cc9d64a4a17c4af286f658dd2eacd9ed53b3957
+      {
+        path: 'setting',
+        element: <SettingPage />,
+      },
+      {
+        path: 'detail/:postId',
+        element: <DetailPage />,
+      },
+      {
+        path: 'modal-practice',
+        element: <ModalPracticePage />,
+      },
     ],
   },
 ]);

@@ -27,8 +27,9 @@ const ModalContext = createContext<{ variant: ModalVariant; onClose: () => void 
 
 const useModalContext = () => useContext(ModalContext);
 
+
 /* -------------------------------------------------------------------------- */
-/* 3. Main Component (Root)                                                  */
+/* 3. Main Components(root)                                                  */
 /* -------------------------------------------------------------------------- */
 
 const ModalRoot = ({ 
@@ -37,119 +38,124 @@ const ModalRoot = ({
   children, 
   variant = 'default' 
 }: ModalProps) => {
-  
-  // 1. 실제로 DOM에 렌더링할지 여부를 결정하는 상태
+  // 1. shouldRender를 사용하여 애니메이션이 끝날 때까지 DOM 유지
   const [shouldRender, setShouldRender] = useState(open);
-  // 2. 애니메이션 클래스를 적용하기 위한 상태
   const [isAnimate, setIsAnimate] = useState(false);
+
+  const modalRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (open) {
       setShouldRender(true);
-      // 브라우저가 DOM 렌더링을 인지한 후 애니메이션을 시작하도록 약간의 지연(requestAnimationFrame)을 줍니다.
+      // 포커스를 위해 이전 요소를 저장
+      triggerRef.current = document.activeElement as HTMLElement;
+      
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setIsAnimate(true));
       });
     } else {
       setIsAnimate(false);
-      // 애니메이션 시간(200ms)이 지난 후 렌더링 중단
       const timer = setTimeout(() => {
         setShouldRender(false);
-      }, 200); 
+      }, 100); 
       return () => clearTimeout(timer);
     }
   }, [open]);
 
-  const modalRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLElement | null>(null);
-
-  // 실제 포커스 가능한 요소만 필터링 (가독성 및 재사용)
   const getFocusables = () => {
     if (!modalRef.current) return [];
     const selectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
     return Array.from(modalRef.current.querySelectorAll<HTMLElement>(selectors)).filter((el) => {
       const isDisabled = (el as any).disabled || el.hasAttribute('disabled');
-      const isVisible = el.offsetWidth > 0 && el.offsetHeight > 0; // 화면에 보이는지 확인
+      const isVisible = el.offsetWidth > 0 && el.offsetHeight > 0;
       return !isDisabled && isVisible;
     });
   };
 
   useEffect(() => {
-    if (!open) {
-      // 모달 닫힘 시, 모달을 열기 전 포커스 위치로 복귀
-      triggerRef.current?.focus();
+    if (!open || !shouldRender) {
+      if (!open) triggerRef.current?.focus();
       return;
     }
-    
-    // 모달이 열리기 직전, 마지막으로 포커스하고 있던 요소를 저장
-    triggerRef.current = document.activeElement as HTMLElement;
 
-    const html = document.documentElement;
+    // 스크롤 고정 로직 유지
+    const scrollY = window.scrollY;
     const body = document.body;
-    html.style.overflow = 'hidden';
-    body.style.overflow = 'hidden';
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.width = '100%';
+    body.style.overflowY = 'scroll';
 
-    //  이미 내부 요소에 포커스가 있는 경우(예: 리렌더링)는 건너뜀
-    const focusTimer = requestAnimationFrame(() => {
-      if (modalRef.current && !modalRef.current.contains(document.activeElement)) {
-        const focusables = getFocusables();
-        focusables.length > 0 ? focusables[0].focus() : modalRef.current.focus();
-      }
-    });
+    const focusTimer = setTimeout(() => {
+          if (modalRef.current) {
+            const focusables = getFocusables();
+            if (focusables.length === 0) {
+              modalRef.current.focus();
+              return;
+            }
+
+            // 1. 인풋이나 텍스트에어리어 먼저 찾기
+            const inputTarget = focusables.find(el => 
+              el.tagName === 'INPUT' || el.tagName === 'TEXTAREA'
+            );
+            
+            // 2. 인풋이 있으면 포커싱, 없으면 그냥 첫 번째 요소(보통 버튼)를 잡습니다.
+            if (inputTarget) {
+              inputTarget.focus();
+            } else {
+              focusables[0].focus();
+            }
+          }
+        }, 150); // 애니메이션 안정화 시간
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      // ESC 처리
       if (e.key === 'Escape') {
         const openModals = document.querySelectorAll('[role="dialog"]');
         if (modalRef.current === openModals[openModals.length - 1]) onClose();
       }
 
-      // 탭 트랩
       if (e.key === 'Tab' && modalRef.current) {
         const focusables = getFocusables();
         if (focusables.length === 0) return;
-
         const first = focusables[0];
         const last = focusables[focusables.length - 1];
 
         if (e.shiftKey && document.activeElement === first) {
-          last.focus();
-          e.preventDefault();
+          last.focus(); e.preventDefault();
         } else if (!e.shiftKey && document.activeElement === last) {
-          first.focus();
-          e.preventDefault();
+          first.focus(); e.preventDefault();
         }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
-      cancelAnimationFrame(focusTimer);
+      clearTimeout(focusTimer);
       window.removeEventListener('keydown', handleKeyDown);
       const openModals = document.querySelectorAll('[role="dialog"]');
       if (openModals.length <= 1) {
-        html.style.removeProperty('overflow');
-        body.style.removeProperty('overflow');
+        body.style.removeProperty('position');
+        body.style.removeProperty('top');
+        body.style.removeProperty('width');
+        body.style.removeProperty('overflow-y');
+        window.scrollTo(0, scrollY);
       }
     };
-  }, [open, onClose]);
+  }, [open, shouldRender, onClose]); // shouldRender 의존성 추가
 
+  // 2. open 대신 shouldRender로 조건부 렌더링
   if (!shouldRender) return null;
 
   const portalTarget = document.getElementById('modal-root') ?? document.body;
-
-   {/* 기본모달 스타일링 (수정 예정)*/}
-  const defaultClasses = 'w-full max-w-md rounded-small';
-
-   {/* 확인모달 스타일링 (수정 예정)*/}
-  const confirmClasses = 'w-full max-w-sm pt-6 px-6 pb-0 text-center rounded-large'
+  const defaultClasses = 'w-full max-w-lg rounded-small';
+  const confirmClasses = 'w-full max-w-md pt-6 px-6 pb-0 text-center rounded-large';
 
   return createPortal(
     <ModalContext.Provider value={{ variant, onClose }}>
       <div
         className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 p-4"
         onMouseDown={(e) => {
-          // 3️⃣ 배경 클릭 시 의도치 않은 닫힘 방지 (배경에서 마우스를 누를 때만 작동)
           if (e.target === e.currentTarget) onClose();
         }}
       >
@@ -158,7 +164,7 @@ const ModalRoot = ({
           role="dialog"
           aria-modal="true"
           tabIndex={-1}
-          onClick={(e) => e.stopPropagation()} // 내부 클릭은 전파 차단
+          onClick={(e) => e.stopPropagation()}
           className={`
             bg-surface shadow-xl outline-none transform transition-all duration-300 ease-out
             ${variant === 'confirm' ? confirmClasses : defaultClasses}
@@ -188,11 +194,17 @@ const ModalHeader = ({ title, onClose: customOnClose }: ModalHeaderProps) => {
 
   return (
     <div
-      className={`mb-4 flex items-center
-        ${variant === 'confirm' ? 'justify-center' : 'justify-between p-3 border-b border-outline-variant'}
+      className={`flex items-center
+        ${variant === 'confirm' ? 'justify-center pt-8' : 'mb-2 justify-between p-3 pl-6 border-b border-outline-variant'}
       `}
     >
-      <h2 className="sub-title-xlarge-emphasized text-on-surface">
+      <h2 
+        className={`text-on-surface ${
+          variant === 'confirm' 
+            ? 'main-title-small-emphasized'
+            : 'sub-title-xlarge-emphasized'
+        }`}
+      >
         {title}
       </h2>
 
@@ -221,10 +233,10 @@ const ModalBody = ({ children }: ModalSectionProps) => {
   return (
     <div
       className={`
-        body-medium text-on-surface
+        sub-title-medium text-on-surface
         ${variant === 'default'
-          ? 'max-h-[60vh] overflow-y-auto px-4 py-2'
-          : 'mt-2'}
+          ? 'max-h-[620px] min-h-[620px] overflow-y-auto px-2 py-2'
+          : 'flex flex-col items-center justify-center px-6 pb-2 text-center'}
       `}
     >
       {children}
@@ -233,9 +245,16 @@ const ModalBody = ({ children }: ModalSectionProps) => {
 };
 
 const ModalFooter = ({ children }: ModalSectionProps) => {
+  const { variant } = useModalContext();
 
   return (
-    <div className="mt-2 flex justify-center gap-2">
+    <div 
+      className={`flex justify-center items-center
+        ${variant === 'confirm' 
+          ? 'pb-12 pt-4'
+          : 'p-4 mt-2 gap-2'}
+      `}
+    >
       {children}
     </div>
   );

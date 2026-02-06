@@ -1,4 +1,4 @@
-export type ButtonSize = "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl";
+export type ButtonSize = "2xs" | "xs" | "sm" | "md" | "none" | "lg" | "xl" | "2xl";
 export type ButtonShape = "square" | "round";
 
 export const BUTTON_SIZE_TOKENS: Record<
@@ -33,6 +33,12 @@ export const BUTTON_SIZE_TOKENS: Record<
     radiusClass: "rounded-medium",
     textClass: "label-xlarge",
     paddingXClass: "px-[32px]",
+  },
+  none: {
+    heightClass: "h-[40px]",
+    radiusClass: "rounded-medium",
+    textClass: "label-xlarge",
+    paddingXClass: "px-[0px]",
   },
   lg: {
     heightClass: "h-[44px]",

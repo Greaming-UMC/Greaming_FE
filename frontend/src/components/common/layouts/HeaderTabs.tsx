@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 
 // path 속성
 const NAV_ITEMS = [
- { path: '/my-room', label: 'My Room', Icon: MyRoomIcon },
+ { path: '/profile', label: 'My Room', Icon: MyRoomIcon },
  { path: '/journey', label: 'Journey', Icon: JourneyIcon },
  { path: '/circle', label: 'Circle', Icon: CircleIcon },
 ] as const;

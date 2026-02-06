@@ -49,7 +49,7 @@ export const SegmentedButton = forwardRef<
                 onClick={() => !isDisabled && onChange(opt.value)}
                 className={clsx(
                   displayClassName,
-                  "px-[16px] py-[4px] state-layer rounded-full font-semibold",
+                  "px-[16px] py-[4px] state-layer rounded-full",
                   "transition-colors",
                   stateLayerClass,
                   selected
@@ -66,8 +66,8 @@ export const SegmentedButton = forwardRef<
                   orientation="vertical"
                   thickness={1}
                   color={dividerColor}
-                  className="mx-2"
-                  style={{ height: "24px" }}
+                  className="w-[1px]"
+                  style={{ height: "18px" }}
                 />
               )}
             </Fragment>
