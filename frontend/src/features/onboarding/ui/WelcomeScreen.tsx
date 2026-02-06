@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { AnimatedLogoDraw } from "./AnimatedLogoDraw";
+import { LoadingSpinner } from "../../../components/common/feedback/LoadingSpinner";
 import { Button } from "../../../components/common/input/Button/Button";
 
 // 로컬 svg 배경 import
@@ -31,7 +31,7 @@ export function WelcomeScreen() {
       {/* 중앙 컨텐츠 */}
       <div className="relative z-20 flex min-h-dvh items-center justify-center px-4">
         <div className="flex flex-col items-center text-center">
-          <AnimatedLogoDraw size={116} />
+          <LoadingSpinner size={116} className="text-white" />
 
           {/* 텍스트 블록 */}
           <div className="mt-6 flex flex-col items-center gap-2">

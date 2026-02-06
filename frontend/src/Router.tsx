@@ -6,6 +6,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import ErrorPage from './pages/ErrorPage';
 
 import ExamplePage from './pages/ExamplePage';
+import { WelcomeScreen } from './features/onboarding/ui/WelcomeScreen';
+import { OnboardingSteps } from './features/onboarding/ui/OnboardingSteps';
 
 /* TODO
 라우터 설정은 추후 변경해야 합니다. 또한, 나중에 API 연동할 때 로그인 여부 등.. 다시 리팩토링해야합니당
@@ -33,7 +35,19 @@ const router = createBrowserRouter([
         path: 'journey',
         element: <JourneyPage />,
       },
+<<<<<<< HEAD
      
+=======
+      {
+        path: 'onboarding',
+        element: <WelcomeScreen />,
+      },
+      {
+        path: 'onboarding/step1',
+        element: <OnboardingSteps />,
+      },
+      
+>>>>>>> 1cc9d64a4a17c4af286f658dd2eacd9ed53b3957
     ],
   },
 ]);
