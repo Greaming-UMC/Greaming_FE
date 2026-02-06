@@ -44,6 +44,14 @@ const router = createBrowserRouter([
         element: <JourneyPage />,
       },
       {
+        path: 'onboarding',
+        element: <WelcomeScreen />,
+      },
+      {
+        path: 'onboarding/step1',
+        element: <OnboardingSteps />,
+      },
+      {
         path: 'setting',
         element: <SettingPage />,
       },

@@ -1,18 +1,24 @@
-//작은 박스
 type WriteTitleFieldProps = {
   value: string;
   onChange: (v: string) => void;
+  className?: string;
+  style?: React.CSSProperties;
 };
 
-export const WriteTitleField = ({ value, onChange }: WriteTitleFieldProps) => {
+export const WriteTitleField = ({
+  value,
+  onChange,
+  className,
+  style,
+}: WriteTitleFieldProps) => {
   return (
     <div
-      className="bg-surface rounded-[10px] flex items-center"
+      className={`bg-surface rounded-[10px] flex items-center w-full ${className ?? ""}`}
       style={{
-        width: 1696,
         height: 50,
         padding: 16,
         boxSizing: "border-box",
+        ...style,
       }}
     >
       <input
