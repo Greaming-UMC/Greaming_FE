@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Button } from "../../../../components/common/input/Button/Button";
-import { DupCheckField } from "../../../../../../temp/input/legacy/DupCheckField/DupCheckField.tsx";
+import { DupCheckField } from "../../../../components/common/input/InputField/DupCheckField";
+import { OnboardingTagChip } from "../../../../components/common/display/OnboardingTagChip";
 
 type NicknameStatus = "unchecked" | "invalid" | "valid";
 
@@ -46,7 +47,6 @@ const FIELD_TAGS = [
 ] as const;
 
 const STYLE_TAGS = ["컬러", "흑백", "귀여운", "공포", "디테일", "심플"] as const;
-
 
 function StatusIcon({ type }: { type: "success" | "error" | "warning" }) {
   if (type === "success") {
@@ -127,7 +127,6 @@ export function Step2Profile({
       setCheckingNickname(false);
     }
   };
-
   /* ---------------- 상태 메시지(3가지 케이스) ---------------- */
   const nicknameUI = useMemo(() => {
     if (nickname.trim().length === 0) return null;
@@ -140,7 +139,6 @@ export function Step2Profile({
     }
     return { kind: "success" as const, text: "사용할 수 있는 닉네임입니다." };
   }, [nickname, nicknameStatus]);
-
   /* ---------------- 분야: 1~4 ---------------- */
   const isFieldMax = fieldTags.length >= MAX_FIELD;
 
@@ -150,12 +148,10 @@ export function Step2Profile({
     if (fieldTags.length >= MAX_FIELD) return;
     onChangeFieldTags([...fieldTags, tag]);
   };
-
   /* ---------------- 스타일: 1개 선택 ---------------- */
   const selectStyleTag = (tag: string) => {
     onChangeStyleTag(styleTag === tag ? null : tag);
   };
-
   /* ---------------- 다음 활성 조건 ---------------- */
   const canNext =
     nickname.trim().length > 0 &&
@@ -163,29 +159,10 @@ export function Step2Profile({
     fieldTags.length >= 1 &&
     styleTag !== null;
 
-  // UI 수치 유지
-  const tagBtnBase =
-    "w-[104px] h-[40px] rounded-[12px] px-0 flex items-center justify-center";
-  const tagShadow = "shadow-[0_0_4px_0_rgba(18,19,21,0.20)]";
-
-  const tagUnselected = "bg-surface text-on-surface";
-  const tagSelected = "bg-primary text-secondary";
-  const tagDisabled = "opacity-50 cursor-not-allowed";
-
   return (
     <div className="w-full flex flex-col items-center gap-[48px]">
       {/* Title */}
-      <h2
-        className="text-center"
-        style={{
-          color: "var(--color-primary, #121315)",
-          fontFamily: "Pretendard",
-          fontSize: "28px",
-          fontWeight: 700,
-          lineHeight: "36px",
-          margin: 0,
-        }}
-      >
+      <h2 className="main-title-medium-emphasized text-on-surface text-center m-0">
         당신을 소개해주세요.
       </h2>
 
@@ -198,13 +175,10 @@ export function Step2Profile({
             <div className="flex items-center gap-[8px]">
               <StatusIcon type={nicknameUI.kind} />
               <span
-                className="label-large-emphasized"
-                style={{
-                  color:
-                    nicknameUI.kind === "success"
-                      ? "var(--color-secondary-variant)"
-                      : "var(--color-error)",
-                }}
+                className={[
+                  "label-large-emphasized",
+                  nicknameUI.kind === "success" ? "text-secondary-variant" : "text-error",
+                ].join(" ")}
               >
                 {nicknameUI.text}
               </span>
@@ -259,20 +233,13 @@ export function Step2Profile({
               const disabled = !selected && isFieldMax;
 
               return (
-                <button
+                <OnboardingTagChip
                   key={tag}
-                  type="button"
+                  label={`#${tag}`}
+                  selected={selected}
                   disabled={disabled}
                   onClick={() => !disabled && toggleFieldTag(tag)}
-                  className={[
-                    tagBtnBase,
-                    tagShadow,
-                    selected ? tagSelected : tagUnselected,
-                    disabled ? tagDisabled : "",
-                  ].join(" ")}
-                >
-                  <span className="label-large-emphasized">#{tag}</span>
-                </button>
+                />
               );
             })}
           </div>
@@ -288,19 +255,14 @@ export function Step2Profile({
           <div className="w-[674px] -mx-[4px] grid grid-cols-6 gap-[10px]">
             {STYLE_TAGS.map((tag) => {
               const selected = styleTag === tag;
+
               return (
-                <button
+                <OnboardingTagChip
                   key={tag}
-                  type="button"
+                  label={`#${tag}`}
+                  selected={selected}
                   onClick={() => selectStyleTag(tag)}
-                  className={[
-                    tagBtnBase,
-                    tagShadow,
-                    selected ? tagSelected : tagUnselected,
-                  ].join(" ")}
-                >
-                  <span className="label-large-emphasized">#{tag}</span>
-                </button>
+                />
               );
             })}
           </div>

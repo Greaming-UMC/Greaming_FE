@@ -1,4 +1,6 @@
+// Step3Interests.tsx
 import { Button } from "../../../../components/common/input/Button/Button";
+import { OnboardingTagChip } from "../../../../components/common/display/OnboardingTagChip";
 
 type Props = {
   interestFields: string[];
@@ -59,53 +61,23 @@ export function Step3Interests({
 
   const canNext = interestFields.length >= 1 && interestStyle !== null;
 
-
-  const tagBtnBase =
-    "w-[104px] h-[40px] rounded-[12px] px-0 flex items-center justify-center";
-  const tagShadow = "shadow-[0_0_4px_0_rgba(18,19,21,0.20)]";
-
-
-  const tagUnselected = "bg-surface text-on-surface";
-  const tagSelected = "bg-primary text-secondary";
-  const tagDisabled = "opacity-50 cursor-not-allowed";
-
-  const prevBtnClass = "w-[82px] h-[60px] rounded-[10px] flex items-center justify-center";
-  const prevBtnBg = "bg-on-surface-variant-low";
-  const prevBtnText = "text-on-surface"; 
+  const prevBtnClass =
+    "w-[82px] h-[60px] rounded-[10px] flex items-center justify-center bg-on-surface-variant-low";
 
   return (
     <div className="w-full flex flex-col items-center gap-[48px]">
-      <h2
-        className="text-center"
-        style={{
-          color: "var(--color-primary, #121315)",
-          fontFamily: "Pretendard",
-          fontSize: "28px",
-          fontWeight: 700,
-          lineHeight: "36px",
-          margin: 0,
-        }}
-      >
+      <h2 className="main-title-medium-emphasized text-on-surface text-center m-0">
         어떤 분야에 관심있나요?
       </h2>
 
       <div className="w-[658px] flex flex-col gap-[8px]">
-        <div
-          className="
-            h-[20px]
-            font-['Pretendard']
-            text-[18px]
-            font-[600]
-            leading-[20px]
-            tracking-[0.15px]
-            text-on-surface
-          "
-        >
+        <div className="sub-title-large-emphasized text-on-surface">
           관심있는 해시태그 선택
         </div>
       </div>
 
       <div className="w-full flex flex-col gap-[16px]">
+        {/* 분야 */}
         <div className="w-[666px] flex items-end justify-between">
           <div className="label-large-emphasized text-on-surface">분야</div>
           <div className="label-large text-on-surface-variant-lowest">최소 1개 최대 4개</div>
@@ -117,24 +89,18 @@ export function Step3Interests({
             const disabled = !selected && isFieldMax;
 
             return (
-              <button
+              <OnboardingTagChip
                 key={tag}
-                type="button"
+                label={`#${tag}`}
+                selected={selected}
                 disabled={disabled}
                 onClick={() => !disabled && toggleField(tag)}
-                className={[
-                  tagBtnBase,
-                  tagShadow,
-                  selected ? tagSelected : tagUnselected,
-                  disabled ? tagDisabled : "",
-                ].join(" ")}
-              >
-                <span className="label-large-emphasized">#{tag}</span>
-              </button>
+              />
             );
           })}
         </div>
 
+        {/* 스타일 */}
         <div className="w-[666px] flex items-end justify-between mt-[8px]">
           <div className="label-large-emphasized text-on-surface">스타일</div>
           <div className="label-large text-on-surface-variant-lowest">1개 선택</div>
@@ -145,18 +111,12 @@ export function Step3Interests({
             const selected = interestStyle === tag;
 
             return (
-              <button
+              <OnboardingTagChip
                 key={tag}
-                type="button"
+                label={`#${tag}`}
+                selected={selected}
                 onClick={() => toggleStyle(tag)}
-                className={[
-                  tagBtnBase,
-                  tagShadow,
-                  selected ? tagSelected : tagUnselected,
-                ].join(" ")}
-              >
-                <span className="label-large-emphasized">#{tag}</span>
-              </button>
+              />
             );
           })}
         </div>
@@ -165,16 +125,8 @@ export function Step3Interests({
       <div className="h-[90px]" />
 
       <div className="w-full flex items-center justify-between">
-        <button type="button" onClick={onPrev} className={[prevBtnClass, prevBtnBg, prevBtnText].join(" ")}>
-          <span
-            className="
-              font-['Pretendard']
-              text-[16.161px]
-              font-[500]
-              leading-[21.01px]
-              text-on-surface-variant-lowest
-            "
-          >
+        <button type="button" onClick={onPrev} className={prevBtnClass}>
+          <span className="text-on-surface-variant-lowest font-['Pretendard'] text-[16.161px] font-[500] leading-[21.01px]">
             이전
           </span>
         </button>

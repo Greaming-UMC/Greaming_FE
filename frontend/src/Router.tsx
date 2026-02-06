@@ -32,8 +32,8 @@ const router = createBrowserRouter([
       {
         path: 'journey',
         element: <JourneyPage />,
-      }
-      
+      },
+     
     ],
   },
 ]);

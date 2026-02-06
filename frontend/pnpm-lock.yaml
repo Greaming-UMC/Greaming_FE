@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@greaming/gds':
-        specifier: ^0.0.4
-        version: 0.0.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2))
+        specifier: ^0.0.5
+        version: 0.0.5(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2))
       '@tailwindcss/vite':
         specifier: ^4.1.18
         version: 4.1.18(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2))
@@ -450,8 +450,8 @@ packages:
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
 
-  '@greaming/gds@0.0.4':
-    resolution: {integrity: sha512-829/iZMThKAeBwLCHO4EoO9jMHndULUSVUwkxIq7VeHRJCo2AGl2krAqiKsCGEpUPWRSKpgXOvPM23FY7b+CcQ==}
+  '@greaming/gds@0.0.5':
+    resolution: {integrity: sha512-GMZRzrVOIBH6ffqRj30FfT3SQEUEjvOa08wwx6xCKBpJMdsCG7dZE1pyCweET4DkpkBltmz8oQbJWgnOwqwSAQ==}
     peerDependencies:
       react: ^19
       react-dom: ^19
@@ -2739,7 +2739,7 @@ snapshots:
 
   '@floating-ui/utils@0.2.10': {}
 
-  '@greaming/gds@0.0.4(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2))':
+  '@greaming/gds@0.0.5(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2))':
     dependencies:
       '@tailwindcss/vite': 4.1.18(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(lightningcss@1.30.2))
       react: 19.2.3

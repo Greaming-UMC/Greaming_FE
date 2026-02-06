@@ -48,7 +48,7 @@ const JOURNEYS: Array<{
   },
 ];
 
-const GOALS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+const GOALS = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100] as const;
 
 export function Step4Purpose({ onPrev, onSubmit }: Props) {
   const [selectedJourney, setSelectedJourney] = useState<JourneyKey | null>(null);
@@ -62,35 +62,42 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
     return { journey: selectedJourney!, weeklyGoal: weeklyGoal! };
   }, [canNext, selectedJourney, weeklyGoal]);
 
+  /* -------------------------------------------------------------------------- */
+  /* Styles (UI 수치 유지 + 토큰 기반)                                           */
+  /* -------------------------------------------------------------------------- */
 
+  // Journey card
   const journeyBoxBase =
-    "w-[666px] h-[77px] rounded-[16px] border box-border flex items-center";
+    "w-[666px] h-[77px] rounded-[16px] border box-border flex items-center relative overflow-hidden";
 
-  const journeyBoxDefault = "bg-surface border-[rgba(18,19,21,0.10)]";
-  const journeyBoxHovered = "bg-surface border-outline-variant"; // = var(--color-outline-variant)
+  // default vs hover를 분리 (지금은 동일했는데, hover 의도가 있으면 border만 올리는 게 자연스러움)
+  const journeyBoxDefault = "bg-surface border-outline-variant";
+  const journeyBoxHovered = "bg-surface border-outline"; // hover 시 테두리 강조(토큰)
   const journeyBoxSelected = "bg-primary border-transparent";
 
+  // SelectItem 내부는 레이아웃만
   const selectItemInner = "w-full h-full bg-transparent border-0 rounded-none px-[16px]";
 
+  // SelectItem 텍스트 색
   const titleSelected = "text-secondary";
   const subtitleSelected = "text-on-surface-variant-low";
 
-  // 주간 목표 박스 
-  const goalBox =
-    "w-[666px] h-[111px] rounded-[16px] bg-surface border border-[rgba(18,19,21,0.10)]";
+  // Weekly goal box
+  const goalBoxBase =
+    "w-[666px] h-[111px] rounded-[16px] bg-surface border border-outline-variant";
   const goalShadow = "shadow-[0_0_4px_0_rgba(18,19,21,0.25)]";
 
-  // 점수 원 
-  const goalCircleBase =
-    "w-[34px] h-[34px] rounded-full inline-flex items-center justify-center border";
-  const goalCircleOff = "bg-surface border-[rgba(18,19,21,0.12)]";
-  const goalCircleOn = "bg-primary border-transparent";
-
-  // 트랙 
+  // Track + circles
   const goalTrack =
     "w-full h-[44px] rounded-full p-[4px] flex items-center justify-between bg-surface-variant-low";
 
-  // 이전 버튼
+  const goalCircleBase =
+    "w-[34px] h-[34px] rounded-full inline-flex items-center justify-center border p-0 flex-none shrink-0 transition";
+
+  const goalCircleOff = "bg-surface border-outline-variant";
+  const goalCircleOn = "bg-primary border-transparent";
+
+  // Prev button
   const prevBtnClass =
     "w-[82px] h-[60px] rounded-[10px] flex items-center justify-center bg-on-surface-variant-low";
 
@@ -98,47 +105,16 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
     <div className="w-full flex flex-col items-center gap-[18px]">
       {/* Title */}
       <div className="flex flex-col items-center gap-[6px]">
-        <h2
-          className="text-center"
-          style={{
-            color: "var(--color-primary, #121315)",
-            fontFamily: "Pretendard",
-            fontSize: "28px",
-            fontWeight: 700,
-            lineHeight: "36px",
-            margin: 0,
-          }}
-        >
+        <h2 className="main-title-medium-emphasized text-on-surface text-center m-0">
           Greaming을 사용하는 목적을 알려주세요.
         </h2>
-        <p
-          className="text-center"
-          style={{
-            color: "var(--color-primary, #121315)",
-            fontFamily: "Pretendard",
-            fontSize: "16px",
-            fontWeight: 500,
-            lineHeight: "20px",
-            margin: 0,
-            opacity: 0.8,
-          }}
-        >
+
+        <p className="body-medium-emphasized text-on-surface text-center m-0 opacity-80">
           목표에 맞는 여정을 추천해드릴게요.
         </p>
       </div>
 
-      <p
-        className="w-[666px]"
-        style={{
-          color: "var(--color-primary, #121315)",
-          fontFamily: "Pretendard",
-          fontSize: "12px",
-          fontWeight: 500,
-          lineHeight: "16px",
-          margin: 0,
-          opacity: 0.6,
-        }}
-      >
+      <p className="label-medium text-on-surface text-left w-[666px] m-0 opacity-60">
         랭킹은 매주 초기화되며, 해당 주의 활동에 맞게 새롭게 바뀌어요.
       </p>
 
@@ -155,7 +131,6 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
               tabIndex={0}
               className={clsx(
                 journeyBoxBase,
-                "relative overflow-hidden",
                 selected
                   ? journeyBoxSelected
                   : hovered
@@ -185,10 +160,10 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
       </div>
 
       {/* Weekly goal box */}
-      <div className={clsx(goalBox, goalShadow, "px-[16px] flex flex-col justify-center gap-[10px]")}>
+      <div className={clsx(goalBoxBase, goalShadow, "px-[16px] flex flex-col justify-center gap-[10px]")}>
         <div className="label-large-emphasized text-on-surface">주간 목표 점수 설정</div>
 
-        {/* 트랙 */}
+        {/* Track */}
         <div className={goalTrack}>
           {GOALS.map((g) => {
             const selected = weeklyGoal === g;
@@ -198,18 +173,13 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
                 key={g}
                 type="button"
                 onClick={() => setWeeklyGoal(g)}
-                className={clsx(
-                  goalCircleBase,
-                  "p-0 flex-none shrink-0",
-                  selected ? goalCircleOn : goalCircleOff,
-                )}
+                className={clsx(goalCircleBase, selected ? goalCircleOn : goalCircleOff)}
               >
                 <span
-                  className="label-medium"
-                  style={{
-                    color: selected ? "var(--color-secondary)" : "rgba(18,19,21,0.35)",
-                    fontWeight: 700,
-                  }}
+                  className={clsx(
+                    "label-medium-emphasized",
+                    selected ? "text-secondary" : "text-on-surface-variant-low",
+                  )}
                 >
                   {g}
                 </span>
@@ -221,31 +191,22 @@ export function Step4Purpose({ onPrev, onSubmit }: Props) {
 
       {/* Bottom buttons */}
       <div className="w-full flex items-center justify-between mt-[6px]">
-        {/* 이전 */}
+        {/* Prev */}
         <button type="button" onClick={onPrev} className={prevBtnClass}>
-          <span
-            className="
-              font-['Pretendard']
-              text-[16.161px]
-              font-[500]
-              leading-[21.01px]
-              text-on-surface-variant-lowest
-            "
-          >
-            이전
-          </span>
+          {/* 기존 px값 유지 원하면 네 span 그대로 써도 됨 */}
+          <span className="label-xlarge text-on-surface-variant-lowest">이전</span>
         </button>
 
-        {/* 다음 */}
+        {/* Next */}
         <Button
           size="2xl"
           shape="square"
           variant={canNext ? "primary" : "surfaceVariant"}
-          className={[
+          className={clsx(
             "w-[572px] h-[60px]",
             "rounded-[6.465px]",
-            !canNext ? "bg-surface-variant-low" : "",
-          ].join(" ")}
+            !canNext && "bg-surface-variant-low",
+          )}
           disabled={!canNext}
           onClick={() => payload && onSubmit(payload)}
         >
