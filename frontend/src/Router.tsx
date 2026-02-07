@@ -4,9 +4,13 @@ import HomePage from './pages/HomePage';
 import SettingPage from './pages/SettingPage';
 import DetailPage from './pages/DetailPage';
 import ModalPracticePage from './pages/ModalPracticePage';
-import { createBrowserRouter } from 'react-router-dom';
+import { Navigate, createBrowserRouter } from 'react-router-dom';
 import ErrorPage from './pages/ErrorPage';
 import ProfilePage from './pages/ProfilePage';
+import LoginPage from './pages/LoginPage';
+import ExamplePage from './pages/ExamplePage';
+import OnboardingWelcomePage from './pages/OnboardingWelcomePage';
+import OnboardingPage from './pages/OnboardingPage';
 
 /* TODO
 라우터 설정은 추후 변경해야 합니다. 또한, 나중에 API 연동할 때 로그인 여부 등.. 다시 리팩토링해야합니당
@@ -15,16 +19,28 @@ import ProfilePage from './pages/ProfilePage';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <AppLayout />,
+    element: <AppLayout variant="main" />,
     errorElement: <ErrorPage />,
     children: [
+      {
+        index: true,
+        element: <Navigate to="/home" replace />,
+      },
       {
         path: 'home',
         element: <HomePage />,
       },
       {
+        path: 'example',
+        element: <ExamplePage />,
+      },
+      {
         path: 'profile',
         children: [
+          {
+            index: true,
+            element: <Navigate to="self" replace />,
+          },
           {
             path: 'self',
             element: <ProfilePage mode="self" />,
@@ -43,16 +59,19 @@ const router = createBrowserRouter([
         path: 'journey',
         element: <JourneyPage />,
       },
-      {
-        path: 'onboarding',
-        element: <WelcomeScreen />,
-      },
-      {
-        path: 'onboarding/step1',
-        element: <OnboardingSteps />,
-      },
+    ],
+  },
+  {
+    path: '/',
+    element: <AppLayout variant="default" />,
+    errorElement: <ErrorPage />,
+    children: [
       {
         path: 'setting',
+        element: <SettingPage />,
+      },
+      {
+        path: 'setting/:tab',
         element: <SettingPage />,
       },
       {
@@ -64,6 +83,22 @@ const router = createBrowserRouter([
         element: <ModalPracticePage />,
       },
     ],
+  },
+  {
+    path: '/onboarding',
+    element: <OnboardingWelcomePage />,
+  },
+  {
+    path: '/onboarding/step1',
+    element: <OnboardingPage />,
+  },
+  {
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
+    path: '*',
+    element: <ErrorPage />,
   },
 ]);
 
