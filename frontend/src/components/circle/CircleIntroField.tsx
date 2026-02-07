@@ -20,7 +20,6 @@ export const CircleIntroField = ({
         onChange={onChange}
         maxLength={300}
         placeholder="띄어쓰기 포함 300자 이내 작성해주세요."
-        variant="fixed300"
       />
     );
   }
@@ -31,7 +30,6 @@ export const CircleIntroField = ({
       onChange={onChange}
       maxLength={350}
       placeholder="띄어쓰기 포함 350자 이하로 작성해주세요."
-      variant="hug350"
     />
   );
 };

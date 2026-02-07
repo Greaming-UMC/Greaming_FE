@@ -31,3 +31,4 @@ Thumbs.db
 *storybook.log
 storybook-static
 preview.stories.tsx
+.vercel

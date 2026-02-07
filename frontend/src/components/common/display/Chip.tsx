@@ -72,10 +72,10 @@ export const Chip = ({
     // 3. 일반 상태
     switch (variant) {
       case "outlined":
-        return "bg-transparent border border-outline text-on-surface hover:bg-surface-variant-lowest";
+        return "bg-transparent border border-outline-variant text-on-surface-variant-dim";
       case "filled":
       default:
-        return "bg-surface-variant-lowest text-on-surface-variant-bright border border-transparent";
+        return "bg-on-surface-variant-lowest text-on-surface-variant-bright border border-transparent";
     }
   };
 
@@ -87,8 +87,8 @@ export const Chip = ({
       className={`
         /* 공통 레이아웃 */
         inline-flex items-center justify-center gap-1.5
-        h-8 px-3 rounded-extra-large /* 칩은 보통 뱃지보다 큼 (터치 영역 고려) */
-        text-sm font-medium
+        h-[24px] px-[12px] py-[2px] rounded-extra-large
+        label-large-emphasized
         transition-colors duration-200
         cursor-pointer
         
@@ -117,7 +117,7 @@ export const Chip = ({
             e.stopPropagation(); // 칩 클릭 이벤트 버블링 방지
             onDelete();
           }}
-          className="ml-0.5 flex items-center justify-center rounded-full hover:bg-black/10 p-0.5 transition-colors"
+          className="ml-0.5 flex items-center justify-center rounded-full state-layer surface-variant-opacity-16"
         >
           <Icon name="close" size={14} className="fill-current" />
         </span>
