@@ -9,7 +9,7 @@ type NavPopoverItem = { type: "popover"; id: string; label: string; iconName: Ic
 type NavItemType = NavLinkItem | NavPopoverItem;
 
 const NAV_ITEMS: NavItemType[] = [
-  { type: "link", path: "/my-room", label: "My Room", iconName: "nav_myroom" },
+  { type: "link", path: "/profile", label: "My Room", iconName: "nav_myroom" },
   { type: "link", path: "/journey", label: "Journey", iconName: "nav_journy" },
   { type: "popover", id: "circle", label: "Circle", iconName: "nav_circle" },
 ];
