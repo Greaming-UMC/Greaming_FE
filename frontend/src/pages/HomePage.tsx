@@ -1,67 +1,56 @@
-import { useState } from 'react';
+import { useMemo, useState } from "react";
+import PageContainer from "../components/common/layouts/PageContainer";
+import CardControls from "../features/home/components/controls/CardControls";
+import CardGrid from "../features/home/components/card/CardGrid";
+import HeroSection from "../features/home/components/hero/HeroSection";
+import type { ChallengeType, HomeView } from "../features/home/components/type";
 
-import mainBackground from '../assets/background/main_background.svg';
-import PageContainer from '../components/common/layouts/PageContainer';
-import Logo from '../components/common/Logo';
-
+import HomeBg from "../assets/background/home_bg.svg";
+import {
+  DAILY_CHALLENGE_CARDS,
+  WEEKLY_CHALLENGE_CARDS,
+} from "../features/home/api/MockHomeChallengeCards";
 
 const HomePage = () => {
-  const [count, setCount] = useState(0);
+  const [view, setView] = useState<HomeView>("HOME");
+
+  const handleJoin = (type: ChallengeType) => {
+    setView(type); // "DAILY" | "WEEKLY"
+  };
+
+  const dailyCards = useMemo(() => DAILY_CHALLENGE_CARDS, []);
+  const weeklyCards = useMemo(() => WEEKLY_CHALLENGE_CARDS, []);
 
   return (
-    <div className="flex flex-col w-full">
+    <>
       <section
-        className="
-          relative flex flex-col items-center justify-center
-          w-full min-h-screen
-          bg-cover bg-center bg-no-repeat
-          bg-surface-inverse 
-        "
-        style={{ backgroundImage: `url(${mainBackground})` }}
+        className="w-full bg-primary bg-no-repeat bg-top"
+        style={{
+          backgroundImage: `url(${HomeBg})`,
+          backgroundSize: "cover",
+        }}
       >
-        <div className="flex w-full max-w-5xl items-center justify-center gap-8 px-6 pb-20 pt-32">
-          <div className="flex min-h-[50vh] flex-col items-center justify-center gap-8 text-center">
-            <div className="flex items-center gap-6">
-              <Logo name="favicon" width={100} height={100} aria-label="Greaming logo" />
-            </div>
-
-            <div className="space-y-2">
-              <h1 className="display-large text-on-primary">Greaming Design System</h1>
-              <p className="body-medium text-on-primary">
-                Vite + React + GDS 프리뷰 화면입니다.
-              </p>
-            </div>
-
-            <div className="flex flex-col items-center gap-3">
-              <button
-                type="button"
-                className="label-large-emphasized state-layer secondary-opacity-8 rounded-medium bg-secondary px-6 py-3 text-on-secondary"
-                onClick={() => setCount((prev) => prev + 1)}
-              >
-                Count is {count}
-              </button>
-              <p className="label-medium text-on-inverse">
-                <code className="rounded-small bg-surface-variant-low px-2 py-1 text-on-primary">
-                  src/pages/HomePage.tsx
-                </code>
-                를 수정해서 바로 확인하세요.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="w-full bg-surface py-12">
         <PageContainer>
-          {/* Header 스크롤 테스트용 더미 컨텐츠 */}
-          <div className="space-y-40 py-20">
-            <div className="h-[600px] rounded-large bg-surface-variant" />
-            <div className="h-[600px] rounded-large bg-surface-variant" />
-            <div className="h-[600px] rounded-large bg-surface-variant" />
+          <div className="pt-14 pb-10">
+            <HeroSection
+              view={view}
+              onJoin={handleJoin}
+              dailyCards={dailyCards}
+              weeklyCards={weeklyCards}
+            />
           </div>
         </PageContainer>
       </section>
-    </div>
+
+      <section className="w-full bg-surface">
+        <PageContainer>
+          <div className="mx-auto w-full max-w-[1366px]">
+            <CardControls view={view} />
+            <CardGrid />
+          </div>
+        </PageContainer>
+      </section>
+    </>
   );
 };
 
