@@ -33,7 +33,7 @@ const SocialLoginButton = ({ variant }: SocialLoginButtonProps) => {
       className="h-14 w-14 rounded-full flex items-center justify-center state-layer primary-opacity-8"
       onClick={() => startSocialLogin(variant)}
     >
-      <Icon name={preset.iconName} size={40} />
+      <Icon name={preset.iconName} size={56} />
     </button>
   );
 };
