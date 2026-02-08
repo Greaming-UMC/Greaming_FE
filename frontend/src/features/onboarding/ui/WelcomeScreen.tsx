@@ -50,7 +50,7 @@ export function WelcomeScreen() {
             size="lg"
             shape="round"
             variant="surface"
-            className="mt-8 w-31.25 px-2.5"
+              className="mt-8 w-[125px] px-2.5"
           >
             시작하기
           </Button>

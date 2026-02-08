@@ -44,7 +44,7 @@ export function Step1Welcome({ onNext }: { onNext: () => void }) {
       </div>
 
       <div className="mt-22">
-        <Button size="2xl" shape="square" className="w-166.5" onClick={onNext}>
+        <Button size="2xl" shape="square" className="w-[666px] onClick={onNext}>
           다음
         </Button>
       </div>
