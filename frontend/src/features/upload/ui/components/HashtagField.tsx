@@ -33,11 +33,6 @@ export function HashtagField({
     onAddTag(t);
     onChange("");
   };
-
-  /* -------------------------------------------------------------------------- */
-  /* Tailwind class tokens (UI 유지 + 통일)                                     */
-  /* -------------------------------------------------------------------------- */
-
   const inputRow =
     "w-full box-border flex items-center justify-between " +
     "h-[50px] px-[16px] " +

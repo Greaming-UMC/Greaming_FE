@@ -5,15 +5,11 @@ type UploadForm = ReturnType<typeof useUploadForm>;
 
 type Props = {
   form: UploadForm;
-  pageWidth: number;
 };
 
-export function UploadOptionsSection({ form, pageWidth }: Props) {
+export function UploadOptionsSection({ form }: Props) {
   return (
-    <div
-      className="flex items-center mt-[16px] gap-[11px]"
-      style={{ width: pageWidth }}
-    >
+    <div className="flex w-full items-center mt-[16px] gap-[11px]">
       <Checkbox checked={form.isPrivate} onChange={form.setIsPrivate}>
         비공개
       </Checkbox>

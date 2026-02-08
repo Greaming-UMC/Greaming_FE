@@ -1,5 +1,4 @@
 import type React from "react";
-import clsx from "clsx";
 
 type Mode = "daily" | "weekly" | "circle";
 

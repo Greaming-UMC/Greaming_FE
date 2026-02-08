@@ -53,33 +53,30 @@ export function UploadView({ header }: UploadViewProps) {
     <div className="flex w-full flex-col items-center">
       <div className="h-[120px]" />
 
-      {header ? (
-        <div className="mb-[12px]" style={{ width: PAGE_WIDTH }}>
-          {typeof header === "function"
-            ? header({ uploadButtonNode })
-            : header}
-        </div>
-      ) : null}
-
-      {!header ? (
-        <div className="flex items-center justify-between" style={{ width: PAGE_WIDTH }}>
-          <div className="sub-title-large-emphasized text-on-surface">
-            그림 업로드
+      <div className="w-[1372px] max-w-[92vw] flex flex-col">
+        {header ? (
+          <div className="mb-[12px]">
+            {typeof header === "function"
+              ? header({ uploadButtonNode })
+              : header}
           </div>
-          {uploadButtonNode}
-        </div>
-      ) : null}
+        ) : (
+          <div className="flex items-center justify-between">
+            <div className="sub-title-large-emphasized text-on-surface">
+              그림 업로드
+            </div>
+            {uploadButtonNode}
+          </div>
+        )}
 
-      {/* 섹션 조립 */}
-      <UploadImagesSection form={form} pageWidth={PAGE_WIDTH} />
-      <UploadOptionsSection form={form} pageWidth={PAGE_WIDTH} />
-      <UploadContentSection form={form} pageWidth={PAGE_WIDTH} />
+        <UploadImagesSection form={form} />
+        <UploadOptionsSection form={form} />
+        <UploadContentSection form={form} />
+      </div>
 
-      {/* 업로드 오버레이 */}
       {isUploading ? (
         <div className="fixed inset-0 z-[999] flex items-center justify-center">
           <div className="absolute inset-0 bg-primary opacity-60" />
-
           <div className="relative text-white">
             <AnimatedLogoDraw size={120} />
           </div>

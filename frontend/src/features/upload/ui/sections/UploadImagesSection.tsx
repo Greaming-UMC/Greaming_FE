@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import clsx from "clsx";
 
 import type { useUploadForm } from "../../model/useUploadForm";
@@ -8,10 +8,9 @@ type UploadForm = ReturnType<typeof useUploadForm>;
 
 type Props = {
   form: UploadForm;
-  pageWidth: number; // 1372
 };
 
-export function UploadImagesSection({ form, pageWidth }: Props) {
+export function UploadImagesSection({ form }: Props) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
 
   // 드래그 스크롤
@@ -29,7 +28,6 @@ export function UploadImagesSection({ form, pageWidth }: Props) {
     dragRef.current.active = true;
     dragRef.current.startX = e.clientX;
     dragRef.current.startScrollLeft = el.scrollLeft;
-
     e.preventDefault();
   };
 
@@ -56,33 +54,20 @@ export function UploadImagesSection({ form, pageWidth }: Props) {
   }, []);
 
   return (
-    <div
-      className="flex flex-col pt-[22px] pb-[28px]"
-      style={{ width: pageWidth }}
-    >
+    <div className="flex w-full flex-col pt-[22px] pb-[28px]">
       <div
         ref={scrollerRef}
         className={clsx(
           "overflow-x-auto overflow-y-hidden",
-          "scrollbar-none",     
+          "[&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none]"
         )}
         onMouseDown={onMouseDownScroller}
       >
-        {/* plugin이 없으면 이 한 줄만 남겨도 됨 */}
-        <style>{`.hide-scrollbar::-webkit-scrollbar{display:none;}`}</style>
-
-        <div
-          className={clsx(
-            "hide-scrollbar flex items-center gap-[24px] pb-[12px]",
-            "w-max pr-[8px] select-none", 
-          )}
-        >
-          {/* 업로드 박스 */}
+        <div className={clsx("flex items-center gap-[24px] pb-[12px]", "w-max pr-[8px] select-none")}>
           <div className="shrink-0">
             <UploadBox onUpload={(files) => form.addFiles(files)} multiple />
           </div>
 
-          {/* 프리뷰들 */}
           {form.images.map((img, idx) => {
             const isFirst = idx === 0;
 
@@ -91,7 +76,7 @@ export function UploadImagesSection({ form, pageWidth }: Props) {
                 key={img.id}
                 className={clsx(
                   "shrink-0 overflow-hidden rounded-[20px] bg-primary",
-                  isFirst ? "w-[220px] h-[340px]" : "w-[520px] h-[340px]",
+                  isFirst ? "w-[220px] h-[340px]" : "w-[520px] h-[340px]"
                 )}
               >
                 <img
@@ -106,7 +91,7 @@ export function UploadImagesSection({ form, pageWidth }: Props) {
         </div>
       </div>
 
-      <ScrollIndicator width={pageWidth} scrollerRef={scrollerRef} />
+      <ScrollIndicator scrollerRef={scrollerRef} />
     </div>
   );
 }
@@ -118,35 +103,53 @@ function clamp(n: number, min: number, max: number) {
 }
 
 function ScrollIndicator({
-  width,
   scrollerRef,
 }: {
-  width: number;
   scrollerRef: React.RefObject<HTMLDivElement | null>;
 }) {
-  const TRACK_W = width;
-  const THUMB_W = Math.min(520, Math.floor(TRACK_W * 0.45));
-
   const trackRef = useRef<HTMLDivElement | null>(null);
+
+  // thumb 드래그
   const dragRef = useRef({
     active: false,
     startClientX: 0,
     startThumbLeft: 0,
   });
 
+  const [trackW, setTrackW] = useState(0);
   const [thumbLeft, setThumbLeft] = useState(0);
+
+
+  const thumbW = useMemo(() => {
+    if (trackW <= 0) return 0;
+    return Math.min(520, Math.floor(trackW * 0.45));
+  }, [trackW]);
+
+  const maxLeft = useMemo(() => Math.max(0, trackW - thumbW), [trackW, thumbW]);
+
+  // track width 측정 (부모 w-full에 맞춰 자동)
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+
+    const measure = () => setTrackW(el.getBoundingClientRect().width);
+    measure();
+
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const syncThumbFromScroller = () => {
     const el = scrollerRef.current;
     if (!el) return;
 
     const maxScroll = el.scrollWidth - el.clientWidth;
-    const maxLeft = TRACK_W - THUMB_W;
-
-    if (maxScroll <= 0) {
+    if (maxScroll <= 0 || maxLeft <= 0) {
       setThumbLeft(0);
       return;
     }
+
     const ratio = el.scrollLeft / maxScroll;
     setThumbLeft(clamp(maxLeft * ratio, 0, maxLeft));
   };
@@ -156,14 +159,13 @@ function ScrollIndicator({
     if (!el) return;
 
     const maxScroll = el.scrollWidth - el.clientWidth;
-    const maxLeft = TRACK_W - THUMB_W;
-
-    if (maxLeft <= 0 || maxScroll <= 0) return;
+    if (maxScroll <= 0 || maxLeft <= 0) return;
 
     const ratio = nextLeft / maxLeft;
     el.scrollLeft = ratio * maxScroll;
   };
 
+  // scroller scroll ↔ thumb 동기화
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -173,7 +175,8 @@ function ScrollIndicator({
     const onScroll = () => syncThumbFromScroller();
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maxLeft]);
 
   const onClickTrack: React.MouseEventHandler<HTMLDivElement> = (e) => {
     if ((e.target as HTMLElement)?.dataset?.thumb === "true") return;
@@ -184,9 +187,7 @@ function ScrollIndicator({
     const rect = track.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
 
-    const maxLeft = TRACK_W - THUMB_W;
-    const nextLeft = clamp(clickX - THUMB_W / 2, 0, maxLeft);
-
+    const nextLeft = clamp(clickX - thumbW / 2, 0, maxLeft);
     setThumbLeft(nextLeft);
     syncScrollerFromThumb(nextLeft);
   };
@@ -201,14 +202,14 @@ function ScrollIndicator({
     e.preventDefault();
   };
 
+  // thumb 드래그 이동
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
       if (!dragRef.current.active) return;
 
       const dx = e.clientX - dragRef.current.startClientX;
-      const maxLeft = TRACK_W - THUMB_W;
-
       const nextLeft = clamp(dragRef.current.startThumbLeft + dx, 0, maxLeft);
+
       setThumbLeft(nextLeft);
       syncScrollerFromThumb(nextLeft);
     };
@@ -223,33 +224,28 @@ function ScrollIndicator({
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
     };
-  }, [thumbLeft, TRACK_W, THUMB_W]);
+  }, [maxLeft]);
+
+  const hidden = trackW <= 0 || thumbW <= 0 || maxLeft <= 0;
 
   return (
     <div
       ref={trackRef}
-      className="relative h-[12px]"
-      style={{ width: TRACK_W }}    
+      className="relative h-[12px] w-full"
       onMouseDown={onClickTrack}
     >
       {/* track */}
-      <div
-        className={clsx(
-          "absolute left-0 top-1/2 -translate-y-1/2 rounded-full",
-          "bg-on-surface opacity-25",
-          "h-[4px] w-full",
-        )}
-      />
+      <div className="absolute left-0 top-1/2 -translate-y-1/2 rounded-full bg-on-surface opacity-25 h-[4px] w-full" />
 
       {/* thumb */}
       <div
         data-thumb="true"
         className={clsx(
           "absolute top-1/2 -translate-y-1/2 rounded-full",
-          "bg-on-surface opacity-95",
-          "h-[6px]",
+          "bg-on-surface opacity-95 h-[6px]",
+          hidden && "opacity-0 pointer-events-none"
         )}
-        style={{ left: thumbLeft, width: THUMB_W }} 
+        style={{ left: thumbLeft, width: thumbW }} //이게 피그마에서 원하는 스크롤바를 사용하려면 style로만 해야된다해서.. 일단은 이렇게 뒀습니다!
         onMouseDown={onMouseDownThumb}
       />
     </div>
