@@ -1,9 +1,9 @@
-import UploadPage from "../UploadPage";
+import { UploadView } from "../view/UploadView";
 import { UploadHeader } from "../components/UploadHeader";
 
 export default function DailyUploadPage() {
   return (
-    <UploadPage
+    <UploadView
       header={({ uploadButtonNode }) => (
         <UploadHeader
           mode="daily"

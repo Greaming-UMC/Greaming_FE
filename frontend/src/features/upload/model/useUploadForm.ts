@@ -8,18 +8,20 @@ export function useUploadForm() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const [isPrivate, setIsPrivate] = useState(false);
-  const [allowComments, setAllowComments] = useState(true);
+  const [allowComments, setAllowComments] = useState(false);
 
-  const [body, setBody] = useState("");        // 설명/내용 (WriteBodyField)
-  const [hashtagInput, setHashtagInput] = useState(""); // 해시태그 입력 (WriteTitleField)
+  const [body, setBody] = useState("");
+  const [hashtagInput, setHashtagInput] = useState("");
   const [hashtags, setHashtags] = useState<string[]>([]);
 
   const activeImage = images[activeIndex];
 
   const canUpload = useMemo(() => {
-    // 최소 조건은 "이미지 1장" + "내용(선택)"은 프로젝트 룰에 따라 바꿔도 됨
-    return images.length > 0;
-  }, [images.length]);
+    const hasBody = body.trim().length > 0;
+    const hasTags = hashtags.length > 0;
+    const hasImage = images.length > 0;
+    return hasBody && hasTags && hasImage;
+  }, [images.length, body, hashtags.length]);
 
   const addFiles = (files: FileList | File[]) => {
     const arr = Array.from(files);
@@ -31,11 +33,7 @@ export function useUploadForm() {
         previewUrl: URL.createObjectURL(file),
       }));
 
-    setImages((prev) => {
-      const next = [...prev, ...items];
-      // 첫 업로드 시 activeIndex 0 유지
-      return next;
-    });
+    setImages((prev) => [...prev, ...items]);
   };
 
   const removeImage = (id: string) => {
@@ -43,18 +41,12 @@ export function useUploadForm() {
       const idx = prev.findIndex((p) => p.id === id);
       const next = prev.filter((p) => p.id !== id);
 
-      // URL revoke
       const removed = prev[idx];
       if (removed) URL.revokeObjectURL(removed.previewUrl);
 
-      // activeIndex 보정
-      if (next.length === 0) {
-        setActiveIndex(0);
-      } else if (activeIndex >= next.length) {
-        setActiveIndex(next.length - 1);
-      } else if (idx <= activeIndex && activeIndex > 0) {
-        setActiveIndex(activeIndex - 1);
-      }
+      if (next.length === 0) setActiveIndex(0);
+      else if (activeIndex >= next.length) setActiveIndex(next.length - 1);
+      else if (idx <= activeIndex && activeIndex > 0) setActiveIndex(activeIndex - 1);
 
       return next;
     });
@@ -84,20 +76,21 @@ export function useUploadForm() {
   };
 
   const removeHashtag = (tag: string) => {
-    setHashtags((prev) => prev.filter((t) => t !== tag));
+    const normalized = tag.startsWith("#") ? tag.slice(1) : tag;
+    setHashtags((prev) => prev.filter((t) => t !== normalized));
   };
 
   const submit = async () => {
     if (!canUpload) return;
 
-    // TODO: API 연결
-    // 예: FormData로 이미지 + body + flags + hashtags 전송
     const fd = new FormData();
     images.forEach((img) => fd.append("images", img.file));
     fd.append("body", body);
     fd.append("isPrivate", String(isPrivate));
     fd.append("allowComments", String(allowComments));
     fd.append("hashtags", JSON.stringify(hashtags));
+
+    await new Promise((r) => setTimeout(r, 800));
 
     console.log("UPLOAD PAYLOAD", {
       images: images.map((i) => i.file.name),
@@ -106,8 +99,6 @@ export function useUploadForm() {
       allowComments,
       hashtags,
     });
-
-    // await api.post("/posts", fd)
   };
 
   return {
@@ -131,6 +122,7 @@ export function useUploadForm() {
 
     setBody,
     setHashtagInput,
+    setHashtags, 
 
     addFiles,
     removeImage,

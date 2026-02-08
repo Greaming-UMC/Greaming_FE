@@ -14,6 +14,18 @@ export function ImagePreviewStrip({
   onSelect,
   onRemove,
 }: Props) {
+  
+  const cardBase =
+    "relative overflow-hidden rounded-large bg-primary " +
+    "w-[420px] h-[300px] cursor-pointer select-none";
+
+  const cardActive = "ring-2 ring-outline-variant";
+  const cardInactive = "ring-1 ring-outline-variant";
+
+  const removeBtn =
+    "absolute right-3 top-3 rounded-full px-3 py-1 text-xs " +
+    "bg-surface-variant-lowest text-on-surface-variant-bright";
+
   return (
     <div className="flex gap-5">
       {images.slice(0, 2).map((img) => {
@@ -22,31 +34,27 @@ export function ImagePreviewStrip({
         return (
           <div
             key={img.id}
-            className={clsx(
-              "relative overflow-hidden rounded-large bg-primary",
-              active ? "ring-2 ring-outline-variant" : "ring-1 ring-outline-variant",
-            )}
-            style={{ width: 420, height: 300 }}
-            onClick={() => onSelect(img.id)}
             role="button"
             tabIndex={0}
+            onClick={() => onSelect(img.id)}
+            className={clsx(cardBase, active ? cardActive : cardInactive)}
           >
+            {/* 이미지 */}
             <img
               src={img.previewUrl}
               alt={img.file.name}
-              className="h-full w-full object-cover"
+              className="w-full h-full object-cover"
+              draggable={false}
             />
 
+            {/* 삭제 버튼 */}
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onRemove(img.id);
               }}
-              className={clsx(
-                "absolute right-3 top-3 rounded-full px-3 py-1 text-xs",
-                "bg-surface-variant-lowest text-on-surface-variant-bright",
-              )}
+              className={removeBtn}
             >
               삭제
             </button>

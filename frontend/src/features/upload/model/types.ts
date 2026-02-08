@@ -15,3 +15,4 @@ export type UploadPageMeta = {
   remainText?: string;
   topicText: string;
 };
+

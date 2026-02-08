@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import clsx from "clsx";
-import { TagChip } from "../components/TagChip";
+import { Chip } from "../../../../components/common/display/Chip";
 
 type Props = {
   value: string;
@@ -34,32 +34,37 @@ export function HashtagField({
     onChange("");
   };
 
+  /* -------------------------------------------------------------------------- */
+  /* Tailwind class tokens (UI 유지 + 통일)                                     */
+  /* -------------------------------------------------------------------------- */
+
+  const inputRow =
+    "w-full box-border flex items-center justify-between " +
+    "h-[50px] px-[16px] " +
+    "bg-surface rounded-small";
+
+  const inputBase =
+    "flex-1 bg-transparent outline-none body-large-emphasized " +
+    "placeholder:text-on-surface-variant-lowest";
+
+  const completeBtn =
+    "w-[66px] h-[32px] flex items-center justify-center " +
+    "rounded-extra-large border border-outline-variant " +
+    "bg-surface-variant-high text-on-surface label-large";
+
+  const chipClass =
+    "h-[32px] rounded-[28px] px-[14px] gap-[8px] label-medium whitespace-nowrap";
+
   return (
     <div className="flex flex-col gap-[10px]">
-      {/* 라벨 */}
       <div className="sub-title-large-emphasized text-on-surface">해시태그</div>
 
-      {/* 입력줄 */}
-      <div
-        className={clsx(
-          "w-full",
-          "flex items-center justify-between",
-          "h-[50px]",
-          "px-[16px]",
-          "bg-surface",
-          "rounded-small",
-        )}
-        style={{ boxSizing: "border-box" }}
-      >
+      <div className={inputRow}>
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="작성하기"
-          className={clsx(
-            "flex-1 bg-transparent outline-none",
-            "body-large-emphasized",
-            "placeholder:text-on-surface-variant-lowest",
-          )}
+          className={inputBase}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
@@ -68,34 +73,29 @@ export function HashtagField({
           }}
         />
 
-        {/* 완료 버튼 */}
         <button
           type="button"
           onClick={onComplete}
           disabled={!canAdd}
-          className={clsx(
-            "w-[66px] h-[32px]",
-            "flex items-center justify-center",
-            "rounded-extra-large",
-            "border border-outline-variant",
-            "bg-surface-variant-high",
-            "text-on-surface",
-            "label-large",
-            !canAdd && "opacity-40 cursor-not-allowed",
-          )}
+          className={clsx(completeBtn, !canAdd && "opacity-40 cursor-not-allowed")}
         >
           완료
         </button>
       </div>
 
-      {/* 태그 목록 */}
-      {tags.length > 0 ? (
+      {tags.length > 0 && (
         <div className="flex flex-wrap gap-[8px]">
           {tags.map((t) => (
-            <TagChip key={t} label={t} onDelete={() => onRemoveTag(t)} />
+            <Chip
+              key={t}
+              label={t}
+              onDelete={() => onRemoveTag(t)}
+              variant="filled"
+              className={chipClass}
+            />
           ))}
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
