@@ -6,7 +6,7 @@ import LeagueIcon from "../../../../assets/icon/mono/intro_League.svg?react";
 import { IntroFeatureCard } from "../components/IntroFeatureCard";
 import { Button } from "../../../../components/common/input/Button/Button";
 
-export function Step1Welcome({ onNext }: { onNext: () => void }) {
+export function Step1Intro({ onNext }: { onNext: () => void }) {
   return (
     <div className="w-full h-full flex flex-col items-center">
       <div className="flex flex-col items-center gap-5">
@@ -43,11 +43,12 @@ export function Step1Welcome({ onNext }: { onNext: () => void }) {
         />
       </div>
 
-      <div className="mt-22">
-        <Button size="2xl" shape="square" className="w-[666px] onClick={onNext}>
-          다음
-        </Button>
+       <div className="mt-[88px]">  {/* 22*4=88px 가정 */}
+          <Button size="2xl" shape="square" className="w-[666px]" onClick={onNext}>
+            다음
+          </Button>
+        </div>
+
       </div>
-    </div>
   );
 }

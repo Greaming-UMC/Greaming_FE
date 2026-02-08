@@ -4,10 +4,11 @@ import clsx from "clsx";
 import { Button } from "../../../../components/common/input/Button/Button";
 import { SelectItem } from "../../../../components/common/input/List/SelectItem";
 
-import BadgeSketcher from "../../../../assets/icon/multi/badge__sketcher.svg?react";
-import BadgePainter from "../../../../assets/icon/multi/badge_painter.svg?react";
-import BadgeArtist from "../../../../assets/icon/multi/badge_artist.svg?react";
-import BadgeMaster from "../../../../assets/icon/multi/badge_master.svg?react";
+import BadgeSketcher from "../../../../assets/icon/multi/SKETCHER.svg?react";
+import BadgePainter from "../../../../assets/icon/multi/PAINTER.svg?react";
+import BadgeArtist from "../../../../assets/icon/multi/ARTIST.svg?react";
+import BadgeMaster from "../../../../assets/icon/multi/MASTER.svg?react";
+
 
 type JourneyKey = "sketcher" | "painter" | "artist" | "master";
 

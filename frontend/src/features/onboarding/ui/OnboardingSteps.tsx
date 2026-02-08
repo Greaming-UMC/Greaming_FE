@@ -2,7 +2,7 @@ import { useState } from "react";
 import OnboardingBg from "../../../assets/background/onboarding_background.svg";
 
 import { StepIndicator } from "./components/StepIndicator";
-import { Step1Welcome } from "./steps/Step1Welcome";
+import { Step1Intro } from "./steps/Step1Intro";
 import { Step2Profile } from "./steps/Step2Profile";
 import { Step3Interests } from "./steps/Step3Interests";
 import { Step4Purpose } from "./steps/Step4Purpose";
@@ -31,14 +31,14 @@ export function OnboardingSteps() {
   >(null);
   const [weeklyGoal, setWeeklyGoal] = useState<number | null>(null);
 
-  const INDICATOR_OFFSET_Y = -72;
-
   return (
     <div className="relative min-h-dvh w-full overflow-hidden">
-      {/* Background */}
-      <div
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${OnboardingBg})` }}
+      {/* Background (no inline style) */}
+      <img
+        src={OnboardingBg}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 z-0 h-full w-full object-cover"
       />
 
       {/* Dark Overlay */}
@@ -49,10 +49,7 @@ export function OnboardingSteps() {
         {/* 카드+indicator wrapper */}
         <div className="relative">
           {/* StepIndicator */}
-          <div
-            className="absolute left-1/2 -translate-x-1/2 z-30"
-            style={{ top: INDICATOR_OFFSET_Y }}
-          >
+          <div className="absolute left-1/2 -translate-x-1/2 z-30 top-[-72px]">
             <StepIndicator current={step} total={4} />
           </div>
 
@@ -70,7 +67,7 @@ export function OnboardingSteps() {
           >
             {/* 본문 영역 */}
             <div className="w-full flex-1 flex flex-col">
-              {step === 1 && <Step1Welcome onNext={next} />}
+              {step === 1 && <Step1Intro onNext={next} />}
 
               {step === 2 && (
                 <Step2Profile
