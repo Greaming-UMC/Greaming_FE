@@ -8,6 +8,7 @@ import { Navigate, createBrowserRouter } from 'react-router-dom';
 import ErrorPage from './pages/ErrorPage';
 import ProfilePage from './pages/ProfilePage';
 import LoginPage from './pages/LoginPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
 import ExamplePage from './pages/ExamplePage';
 import OnboardingWelcomePage from './pages/OnboardingWelcomePage';
 import OnboardingPage from './pages/OnboardingPage';
@@ -95,6 +96,10 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+  },
+  {
+    path: '/auth/callback',
+    element: <AuthCallbackPage />,
   },
   {
     path: '*',
