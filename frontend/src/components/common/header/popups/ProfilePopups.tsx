@@ -14,7 +14,7 @@ const ProfilePopup = ({ userInfo, onLogout }: ProfilePopupProps) => {
   ];
 
   return (
-    <div className="absolute top-full right-0 mt-3 w-[240px] bg-surface rounded-lg shadow-xl py-2 animate-in fade-in slide-in-from-top-2">
+    <div className="w-[240px] bg-surface rounded-lg shadow-xl py-2 animate-in fade-in zoom-in-95 duration-200">
       <div className="px-4 pb-2 border-b border-surface-variant-low">
         <ListBase
           size="lg"

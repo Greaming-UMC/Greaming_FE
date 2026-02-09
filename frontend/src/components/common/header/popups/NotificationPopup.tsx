@@ -3,7 +3,7 @@ import Icon from '../../Icon';
 
 const NotificationPopup = () => {
   return (
-    <div className="absolute top-full right-0 mt-3 w-[400px] bg-surface rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2">
+    <div className="w-[400px] bg-surface rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
       <div className="px-4 py-3 border-b border-surface-variant-low">
         <h3 className="font-bold text-primary">알림</h3>
       </div>
