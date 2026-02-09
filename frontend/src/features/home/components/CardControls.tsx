@@ -3,7 +3,7 @@ import FilterTabs from "../ui/controls/FilterTabs";
 import SortTabs from "../ui/controls/SortTabs";
 import HomeSearchInput from "../ui/controls/HomeSearchInput";
 import { DatePickerDayModal, DatePickerWeekModal } from "../../../components/common";
-import { Chip } from "../../../components/common/display/Chip"; // Chip 컴포넌트 import
+import { Chip } from "../../../components/common/display/Chip";
 import type { HomeView } from "./type";
 
 interface CardControlsProps {
