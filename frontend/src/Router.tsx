@@ -35,6 +35,13 @@ const router = createBrowserRouter([
         path: 'example',
         element: <ExamplePage />,
       },
+    ],
+  },
+  {
+    path: '/',
+    element: <AppLayout variant="default" />,
+    errorElement: <ErrorPage />,
+    children: [
       {
         path: 'profile',
         children: [
@@ -60,13 +67,6 @@ const router = createBrowserRouter([
         path: 'journey',
         element: <JourneyPage />,
       },
-    ],
-  },
-  {
-    path: '/',
-    element: <AppLayout variant="default" />,
-    errorElement: <ErrorPage />,
-    children: [
       {
         path: 'setting',
         element: <SettingPage />,
