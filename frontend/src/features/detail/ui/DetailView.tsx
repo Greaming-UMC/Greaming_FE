@@ -1,5 +1,4 @@
 import type { CommentDetail } from "../../../apis/types/submission/checkSubmissionDetails";
-import Icon from "../../../components/common/Icon";
 import ArtistArtwork from "./ArtistArtwork";
 import DetailPost from "./DetailPost";
 import ActionSideBar from "./section/ActionSideBar";
