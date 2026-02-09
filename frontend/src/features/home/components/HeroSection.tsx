@@ -1,9 +1,9 @@
-import type { HomeCardType } from "../../../../apis/types/common";
-import { DAILY_CHALLENGE_CARDS, WEEKLY_CHALLENGE_CARDS } from "../../api/MockHomeChallengeCards";
-import { useHeroChallengeProps } from "../../hooks/useHeroChallengeProps";
-import type { ChallengeType, HomeView } from "../type";
+import type { HomeCardType } from "../../../apis/types/common";
+import { DAILY_CHALLENGE_CARDS, WEEKLY_CHALLENGE_CARDS } from "../api/MockHomeChallengeCards";
+import { useHeroChallengeProps } from "../hooks/useHeroChallengeProps";
+import type { ChallengeType, HomeView } from "./type";
 import ChallengeHeroLayout from "./ChallengeHeroLayout";
-import HeroHeaderText from "./HeroHeaderText";
+import HeroHeaderText from "../ui/hero/HeroHeaderText";
 import HeroLayout from "./HeroLayout";
 
 interface HeroSectionProps {
