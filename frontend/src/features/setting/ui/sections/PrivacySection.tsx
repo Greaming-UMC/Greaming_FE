@@ -2,8 +2,6 @@ import { Button } from "../../../../components/common";
 import clsx from "clsx";
 
 const PrivacySection = () => {
-  // 🎨 우리가 확인했던 그 수치 그대로 (그림자 25%, 테두리 3%)
-  const testCardStyle = "shadow-[0_0_4px_0_rgba(18,19,21,0.25)] border-none";
 
   return (
     <section className="flex flex-col gap-10">
@@ -25,8 +23,7 @@ const PrivacySection = () => {
             widthMode="fill"
             // 🛠️ 원본의 px-6 py-4 h-auto 구조 유지 + 우리 그림자/테두리만 추가
             className={clsx(
-              "justify-start px-6 py-3 h-auto border transition-all rounded-medium",
-              testCardStyle
+              "justify-start px-6 py-3 h-auto transition-all rounded-medium shadow-1",
             )}
             onClick={() => console.log("내 데이터 다운로드 클릭됨")}
           >
@@ -38,8 +35,7 @@ const PrivacySection = () => {
             variant="surface"
             widthMode="fill"
             className={clsx(
-              "justify-start px-6 py-3 h-auto border transition-all rounded-medium",
-              testCardStyle
+              "justify-start px-6 py-3 h-auto transition-all rounded-medium shadow-1"
             )}
             onClick={() => console.log("활동 기록 삭제 클릭됨")}
           >
