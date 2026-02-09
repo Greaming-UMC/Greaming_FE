@@ -43,6 +43,10 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
+        path: 'home/:view',
+        element: <HomePage />,
+      },
+      {
         path: 'profile',
         children: [
           {
