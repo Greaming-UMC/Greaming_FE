@@ -3,9 +3,10 @@ import { SearchField } from "../../../../components/common";
 interface Props {
   value: string;
   onChange: (value: string) => void;
+  onSearch: () => void;
 }
 
-const HomeSearchInput = ({ value, onChange }: Props) => {
+const HomeSearchInput = ({ value, onChange, onSearch }: Props) => {
   return (
     <SearchField
       value={value}
@@ -14,8 +15,8 @@ const HomeSearchInput = ({ value, onChange }: Props) => {
       customSize="large"
       icon="search"
       iconPosition="trailing"
-      className="w-full max-w-[405px]"
-      onSearch={() => {}}
+      className="w-[405px] shrink-0"
+      onSearch={onSearch}
     />
   );
 };
