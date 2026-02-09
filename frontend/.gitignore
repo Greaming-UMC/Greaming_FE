@@ -27,3 +27,8 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+*storybook.log
+storybook-static
+preview.stories.tsx
+.vercel

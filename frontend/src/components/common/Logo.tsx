@@ -75,7 +75,7 @@ const Logo = ({ name, size, className, ...rest }: LogoProps) => {
   // 2) 없으면 개발 모드에서만 경고를 찍고 렌더를 중단합니다.
   if (!Component) {
     if (import.meta.env.DEV) {
-      // eslint-disable-next-line no-console
+       
       console.warn(`[Logo] Unknown name: "${name}".`, LOGO_NAMES)
     }
     return null

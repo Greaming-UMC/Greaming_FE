@@ -1,0 +1,165 @@
+/* ==========================================================================
+   1. 전체 컨테이너 및 레이아웃 (Layout)
+   ========================================================================== */
+.react-datepicker {
+  background-color: var(--color-surface) !important;
+  border: 1px solid var(--color-outline) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  font-family: 'Pretendard', sans-serif !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+/* 인라인(챌린지 카드)에서는 외곽 라인/그림자 제거 */
+.variant-inline .react-datepicker {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.react-datepicker__header {
+  border-bottom: none !important;
+  background-color: transparent !important;
+  padding-top: 0 !important;
+}
+
+/* ==========================================================================
+   2. 요일 및 날짜 기본 스타일 (Common Day Styles)
+   ========================================================================== */
+.react-datepicker__day-names {
+  display: flex !important;
+  justify-content: center !important;
+  margin-bottom: 8px !important;
+}
+
+.react-datepicker__day-name, 
+.react-datepicker__day {
+  width: 20px !important; 
+  height: 20px !important;
+  margin: 0 12px !important; 
+  display: inline-flex !important;
+  justify-content: center;
+  align-items: center;
+  border-radius: var(--radius-full) !important;
+  transition: all 0.2s;
+}
+
+.react-datepicker__day-name {
+  color: var(--color-primary) !important;
+  font-size: var(--text-label-xlarge) !important;
+  line-height: var(--text-label-xlarge--line-height) !important;
+  letter-spacing: var(--text-label-xlarge--letter-spacing) !important;
+  font-weight: 600 !important;
+}
+
+.react-datepicker__day {
+  color: var(--color-on-surface) !important;
+  font-size: var(--text-label-medium) !important;
+  line-height: var(--text-label-medium--line-height) !important;
+  letter-spacing: var(--text-label-medium--letter-spacing) !important;
+  cursor: pointer;
+}
+
+/* 높이는 콘텐츠에 맞춰 자동 (요일+날짜 7줄 기준) */
+.react-datepicker__month-container {
+  height: auto !important;
+  overflow: hidden;
+}
+
+.react-datepicker__month {
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important; /* 주차(줄) 사이의 세로 간격 */
+
+}
+
+
+
+/* ==========================================================================
+   3. 상태별 스타일 (States: Today, Outside, Success, Fail)
+   ========================================================================== */
+
+/* 오늘 날짜 */
+.react-datepicker__day--today {
+  background-color: transparent !important; /* 배경색 제거 */
+  color: #3B82F6 !important;               /* 글자만 파란색으로 */
+  font-weight: 700 !important;
+}
+
+/* 외부 달 날짜 */
+.outside-day {
+  color: var(--color-on-surface-variant-low) !important;
+  opacity: 0.4;
+}
+
+/* 챌린지 성공 (Success) - 배경색 채우기 */
+.day-success {
+  background-color: var(--color-primary) !important; /* 성공 시 배경색 (보라색 등) */
+  color: var(--color-secondary) !important;      /* 글자색 흰색 반전 */
+  border-radius: 50% !important;                  /* 꽉 찬 원형 유지 */
+  font-weight: 600 !important;
+}
+
+/* 챌린지 실패 (Fail) - 텍스트 색상만 변경 */
+.day-fail {
+  color: var(--color-error) !important;           /* 실패 시 붉은색 텍스트 */
+  background-color: transparent !important;       /* 배경은 투명하게 유지 */
+}
+
+/* ==========================================================================
+   4. 모드별 특화 스타일 (Variant Specific)
+   ========================================================================== */
+
+/* [모달 모드] 선택 및 호버 */
+
+/* 12월로 넘겼을 때 16일에 자동으로 생기는 강조 효과(포커스)를 제거 */
+.react-datepicker__day--keyboard-selected {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+/* 오직 사용자가 직접 클릭해서 '선택'한 날짜만 배경색을 칠함 */
+.react-datepicker__day--selected {
+  background-color: var(--color-primary) !important;
+  color: var(--color-secondary) !important;
+}
+.variant-modal .react-datepicker__day:hover {
+  background-color: var(--color-state-layers-primary-opacity-8) !important;
+}
+
+/* [인라인 모드] 일자별 좌우 간격 넓히기 */
+.variant-inline .react-datepicker__day-name, 
+.variant-inline .react-datepicker__day {
+  /* 세로(0)는 유지하고, 가로(8px -> 14px)만 늘립니다. */
+  margin: 0 12px !important; 
+}
+
+/* [인라인 모드] 클릭 방지 및 커서 */
+.variant-inline .react-datepicker__day {
+  cursor: default !important;
+  pointer-events: none; /* 클릭 원천 차단 */
+}
+
+/* [인라인 모드] 오늘 날짜 강조 제거 */
+.variant-inline .react-datepicker__day--today {
+  color: var(--color-on-surface) !important; /* 일반 날짜 색상으로 복구 */
+  font-weight: 400 !important;               /* 일반 두께로 복구 */
+  background-color: transparent !important;   /* 배경색 제거 */
+}
+
+/* 인라인 모드에서 오늘 날짜가 성공/실패했을 때는 해당 데이터 스타일을 따르도록 설정 */
+.variant-inline .react-datepicker__day--today.day-success {
+  background-color: var(--color-primary) !important;
+  color: var(--color-secondary) !important;
+}
+
+.variant-inline .react-datepicker__day--today.day-fail {
+  color: var(--color-error) !important;
+}
+
+/* ==========================================================================
+   5. 기타 UI 요소 (Helpers & Extra)
+   ========================================================================== */
+.react-datepicker__triangle { display: none !important; }
