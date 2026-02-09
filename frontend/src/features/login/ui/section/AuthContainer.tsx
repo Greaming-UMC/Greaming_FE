@@ -1,11 +1,8 @@
-import { useNavigate } from "react-router-dom";
 import Logo from "../../../../components/common/Logo";
 import { Divider } from "../../../../components/common";
 import SocialLoginButtons from "../../components/SocialLoginButtons";
 
 const AuthContainer = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="relative flex justify-center w-[995px] h-[500px] bg-building-block">
         <div className="flex flex-col w-[320px] items-center justify-center">
