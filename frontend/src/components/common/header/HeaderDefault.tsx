@@ -18,7 +18,7 @@ const HeaderDefault = ({ userInfo, onLogout }: HeaderDefaultProps) => {
         zIndex: Z_INDEX.HEADER
       }}
     >
-      <div className="relative h-full max-w-[1440px] mx-auto px-4">
+      <div className="relative h-full max-w-[1760px] mx-auto px-8">
         <div className="flex h-full items-center pt-1 gap-6">
           <div className="shrink-0 scale-90 origin-left">
              <Logo name="mono_white_wordmark" size={100} />

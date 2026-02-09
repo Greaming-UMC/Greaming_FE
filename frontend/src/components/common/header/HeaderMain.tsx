@@ -37,7 +37,7 @@ const HeaderMain = ({ userInfo, onLogout }: HeaderMainProps) => {
         className={headerClass}
         style={{ height: isScrolled ? HEADER_HEIGHT.DEFAULT : HEADER_HEIGHT.MAIN }}
       >
-        <div className="relative mx-auto h-full max-w-[1440px] px-4">
+        <div className="relative mx-auto h-full max-w-[1760px] px-8">
           <div className="flex h-full items-center">
             <div className={`z-10 ${logoWrapperClass}`}>
               <Logo name="mono_white_wordmark" size={100} />
