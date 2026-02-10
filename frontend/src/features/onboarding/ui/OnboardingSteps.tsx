@@ -25,12 +25,6 @@ export function OnboardingSteps() {
   const [interestFields, setInterestFields] = useState<string[]>([]);
   const [interestStyle, setInterestStyle] = useState<string | null>(null);
 
-  // Step4
-  const [journey, setJourney] = useState<
-    "sketcher" | "painter" | "artist" | "master" | null
-  >(null);
-  const [weeklyGoal, setWeeklyGoal] = useState<number | null>(null);
-
   const INDICATOR_OFFSET_Y = -72;
 
   return (
@@ -102,9 +96,6 @@ export function OnboardingSteps() {
                 <Step4Purpose
                   onPrev={prev}
                   onSubmit={({ journey, weeklyGoal }) => {
-                    setJourney(journey);
-                    setWeeklyGoal(weeklyGoal);
-
                     console.log("STEP4 submit", {
                       nickname,
                       fieldTags,

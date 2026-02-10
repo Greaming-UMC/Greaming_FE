@@ -3,7 +3,7 @@ export const ENDPOINTS = {
     // 도메인: AUTH
     AUTH : {
         REGISTER_INFO: "/api/user/registinfo",
-        SOCIAL_LOGIN: (provider: string) => `/api/auth/login/social/${provider}`,
+        SOCIAL_LOGIN: (provider: string) => `/oauth2/authorization/${provider}`,
         LOGOUT: "/api/auth/logout",
         REISSUE_TOKEN: "/api/auth/reissue",
     },
