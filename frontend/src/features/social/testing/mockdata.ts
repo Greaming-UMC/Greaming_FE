@@ -1,7 +1,6 @@
 import type { 
   FollowUserInfo, 
   CheckCircleMemberInfo, 
-  ExploreCircleInfo 
 } from "../../../apis/types/common";
 import type { 
   CheckFollowersData, 

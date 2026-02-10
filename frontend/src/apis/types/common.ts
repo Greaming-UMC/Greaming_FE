@@ -67,6 +67,8 @@ export type ArtStyle =
   | 'COLOR' | 'BLACK_AND_WHITE' | 'CUTE'
   | 'HORROR' | 'DETAILED' | 'SIMPLE';
 
+
+
 // ====================================================
 // Account & Profile
 // ====================================================

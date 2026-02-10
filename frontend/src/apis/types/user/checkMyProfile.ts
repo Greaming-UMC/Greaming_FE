@@ -15,12 +15,19 @@ export type CheckMyProfileResult = ProfileInterceptor;
 export interface UserInformation {
   nickname: string;
   profileImgUrl: string;
-  level: string;
-  introduction: string;
+  usagePurpose: string;
+  weeklyGoalScore: number;
+  intro: string;
   followerCount: number;
   followingCount: number;
-  specialtyTags: string[];
-  interestTags: string[];
+  specialties: {
+    fields: string[]; 
+    style: string;
+  };
+  interests: {
+    fields: string[];
+    style: string;
+  };
 }
 
 export interface ChallengeCalendar {
