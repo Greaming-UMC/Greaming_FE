@@ -1,8 +1,10 @@
+import type { FollowUserInfo } from "../../../../apis/types/common";
 import { ActionItem, EmptyState } from "../../../../components/common";
-import type { SocialUserItem } from "../../types";
+
 
 interface FollowerListSectionProps {
-  users: SocialUserItem[];
+  // 🟢 SocialUserItem 대신 FollowUserInfo 사용
+  users: FollowUserInfo[];
   onToggle: (userId: number) => void;
 }
 
@@ -25,17 +27,20 @@ const FollowerListSection = ({ users, onToggle }: FollowerListSectionProps) => {
         <ActionItem
           key={user.userId}
           size="lg"
-          // isFollowing이 true면 '맞팔로우 중' 상태이므로 'following' UI 노출
+          // isFollowing 상태에 따라 'following' 또는 'follow' 액션 결정
           action={user.isFollowing ? "following" : "follow"}
           title={user.nickname}
-          subtitle={user.bio}
+          // 🟢 원본 명세에 bio가 없을 수 있으므로 방어 코드 작성 (필요 시 공통 타입에 bio 추가 검토)
+          subtitle={(user as any).bio || ""} 
           badge={{
-            icon: user.badgeImage || 'badge_artist',          
+            // 🟢 명세에 레벨이나 배지가 없다면 기본 배지 노출
+            icon: (user as any).badgeImage || 'badgeArtist',          
             size: "md"
           }}
           avatar={{ 
             src: user.profileImgUrl, 
-            icon: user.profileIcon || "avatar_grey" 
+            // 🟢 명세 외 필드이므로 기본 person 아이콘 사용
+            icon: "person" 
           }}
           onUnfollow={() => onToggle(user.userId)}
           onFollow={() => onToggle(user.userId)}

@@ -15,7 +15,7 @@ export interface ApiResultResponse<T> extends BaseLogicResponse {
 export interface ApiDataSuccessResponse<T> extends BaseLogicResponse {
   data: T | null;
 };
-
+  
 // [Family B] status, message 가 있음 (code는 있을 수도 없을 수도)
 interface BaseStatusResponse {
   status: number;
@@ -73,16 +73,22 @@ export type ArtStyle =
 // visibility 타입
 export type VisibilityType = 'PUBLIC' | 'PRIVATE' | 'PROTECTED';
 
-// userInfo
 export type UserInformations = {
   nickname: string;
   profileImgUrl: string;
-  level: UsagePurpose;
-  introduction: string;
+  intro: string;            
+  usagePurpose: UsagePurpose; 
+  weeklyGoalScore: number;    // 명세서에 있는 주간 목표 점수 추가
+  specialties: {
+    fields: ArtField[]; // 여러 개 선택 가능한 분야
+    style: string;      // 하나만 선택하는 스타일
+  };
+  interests: {
+    fields: ArtField[]; 
+    style: string;      
+  };
   followerCount: number;
   followingCount: number;
-  specialtyTags: string[];
-  interestTags: string[];
   followState?: FollowState;
   visibility?: VisibilityType;
 };

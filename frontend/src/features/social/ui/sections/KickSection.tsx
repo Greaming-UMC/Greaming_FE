@@ -1,28 +1,43 @@
+import type { CheckCircleMemberInfo } from "../../../../apis/types/common";
 import { ActionItem } from "../../../../components/common";
-import type { CircleMemberItem } from "../../types";
 
-const KickSection = ({ users, onKick }: { users: CircleMemberItem[], onKick: (userId: number) => void }) => {
+
+interface KickSectionProps {
+  users: CheckCircleMemberInfo[]; 
+  onKick: (userId: number) => void;
+}
+
+const KickSection = ({ users, onKick }: KickSectionProps) => {
   return (
     <div className="flex flex-col">
-      {users.map((user) => (
-        <ActionItem
-          // 🟢 key를 userId로 변경 (중복 방지)
-          key={user.userId} 
-          size="lg"
-          action="kick"
-          title={user.nickname}
-          // 🟢 명세에 맞는 subtitle 우선순위 적용
-          subtitle={user.introduction || user.tags?.map(t => `#${t}`).join(' ')}
-          avatar={{ 
-            src: user.profileImgUrl, 
-            icon: user.profileIcon || "person" 
-          }}
-          badge={{ icon: user.badgeImage, size: "md" }}
-          // 🟢 ActionItem 내부 버튼 핸들러에 id 전달
-          onKick={() => onKick(user.userId)}
-          widthMode="fill"
-        />
-      ))}
+      {users.map((user) => {
+        // 🟢 명세 기반 서브타이틀: 태그가 있으면 #태그 형태로 표시
+        const subtitleText = user.tags && user.tags.length > 0
+          ? user.tags.map(t => `#${t}`).join(' ')
+          : "";
+
+        return (
+          <ActionItem
+            key={user.userId} 
+            size="lg"
+            action="kick"
+            title={user.nickname}
+            subtitle={subtitleText}
+            avatar={{ 
+              src: user.profileImgUrl, 
+              // 명세 외 필드이므로 기본 person 아이콘 사용
+              icon: "person" 
+            }}
+            badge={{ 
+              // UsagePurpose(level)에 따른 배지 매칭
+              icon: user.level === 'MASTER' ? 'badgeMaster' : 'badgeArtist', 
+              size: "md" 
+            }}
+            onKick={() => onKick(user.userId)}
+            widthMode="fill"
+          />
+        );
+      })}
     </div>
   );
 };
