@@ -10,7 +10,7 @@ import { JourneySection } from "./components/JourneySection";
 import { GoalSection } from "./components/GoalSection";
 import { TagGroupSection } from "./components/TagGroupSection";
 
-const IS_MOCK_MODE = false;
+const IS_MOCK_MODE = true;
 
 const MOCK_PROFILE_DATA = {
   nickname: "그림쟁이이야",
