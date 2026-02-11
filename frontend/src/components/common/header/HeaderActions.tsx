@@ -5,28 +5,29 @@ import Icon from "../Icon";
 import NotificationPopup from "./popups/NotificationPopup";
 import { Button } from "../input";
 import { Dropdown } from "../feedback/Dropdown";
+import { NavLink } from "react-router-dom";
 
 interface HeaderActionsProps {
   userInfo?: UserInfo;
   onLogout?: () => void;
-  onLogin?: () => void;
 }
 
-export const HeaderActions = ({ userInfo, onLogout, onLogin }: HeaderActionsProps) => {
+export const HeaderActions = ({ userInfo, onLogout }: HeaderActionsProps) => {
   const isLoggedIn = !!userInfo?.nickname;
 
   if (!isLoggedIn) {
     return (
       <div className="ml-auto flex items-center gap-3 relative">
-        <Button
-          variant="secondary"
-          size="sm"
-          shape="round"
-          className="font-medium shadow-none"
-          onClick={onLogin ?? (() => console.log("로그인"))}
-        >
-          로그인
-        </Button>
+        <NavLink to="/login" className="inline-flex">
+          <Button
+            variant="secondary"
+            size="sm"
+            shape="round"
+            className="font-medium shadow-none"
+          >
+            로그인
+          </Button>
+        </NavLink>
       </div>
     );
   }
