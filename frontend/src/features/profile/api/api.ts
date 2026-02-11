@@ -19,7 +19,7 @@ export const getMyProfile = async () => {
 };
 
 export const getUserProfile = async (userId: number) => {
-    const { data } = await http.get<ApiResultResponse<CheckUserProfileResult>>(`/users/${userId}`);
+    const { data } = await http.get<ApiResultResponse<CheckUserProfileResult>>(`/user/${userId}/info`);
     return data;
   };
   

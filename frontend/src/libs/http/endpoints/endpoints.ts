@@ -23,7 +23,7 @@ export const ENDPOINTS = {
 
     // 도메인: USER
     USER : {
-        GET_USER_PROFILE_HEADER: (userId: number | string) => `/api/users/${userId}`,
+        GET_USER_PROFILE_HEADER: (userId: number | string) => `/api/user/${userId}/info`,
         GET_MY_PROFILE_HEADER: "/api/users/me",
     },
 
