@@ -1,25 +1,24 @@
 import type { HomeCardType } from "../../../apis/types/common";
-import { DAILY_CHALLENGE_CARDS, WEEKLY_CHALLENGE_CARDS } from "../api/MockHomeChallengeCards";
 import { useHeroChallengeProps } from "../hooks/useHeroChallengeProps";
 import type { ChallengeType, HomeView } from "./type";
 import ChallengeHeroLayout from "./ChallengeHeroLayout";
 import HeroHeaderText from "../ui/hero/HeroHeaderText";
 import HeroLayout from "./HeroLayout";
+import { useChallengeCards } from "../api/useChallengeCards";
 
 interface HeroSectionProps {
   view: HomeView;
   onJoin: (type: ChallengeType) => void;
-  dailyCards?: HomeCardType[];
-  weeklyCards?: HomeCardType[];
 }
 
-const HeroSection = ({
-  view,
-  onJoin,
-  dailyCards = DAILY_CHALLENGE_CARDS,
-  weeklyCards = WEEKLY_CHALLENGE_CARDS,
-}: HeroSectionProps) => {
+const HeroSection = ({ view, onJoin }: HeroSectionProps) => {
   const { dailyProps, weeklyProps } = useHeroChallengeProps();
+
+  const dailyCardsQuery = useChallengeCards("DAILY");
+  const weeklyCardsQuery = useChallengeCards("WEEKLY");
+
+  const dailyCards: HomeCardType[] = dailyCardsQuery.data ?? [];
+  const weeklyCards: HomeCardType[] = weeklyCardsQuery.data ?? [];
 
   const currentCards = view === "DAILY" ? dailyCards : weeklyCards;
   const targetProps = view === "DAILY" ? dailyProps : weeklyProps;
