@@ -15,6 +15,7 @@ const HomeSearchInput = ({ value, onChange, onSearch }: Props) => {
       customSize="large"
       icon="search"
       iconPosition="trailing"
+      iconClassName="text-on-surface"
       className="w-[405px] shrink-0"
       onSearch={onSearch}
     />
