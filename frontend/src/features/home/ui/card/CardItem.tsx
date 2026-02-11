@@ -14,23 +14,23 @@ const CardItem = ({ card, context = "grid" }: Props) => {
     context === "carousel" ? "text-on-surface-variant-bright" : "text-on-surface";
 
   return (
-    <div className="w-[250px] h-[285px]">
+    <div className="w-[250px] h-[285px] rounded-2xl overflow-hidden">
       <Card.Root
         hoverEffect
         clickable
-        className="h-full flex flex-col overflow-hidden rounded-2xl"
+        className="h-full w-full flex flex-col overflow-hidden rounded-2xl"
       >
         <Card.Media
           src={card.thumbnailUrl}
           alt={card.title}
           aspectRatio="aspect-auto"
           hoverEffect
-          className="h-[237px]"
+          className="h-[237px] w-full rounded-b-2xl"
         />
 
         {/* 하단 정보 영역 */}
-        <Card.Body className="h-[48px] px-3 shrink-0 bg-transparent">
-          <div className={`flex h-full items-center justify-between ${textClass}`}>
+        <Card.Body className="h-[48px] w-full px-3 shrink-0 bg-transparent">
+          <div className={`flex h-full w-full items-center justify-between ${textClass}`}>
             {/* 좌 : 프로필, 닉네임 */}
             <div className="flex items-center gap-2 min-w-0">
               <Avatar src={card.profileImgUrl} size="xs" />
