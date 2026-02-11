@@ -16,7 +16,10 @@ export type ButtonVariant =
   | "outlinedVariant"
   | "surface"
   | "surfaceVariant"
-  | "text";
+  | "text"
+  | "textOnPrimary"
+  | "textSecondary"
+  | "nav";
 
 export type IconPosition = "leading" | "trailing" | "none";
 export type ButtonWidthMode = "hug" | "fixed" | "fill";
@@ -68,6 +71,18 @@ const VARIANT_STYLES: Record<
   },
   text: {
     base: "bg-transparent text-on-surface",
+    stateLayer: "surface-container-opacity-16",
+  },
+  textOnPrimary: {
+    base: "bg-transparent text-on-primary",
+    stateLayer: "surface-container-opacity-16",
+  },
+  textSecondary: {
+    base: "bg-transparent text-secondary",
+    stateLayer: "surface-container-opacity-16",
+  },
+  nav: {
+    base: "bg-primary border border-on-primary text-on-primary",
     stateLayer: "surface-container-opacity-8",
   },
 };

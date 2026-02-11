@@ -1,30 +1,22 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const useHeaderScroll = (threshold: number = 0) => {
   const [isScrolled, setIsScrolled] = useState(false);
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const sentinelEl = sentinelRef.current;
-    if (!sentinelEl) return;
+    if (typeof window === "undefined") return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // sentinel이 화면에서 사라지면(스크롤 내리면) isScrolled = true
-        setIsScrolled(!entry.isIntersecting);
-      },
-      {
-        root: null,
-        threshold,
-      }
-    );
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > threshold);
+    };
 
-    observer.observe(sentinelEl);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
-      observer.disconnect();
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [threshold]);
 
-  return { isScrolled, sentinelRef };
+  return { isScrolled };
 };

@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import PageContainer from "../components/common/layouts/PageContainer";
-import CardControls from "../features/home/components/controls/CardControls";
-import CardGrid from "../features/home/components/card/CardGrid";
-import HeroSection from "../features/home/components/hero/HeroSection";
+import CardGrid from "../features/home/ui/card/CardGrid";
+import HeroSection from "../features/home/components/HeroSection";
 import type { ChallengeType, HomeView } from "../features/home/components/type";
 
 import HomeBg from "../assets/background/home_bg.svg";
@@ -10,12 +10,25 @@ import {
   DAILY_CHALLENGE_CARDS,
   WEEKLY_CHALLENGE_CARDS,
 } from "../features/home/api/MockHomeChallengeCards";
+import CardControls from "../features/home/components/CardControls";
+
+const toHomeView = (raw?: string): HomeView => {
+  if (!raw) return "HOME";
+  const v = raw.toLowerCase();
+  if (v === "daily") return "DAILY";
+  if (v === "weekly") return "WEEKLY";
+  return "HOME";
+};
 
 const HomePage = () => {
-  const [view, setView] = useState<HomeView>("HOME");
+  const navigate = useNavigate();
+  const { view: viewParam } = useParams<{ view?: string }>();
+
+  const view = toHomeView(viewParam);
 
   const handleJoin = (type: ChallengeType) => {
-    setView(type); // "DAILY" | "WEEKLY"
+    // "DAILY" | "WEEKLY" -> /home/daily | /home/weekly
+    navigate(`/home/${type.toLowerCase()}`);
   };
 
   const dailyCards = useMemo(() => DAILY_CHALLENGE_CARDS, []);
@@ -31,7 +44,7 @@ const HomePage = () => {
         }}
       >
         <PageContainer>
-          <div className="pt-14 pb-10">
+          <div className="pt-[100px] pb-10">
             <HeroSection
               view={view}
               onJoin={handleJoin}

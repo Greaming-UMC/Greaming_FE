@@ -1,8 +1,9 @@
-import { useState, useRef } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { Divider } from "../display";
 import { Button, ListBase } from "../input";
-import Icon, { type IconName } from "../Icon";
-import { useOnClickOutside } from "./hooks/useOnClickOutside";
+import { type IconName } from "../Icon";
+import { Dropdown } from "../feedback/Dropdown";
 
 type NavLinkItem = { type: "link"; path: string; label: string; iconName: IconName };
 type NavPopoverItem = { type: "popover"; id: string; label: string; iconName: IconName };
@@ -18,102 +19,103 @@ interface HeaderTabsProps {
   isScrolled: boolean;
 }
 
+const TAB_STYLE_DELAY_MS = 200;
+
 const HeaderTabs = ({ isScrolled }: HeaderTabsProps) => {
-  const [activePopover, setActivePopover] = useState<string | null>(null);
-  const popoverRef = useRef<HTMLDivElement>(null);
+  const [isTabsScrolled, setIsTabsScrolled] = useState(isScrolled);
 
-  useOnClickOutside(popoverRef, () => setActivePopover(null));
+  useEffect(() => {
+    if (isScrolled === isTabsScrolled) return;
 
-  const handlePopoverClick = (id: string) => {
-    setActivePopover((prev) => (prev === id ? null : id));
+    const timer = window.setTimeout(() => {
+      setIsTabsScrolled(isScrolled);
+    }, TAB_STYLE_DELAY_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [isScrolled, isTabsScrolled]);
+
+  const renderTabContent = (item: NavItemType, isActive: boolean) => {
+    if (!isTabsScrolled) {
+      // 스크롤 안 됐을 때
+      return (
+        <Button
+          variant="nav"
+          size="md"
+          icon={item.iconName}
+          shape="round"
+          widthMode="fixed"
+          width={160}
+          tabIndex={-1}
+          className="duration-600 ease-in-out"
+        >
+          {item.label}
+        </Button>
+      );
+    } else {
+      // 스크롤 됐을 때
+      return (
+        <Button
+          variant={isActive ? "textSecondary" : "textOnPrimary"}
+          size="xs"
+          icon={item.iconName}
+          shape="round"
+          widthMode="hug"
+          className="duration-600 ease-in-out"
+        >
+          {item.label}
+        </Button>
+      );
+    }
   };
 
   return (
     <nav
       className={`flex items-center transition-all duration-300 ease-in-out ${
-        isScrolled ? 'gap-2' : 'gap-3'
+        isTabsScrolled ? "gap-1" : "gap-3"
       }`}
     >
       {NAV_ITEMS.map((item, index) => {
-        const itemId = item.type === "popover" ? item.id : null;
-        const isPopoverActive = itemId && activePopover === itemId;
-
-        const renderContent = (isActiveLink: boolean, onClick?: () => void) => {
-          const isActive = isActiveLink || isPopoverActive;
-          
-          if (!isScrolled) {
-            // 스크롤되지 않았을 때 (Button 스타일)
-            return (
-              <Button
-                variant="onPrimary"
-                size="md"
-                icon={item.iconName}
-                shape="round"
-                className={`px-4 py-2 border border-on-primary transition-colors ${
-                  isActive ? "bg-primary text-white" : ""
-                }`}
-                tabIndex={-1}
-                onClick={onClick}
-              >
-                {item.label}
-              </Button>
-            );
-          } else {
-            // 스크롤되었을 때 (텍스트 + 아이콘 스타일)
-            return (
-              <div
-                onClick={onClick}
-                className={`
-                  flex items-center gap-1.5 transition-all duration-300 rounded-full
-                  label-large state-layer px-2 py-1 bg-transparent cursor-pointer
-                  ${isActive ? "text-secondary" : "text-on-primary"}
-                `}
-              >
-                <Icon name={item.iconName} size={16} className="text-current" />
-                <span>{item.label}</span>
-              </div>
-            );
-          }
-        };
+        const showDivider = isTabsScrolled && index < NAV_ITEMS.length - 1;
 
         return (
-          <div key={item.label} className="relative flex items-center" ref={item.type === 'popover' ? popoverRef : null}>
-            {item.type === "link" ? (
-              <NavLink to={item.path}>
-                {({ isActive }) => renderContent(isActive)}
-              </NavLink>
-            ) : (
-              <div className="relative">
-                {renderContent(false, () => handlePopoverClick(item.id))}
-                
-                {isPopoverActive && (
-                  <div className="absolute top-full left-0 mt-2 w-[200px] bg-white rounded-lg shadow-xl p-2 z-50 animate-in fade-in slide-in-from-top-2">
+          <Fragment key={item.label}>
+            <div className="relative">
+              {item.type === "link" ? (
+                <NavLink to={item.path} end>
+                  {({ isActive }) => renderTabContent(item, isActive)}
+                </NavLink>
+              ) : (
+                <Dropdown
+                  align="left"
+                  trigger={
+                    <button type="button">
+                      {renderTabContent(item, false)}
+                    </button>
+                  }
+                >
+                  <div className="w-[200px] bg-surface rounded-lg shadow-xl p-2 animate-in fade-in zoom-in-95 duration-200">
                     <ListBase
                       size="md"
                       title="추가하기"
                       leadingIcon="plus"
                       radius="md"
-                      className="cursor-pointer hover:bg-gray-100 text-gray-700"
-                      onClick={() => {
-                        console.log("Circle 추가하기 클릭");
-                        setActivePopover(null);
-                      }}
+                      className="cursor-pointer text-on-surface"
+                      onClick={() => console.log("Circle 추가하기 클릭")}
                     />
                   </div>
-                )}
-              </div>
-            )}
+                </Dropdown>
+              )}
+            </div>
 
-            {/* 구분선 (|) */}
-            <span
-              className={`
-                mx-1 text-outline-variant transition-opacity duration-300
-                ${isScrolled && index < NAV_ITEMS.length - 1 ? "opacity-100" : "opacity-0 hidden"}
-              `}
-            >
-              |
-            </span>
-          </div>
+            {showDivider && (
+              <Divider
+                orientation="vertical"
+                thickness={1}
+                color="bg-on-primary"
+                style={{ height: "16px" }}
+              />
+            )}
+          </Fragment>
         );
       })}
     </nav>
