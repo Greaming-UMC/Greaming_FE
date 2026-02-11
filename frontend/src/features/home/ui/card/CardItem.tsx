@@ -25,7 +25,7 @@ const CardItem = ({ card, context = "grid" }: Props) => {
         />
 
         {/* 하단 정보 영역 */}
-        <Card.Body className="h-[48px] w-full shrink-0 bg-transparent !p-0">
+        <Card.Body className="h-[48px] w-full shrink-0 bg-transparent">
           <div className={`flex h-full w-full items-center justify-between ${textClass}`}>
             {/* 좌 : 프로필, 닉네임 */}
             <div className="flex items-center gap-2 min-w-0">

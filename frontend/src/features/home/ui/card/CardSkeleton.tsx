@@ -15,8 +15,8 @@ const CardSkeleton = () => {
           <div className="absolute inset-0 animate-pulse bg-surface-variant-low opacity-40" />
         </div>
 
-        <Card.Body className="h-[48px] w-full shrink-0 bg-transparent !p-0">
-          <div className="flex h-full w-full items-center justify-between px-0">
+        <Card.Body className="h-[48px] w-full shrink-0 bg-transparent">
+          <div className="flex h-full w-full items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 rounded-full bg-surface-variant-low" />
               <div className="w-16 h-3 rounded bg-surface-variant-low" />
