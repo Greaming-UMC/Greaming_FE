@@ -11,24 +11,16 @@ import axios from 'axios';
 // ApiResultSuccessResponse<CheckMyProfileResult>
 export type CheckMyProfileResult = ProfileInterceptor;
 
-// [Type] 서버 응답 데이터 타입 정의
-export interface UserInformation {
+export type UserInformation = {
   nickname: string;
   profileImgUrl: string;
-  usagePurpose: string;
-  weeklyGoalScore: number;
-  intro: string;
+  level: string;     
+  introduction: string;      
   followerCount: number;
   followingCount: number;
-  specialties: {
-    fields: string[]; 
-    style: string;
-  };
-  interests: {
-    fields: string[];
-    style: string;
-  };
-}
+  specialtyTags: string[];   
+  interestTags: string[];    
+};
 
 export interface ChallengeCalendar {
   dailyChallenge: string[];

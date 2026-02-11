@@ -28,8 +28,8 @@ export function OnboardingTagChip({
         "!text-inherit label-large-emphasized",
         "shadow-[0_0_4px_rgba(18,19,21,0.20)]",
         selected
-          ? "!bg-primary !text-secondary !border-transparent"
-          : "!bg-surface !text-on-surface !border-transparent",
+          ? "!bg-primary !text-secondary shadow-1"
+          : "!bg-surface !text-on-surface shadow-1",
         disabled && "!opacity-50 !cursor-not-allowed",
 
         className,
