@@ -104,6 +104,9 @@ export function Step2Profile({
 }: Props) {
   const [checkingNickname, setCheckingNickname] = useState(false);
   const [nicknameStatus, setNicknameStatus] = useState<NicknameStatus>("unchecked");
+  void intro;
+  void onChangeIntro;
+  void onPrev;
 
   /* ---------------- Nickname: 8자 제한 + 상태 초기화 ---------------- */
   const handleNicknameChange = (v: string) => {

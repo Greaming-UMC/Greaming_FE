@@ -1,5 +1,5 @@
-import { LoginScreen } from "../../features/login/ui/LoginScreen";
+import AuthView from "../../features/login/ui/AuthView";
 
 export default function LoginPage() {
-  return <LoginScreen />;
+  return <AuthView />;
 }

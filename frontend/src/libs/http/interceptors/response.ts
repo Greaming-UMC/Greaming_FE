@@ -1,7 +1,7 @@
 import { httpRefresh } from "../../http/refreshClient";
 import { ENDPOINTS } from "../endpoints/endpoints";
 import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
-import { getAccessToken, setAccessToken, clearAccessToken } from "../../security/tokenStore";
+import { clearAccessToken, getAccessToken, setAccessToken } from "../../security/tokenStore";
 
 const REFRESH_PATH = ENDPOINTS.AUTH.REISSUE_TOKEN.replace(/^\/api/, "");
 
@@ -22,8 +22,10 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
       const originalRequest = error.config as RetryConfig;
 
       if (status === 403) {
-        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-        window.location.href = "/";
+        if (isBrowser) {
+          alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+          window.location.href = "/login";
+        }
         return Promise.reject(error);
       }
 
@@ -39,20 +41,25 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
 
       if (!refreshing) {
         refreshing = (async () => {
-
           try {
             const res = await httpRefresh.post(REFRESH_PATH);
-            const nextToken = res.data?.accessToken ?? null;
-            if (!nextToken) throw new Error("accessToken missing");
-            setAccessToken(res.data.accessToken);
-            
-          } catch (e) {
-            clearAccessToken();
-            if (isBrowser) {
-              alert("로그인 세션이 만료되었습니다.");
-              window.location.href = "/login";
+            const authHeader =
+              res.headers?.authorization ?? res.headers?.Authorization;
+
+            if (typeof authHeader !== "string") {
+              throw new Error("authorization header missing");
             }
-            return Promise.reject(error);
+
+            const match = authHeader.match(/^Bearer\s+(.+)$/i);
+            const nextToken = (match?.[1] ?? authHeader).trim();
+            if (!nextToken) {
+              throw new Error("access token missing");
+            }
+
+            setAccessToken(nextToken);
+          } catch {
+            clearAccessToken();
+            throw error;
           }
         })().finally(() => {
           refreshing = null;
@@ -62,6 +69,11 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
       try {
         await refreshing;
       } catch (refreshError) {
+        clearAccessToken();
+        if (isBrowser) {
+          alert("로그인 세션이 만료되었습니다.");
+          window.location.href = "/login";
+        }
         return Promise.reject(refreshError);
       }
 

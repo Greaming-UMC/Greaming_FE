@@ -3,7 +3,7 @@ export const ENDPOINTS = {
     // 도메인: AUTH
     AUTH : {
         REGISTER_INFO: "/api/user/registinfo",
-        SOCIAL_LOGIN: (provider: string) => `/api/auth/login/social/${provider}`,
+        SOCIAL_LOGIN: (provider: string) => `/oauth2/authorization/${provider}`,
         LOGOUT: "/api/auth/logout",
         REISSUE_TOKEN: "/api/auth/reissue",
     },
@@ -23,7 +23,7 @@ export const ENDPOINTS = {
 
     // 도메인: USER
     USER : {
-        GET_USER_PROFILE_HEADER: (userId: number | string) => `/api/users/${userId}`,
+        GET_USER_PROFILE_HEADER: (userId: number | string) => `/api/user/${userId}/info`,
         GET_MY_PROFILE_HEADER: "/api/users/me",
     },
 

@@ -87,3 +87,25 @@
       max-[1440px]:grid-cols-2 max-[1440px]:gap-x-[8px] max-[1440px]:gap-y-[24px];
   }
 }
+
+
+.bg-auth-onboarding {
+  background-image: url("./assets/background/onboarding_background.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-building-block {
+  background-image: url("./assets/background/buildingBlockWhite.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg-profile-banner {
+  background-image: url("./assets/background/profile_banner.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
