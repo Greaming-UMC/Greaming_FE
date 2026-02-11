@@ -1,9 +1,10 @@
-import HeaderTabs from './HeaderTabs';
-import { HeaderActions } from './HeaderActions';
-import Logo from '../Logo';
-import type { UserInfo } from './types';
-import { HEADER_HEIGHT } from '../layouts/layout';
-import { useHeaderScroll } from './hooks/useHeaderScroll';
+import HeaderTabs from "./HeaderTabs";
+import { HeaderActions } from "./HeaderActions";
+import Logo from "../Logo";
+import type { UserInfo } from "./types";
+import { HEADER_HEIGHT } from "../layouts/layout";
+import { useHeaderScroll } from "./hooks/useHeaderScroll";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderMainProps {
   userInfo?: UserInfo;
@@ -11,33 +12,37 @@ interface HeaderMainProps {
 }
 
 const HeaderMain = ({ userInfo, onLogout }: HeaderMainProps) => {
+  const navigate = useNavigate();
   const { isScrolled, sentinelRef } = useHeaderScroll(0);
 
   const headerClass = `fixed top-0 z-50 w-full transition-all duration-500 ease-in-out ${
-    isScrolled
-      ? 'bg-primary shadow-md'
-      : 'bg-linear-to-b from-primary via-primary/60 to-transparent'
+    isScrolled ? "bg-primary shadow-md" : "bg-linear-to-b from-primary via-primary/60 to-transparent"
   }`;
 
   const logoWrapperClass = `shrink-0 transition-transform duration-500 ease-in-out origin-left ${
-    isScrolled ? 'scale-90' : 'scale-100'
+    isScrolled ? "scale-90" : "scale-100"
   }`;
 
   const tabsWrapperClass = `absolute transition-all duration-500 ease-in-out ${
-    isScrolled 
-      ? 'left-[130px] translate-x-0' 
-      : 'left-1/2 -translate-x-1/2'
+    isScrolled ? "left-[130px] translate-x-0" : "left-1/2 -translate-x-1/2"
   }`;
+
+  const handleLogin = () => {
+    navigate("/login");
+  };
 
   return (
     <>
-      <div ref={sentinelRef} className="absolute top-[82px] h-px w-px pointer-events-none opacity-0" />
-      
+      <div
+        ref={sentinelRef}
+        className="absolute top-[82px] h-px w-px pointer-events-none opacity-0"
+      />
+
       <header
         className={headerClass}
         style={{ height: isScrolled ? HEADER_HEIGHT.DEFAULT : HEADER_HEIGHT.MAIN }}
       >
-        <div className="relative mx-auto h-full max-w-[1440px] px-4">
+        <div className="relative mx-auto h-full max-w-[1760px] px-8">
           <div className="flex h-full items-center">
             <div className={`z-10 ${logoWrapperClass}`}>
               <Logo name="mono_white_wordmark" size={100} />
@@ -48,9 +53,8 @@ const HeaderMain = ({ userInfo, onLogout }: HeaderMainProps) => {
             </div>
 
             <div className="ml-auto z-10">
-              <HeaderActions userInfo={userInfo} onLogout={onLogout} />
+              <HeaderActions userInfo={userInfo} onLogout={onLogout} onLogin={handleLogin} />
             </div>
-            
           </div>
         </div>
       </header>

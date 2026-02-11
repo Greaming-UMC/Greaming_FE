@@ -70,7 +70,7 @@ const Dropdown = ({
       {triggerNode}
       {isOpen && (
         <div
-          className={`absolute z-50 mt-[4px] ${
+          className={`absolute z-50 top-full mt-[4px] ${
             align === "right" ? "right-0" : "left-0"
           } ${menuClassName}`}
         >

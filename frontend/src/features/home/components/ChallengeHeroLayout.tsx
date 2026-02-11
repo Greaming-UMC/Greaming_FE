@@ -1,10 +1,10 @@
-import type { HomeCardType } from "../../../../apis/types/common";
-import HeroChallengeCard from "./HeroChallengeCard";
-import ChallengeCarousel from "../carousel/ChallengeCarousel";
+import type { HomeCardType } from "../../../apis/types/common";
+import HeroChallengeCard from "../ui/hero/HeroChallengeCard";
+import ChallengeCarousel from "../ui/carousel/ChallengeCarousel";
 import ChallengeCarouselTypeSelector, {
   type ChallengeCarouselType,
-} from "../carousel/ChallengeCarouselTypeSelector";
-import type { ChallengeType } from "../type";
+} from "../ui/carousel/ChallengeCarouselTypeSelector";
+import type { ChallengeType } from "./type";
 
 interface Props {
   targetProps: {

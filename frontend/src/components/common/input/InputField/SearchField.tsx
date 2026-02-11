@@ -15,6 +15,7 @@ export interface SearchFieldProps
   onSearch?: () => void;
   className?: string;
   iconAriaLabel?: string;
+  iconClassName?: string;
 }
 
 const SIZE_CLASS: Record<SearchFieldSize, string> = {
@@ -34,6 +35,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
       disabled,
       className,
       iconAriaLabel = "검색",
+      iconClassName,
       placeholder,
       ...props
     },
@@ -46,11 +48,11 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
     const hasIcon = Boolean(icon);
     const iconElement = hasIcon ? (
       <Icon
-        name={icon}
-        size={24}
-        className="fill-current stroke-current"
-        aria-hidden
-      />
+    name={icon}
+    size={24}
+    className={clsx("fill-current stroke-current", iconClassName)}
+    aria-hidden
+  />
     ) : null;
 
     const iconButton = hasIcon ? (
@@ -85,7 +87,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
           placeholder={placeholder}
           className={clsx(
             "flex-1 bg-transparent outline-none",
-            "text-on-surface-variant-lowest placeholder:text-on-surface-variant-lowest",
+            "text-on-surface placeholder:text-on-surface-variant-lowest",
           )}
           {...props}
         />

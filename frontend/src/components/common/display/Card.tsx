@@ -178,7 +178,7 @@ export const CardBody = ({
   className = "",
   ...props
 }: HTMLAttributes<HTMLDivElement>) => (
-  <div className={`flex-1 p-4 ${className}`} {...props}>
+  <div className={`flex-1 ${className}`} {...props}>
     {children}
   </div>
 );
