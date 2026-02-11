@@ -15,38 +15,29 @@ export function OnboardingSteps() {
     prev, 
     setNickname, 
     toggleTag, 
-    setArtStyle 
+    setArtStyle,
+    setPurpose,   
+    setWeeklyGoal  
   } = useOnboardingSteps();
 
   const INDICATOR_OFFSET_Y = -72;
 
   return (
     <div className="relative min-h-dvh w-full overflow-hidden">
-      {/* Background & Overlay */}
-      <div 
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat" 
-        style={{ backgroundImage: `url(${OnboardingBg})` }} 
-      />
+      <div className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: `url(${OnboardingBg})` }} />
       <div className="absolute inset-0 z-10 bg-black/40" />
 
       <div className="relative z-20 min-h-dvh flex items-center justify-center px-4">
         <div className="relative">
-          {/* Step Indicator */}
-          <div 
-            className="absolute left-1/2 -translate-x-1/2 z-30" 
-            style={{ top: INDICATOR_OFFSET_Y }}
-          >
+          <div className="absolute left-1/2 -translate-x-1/2 z-30" style={{ top: INDICATOR_OFFSET_Y }}>
             <StepIndicator current={step} total={4} />
           </div>
 
-          {/* Onboarding Card */}
           <div className="rounded-[30px] bg-surface w-[min(762px,92vw)] h-[min(800px,92vh)] pt-15 pr-12 pb-18 pl-12 box-border flex flex-col items-center">
             <div className="w-full flex-1 flex flex-col">
               
-              {/* Step 1: 환영 페이지 */}
               {step === 1 && <Step1Welcome onNext={next} />}
 
-              {/* Step 2: 내 프로필 정보 (특기) */}
               {step === 2 && (
                 <Step2Profile
                   nickname={draft.nickname}
@@ -59,7 +50,6 @@ export function OnboardingSteps() {
                 />
               )}
 
-              {/* Step 3: 관심사 정보 */}
               {step === 3 && (
                 <Step3Interests
                   interestFields={draft.interests.fields}
@@ -71,8 +61,14 @@ export function OnboardingSteps() {
                 />
               )}
 
-              {/* Step 4: 사용 목적 및 주간 목표 (내부 훅 연동) */}
-              {step === 4 && <Step4Purpose onPrev={prev} />}
+              {step === 4 && (
+                <Step4Purpose 
+                  onPrev={prev} 
+                  draft={draft}      
+                  setPurpose={setPurpose}
+                  setWeeklyGoal={setWeeklyGoal} 
+                />
+              )}
             </div>
           </div>
         </div>

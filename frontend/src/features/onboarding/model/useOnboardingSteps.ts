@@ -65,7 +65,7 @@ export function useOnboardingSteps() {
     return true;
   }, [step, draft]);
 
-  // 🟢 return문에 빠진 함수들을 다 집어넣어야 에러가 안 납니다!
+ 
   return {
     step,
     draft,
@@ -74,9 +74,9 @@ export function useOnboardingSteps() {
     setStep,
     canNext,
     setNickname,
-    setIntro,      // 여기에 있어야 TS가 인식함
+    setIntro,      
     toggleTag,
-    setArtStyle,   // 추가
+    setArtStyle,   
     setPurpose,
     setWeeklyGoal,
   };

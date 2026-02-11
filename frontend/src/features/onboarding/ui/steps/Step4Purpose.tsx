@@ -2,12 +2,11 @@ import { useMemo } from "react";
 import clsx from "clsx";
 
 import { Button } from "../../../../components/common";
-import { useOnboardingSteps } from "../../model/useOnboardingSteps";
 import { useOnboarding } from "../../hooks/useOnboarding";
 import { JourneySection } from "../components/JourneySection"; 
 import { GoalSection } from "../components/GoalSection";
 
-import type { UsagePurpose } from "../../../../apis/types/common";
+import type { UsagePurpose, UserInformations } from "../../../../apis/types/common";
 
 const PURPOSE_MAP: Record<number, UsagePurpose> = {
   0: "SKETCHER",
@@ -25,10 +24,12 @@ const JOURNEY_LIST = [
 
 interface Props {
   onPrev: () => void;
+  draft: UserInformations; // 🟢 부모의 데이터 타입
+  setPurpose: (purpose: UsagePurpose) => void;
+  setWeeklyGoal: (goal: number) => void;
 }
 
-export function Step4Purpose({ onPrev }: Props) {
-  const { draft, setPurpose, setWeeklyGoal } = useOnboardingSteps();
+export function Step4Purpose({ onPrev, draft, setPurpose, setWeeklyGoal }: Props) {
   const { submitOnboarding, isSubmitting } = useOnboarding();
 
   const selectedIdx = useMemo(() => {
@@ -38,13 +39,13 @@ export function Step4Purpose({ onPrev }: Props) {
   const canNext = selectedIdx !== -1 && draft.weeklyGoalScore > 0;
 
   const handleFinish = () => {
+    // 🟢 이제 부모가 모아온 닉네임, 태그가 담긴 draft를 그대로 쏩니다.
     if (!canNext || isSubmitting) return;
     submitOnboarding(draft);
   };
 
   return (
     <div className="w-full flex flex-col items-center gap-8">
-      {/* Header */}
       <div className="flex flex-col items-center gap-2">
         <h2 className="main-title-medium-emphasized text-on-surface text-center m-0">
           Greaming을 사용하는 목적을 알려주세요.
@@ -54,7 +55,6 @@ export function Step4Purpose({ onPrev }: Props) {
         </p>
       </div>
 
-      {/* Content Section */}
       <div className="w-[666px] flex flex-col gap-6">
         <JourneySection
           list={JOURNEY_LIST}
@@ -68,13 +68,12 @@ export function Step4Purpose({ onPrev }: Props) {
         />
       </div>
 
-      {/* Footer Buttons */}
       <div className="w-full flex items-center justify-between mt-4">
         <button
           type="button"
           onClick={onPrev}
           disabled={isSubmitting}
-          className="w-[82px] h-[60px] rounded-medium flex items-center justify-center bg-surface-variant-low disabled:opacity-50"
+          className="w-[82px] h-[60px] rounded-medium flex items-center justify-center bg-surface-variant-low"
         >
           <span className="label-xlarge text-on-surface-variant-lowest">이전</span>
         </button>
