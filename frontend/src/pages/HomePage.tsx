@@ -1,16 +1,12 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import PageContainer from "../components/common/layouts/PageContainer";
 import CardGrid from "../features/home/ui/card/CardGrid";
 import HeroSection from "../features/home/components/HeroSection";
 import type { ChallengeType, HomeView } from "../features/home/components/type";
-
 import HomeBg from "../assets/background/home_bg.svg";
-import {
-  DAILY_CHALLENGE_CARDS,
-  WEEKLY_CHALLENGE_CARDS,
-} from "../features/home/api/MockHomeChallengeCards";
 import CardControls from "../features/home/components/CardControls";
+import type { CheckSubmissionType, SortBy } from "../apis/types/common";
 
 const toHomeView = (raw?: string): HomeView => {
   if (!raw) return "HOME";
@@ -20,37 +16,39 @@ const toHomeView = (raw?: string): HomeView => {
   return "HOME";
 };
 
+const todayIso = () => {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}T00:00:00`;
+};
+
 const HomePage = () => {
   const navigate = useNavigate();
   const { view: viewParam } = useParams<{ view?: string }>();
-
   const view = toHomeView(viewParam);
 
   const handleJoin = (type: ChallengeType) => {
-    // "DAILY" | "WEEKLY" -> /home/daily | /home/weekly
     navigate(`/home/${type.toLowerCase()}`);
   };
 
-  const dailyCards = useMemo(() => DAILY_CHALLENGE_CARDS, []);
-  const weeklyCards = useMemo(() => WEEKLY_CHALLENGE_CARDS, []);
+  const [gridType, setGridType] = useState<CheckSubmissionType>("ALL");
+  const [gridSort, setGridSort] = useState<SortBy>("latest");
+  const [gridTags, setGridTags] = useState<string[]>([]);
+  const [dateTimeIso, setDateTimeIso] = useState<string>(todayIso());
+
+  const gridView = useMemo(() => view, [view]);
 
   return (
     <>
       <section
         className="w-full bg-primary bg-no-repeat bg-top"
-        style={{
-          backgroundImage: `url(${HomeBg})`,
-          backgroundSize: "cover",
-        }}
+        style={{ backgroundImage: `url(${HomeBg})`, backgroundSize: "cover" }}
       >
         <PageContainer>
           <div className="pt-[100px] pb-10">
-            <HeroSection
-              view={view}
-              onJoin={handleJoin}
-              dailyCards={dailyCards}
-              weeklyCards={weeklyCards}
-            />
+            <HeroSection view={view} onJoin={handleJoin} />
           </div>
         </PageContainer>
       </section>
@@ -58,8 +56,24 @@ const HomePage = () => {
       <section className="w-full bg-surface">
         <PageContainer>
           <div className="mx-auto w-full max-w-[1366px]">
-            <CardControls view={view} />
-            <CardGrid />
+            <CardControls
+              view={gridView}
+              type={gridType}
+              sort={gridSort}
+              tags={gridTags}
+              onChangeType={setGridType}
+              onChangeSort={setGridSort}
+              onChangeTags={setGridTags}
+              dateTimeIso={dateTimeIso}
+              onChangeDateTimeIso={setDateTimeIso}
+            />
+
+            <CardGrid
+              view={gridView}
+              type={gridType}
+              sort={gridSort}
+              dateTimeIso={dateTimeIso}
+            />
           </div>
         </PageContainer>
       </section>
