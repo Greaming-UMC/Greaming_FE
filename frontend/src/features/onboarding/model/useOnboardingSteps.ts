@@ -7,7 +7,7 @@ const DEFAULT: UserInformations = {
   nickname: "",
   profileImgUrl: "",
   intro: "",
-  usagePurpose: "SKETCHER",
+  usagePurpose: "" as UsagePurpose,
   weeklyGoalScore: 0,
   specialties: { fields: [], style: "" },
   interests: { fields: [], style: "" },

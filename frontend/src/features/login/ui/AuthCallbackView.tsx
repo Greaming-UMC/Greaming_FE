@@ -20,11 +20,13 @@ const AuthCallbackView = () => {
       return;
     }
 
+    // ✅ NEW USER: 온보딩 시작 화면으로
     if (TRUE_SET.has(normalized)) {
-      navigate("/onboarding/step1", { replace: true });
+      navigate("/onboardingstart", { replace: true });
       return;
     }
 
+    // ✅ EXISTING USER: 홈으로
     if (FALSE_SET.has(normalized)) {
       navigate("/home", { replace: true });
       return;
