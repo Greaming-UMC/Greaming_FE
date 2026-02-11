@@ -1,4 +1,4 @@
-import type { HomeView } from "../type";
+import type { HomeView } from "../../components/type";
 
 interface Props {
   view: HomeView;
