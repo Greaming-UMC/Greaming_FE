@@ -90,16 +90,23 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: '/',
+    element: <AppLayout variant="logo" />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: '/login',
+        element: <LoginPage />,
+      },
+    ]
+  },
+  {
     path: '/onboarding',
     element: <OnboardingWelcomePage />,
   },
   {
     path: '/onboarding/step1',
     element: <OnboardingPage />,
-  },
-  {
-    path: '/login',
-    element: <LoginPage />,
   },
   {
     path: '/auth/callback',
