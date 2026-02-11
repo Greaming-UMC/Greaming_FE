@@ -1,5 +1,3 @@
-// src/features/upload/ui/sections/UploadContentSection.tsx
-
 import type { useUploadForm } from "../../config/useUploadForm";
 
 import { WriteBodyField } from "../../../../components/common/post/WriteBodyField";
@@ -13,10 +11,8 @@ type Props = {
 };
 
 export function UploadContentSection({ form }: Props) {
-  // ✅ 간격을 한 곳에서 통일 관리
-  const SECTION_GAP = "gap-[16px]"; // 섹션(제목/설명/해시태그) 간격
-  const INNER_GAP = "gap-[10px]";   // 라벨 ↔ 입력 간격 (원래 UI 느낌 유지)
-  // 만약 “완전 동일 간격” 원하면 INNER_GAP도 gap-[16px]로 바꾸면 끝.
+  const SECTION_GAP = "gap-[16px]"; 
+  const INNER_GAP = "gap-[10px]";   
 
   const inputRow =
     "w-full box-border flex items-center " +
@@ -40,7 +36,7 @@ export function UploadContentSection({ form }: Props) {
         "mt-[16px] mb-[40px]",
       ].join(" ")}
     >
-      {/* ✅ 제목 */}
+      {/*  제목 */}
       <div className={["flex flex-col w-full", INNER_GAP].join(" ")}>
         <div className="sub-title-large-emphasized text-on-surface">
           제목<span className="text-error">*</span>
