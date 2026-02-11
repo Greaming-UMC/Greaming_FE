@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
 import Logo from "../Logo";
+import { HEADER_HEIGHT, Z_INDEX } from "../layouts/layout";
 
 const HeaderLogo = () => {
   return (
-    <header className="h-[82px] flex items-center px-4 bg-linear-to-b from-primary via-primary/60 to-transparent">
+    <header
+      className="fixed top-0 left-0 w-full flex items-center px-8 bg-linear-to-b from-primary via-primary/60 to-transparent"
+      style={{ height: HEADER_HEIGHT.LOGO, zIndex: Z_INDEX.HEADER }}
+    >
       <Link to="/home" aria-label="홈으로 이동" className="inline-flex">
         <Logo name="mono_white_wordmark" size={100} />
       </Link>
