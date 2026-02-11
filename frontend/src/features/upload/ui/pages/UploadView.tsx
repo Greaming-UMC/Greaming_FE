@@ -1,7 +1,5 @@
-//공통 업로드 화면
-
 import type React from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { AnimatedLogoDraw } from "../../../onboarding/ui/AnimatedLogoDraw";
 import { useUploadForm } from "../../config/useUploadForm";
@@ -15,24 +13,38 @@ export type UploadHeaderRender = (ctx: {
   uploadButtonNode: React.ReactNode;
 }) => React.ReactNode;
 
+export type UploadMode = "free" | "daily" | "weekly" | "circle";
+
 export type UploadViewProps = {
+  mode?: UploadMode;
   header?: React.ReactNode | UploadHeaderRender;
 };
 
-export function UploadView({ header }: UploadViewProps) {
+export function UploadView({ mode = "free", header }: UploadViewProps) {
   const PAGE_WIDTH = 1372;
 
   const form = useUploadForm();
   const [isUploading, setIsUploading] = useState(false);
 
-  const canUpload = useMemo(() => form.canUpload, [form.canUpload]);
+  const field = useMemo(() => {
+    if (mode === "daily") return "DAILY" as const;
+    if (mode === "weekly") return "WEEKLY" as const;
+    return "FREE" as const;
+  }, [mode]);
+
+  // circle이면 visibility=CIRCLE로 고정(현재 form의 isPrivate 사용)
+  useEffect(() => {
+    if (mode === "circle") form.setIsPrivate(true);
+  }, [mode]);
+
+  const canUpload = form.canUpload;
 
   const onSubmit = async () => {
     if (!canUpload || isUploading) return;
 
     setIsUploading(true);
     try {
-      await form.submit();
+      await form.submit(field);
     } finally {
       setIsUploading(false);
     }
@@ -68,7 +80,7 @@ export function UploadView({ header }: UploadViewProps) {
 
         <UploadImagesSection form={form} pageWidth={PAGE_WIDTH} />
         <UploadOptionsSection form={form} />
-        <UploadContentSection form={form} pageWidth={window.innerWidth} />
+        <UploadContentSection form={form} pageWidth={PAGE_WIDTH} />
       </div>
 
       {isUploading ? (
