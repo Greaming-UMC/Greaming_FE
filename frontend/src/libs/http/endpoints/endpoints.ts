@@ -19,6 +19,7 @@ export const ENDPOINTS = {
     PROFILE_SETTINGS: {
         CHECK_NICKNAME: "/api/users/checkNickname",
         GET_PROFILE_SETTINGS: "/api/users/me/profile",
+        UPDATE_PROFILE_INFO: "/api/users/info",
     },
 
     // 도메인: USER

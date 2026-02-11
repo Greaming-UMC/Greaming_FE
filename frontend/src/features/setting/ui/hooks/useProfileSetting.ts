@@ -3,7 +3,6 @@ import { getProfileSettings, updateProfileSettings, checkNickname } from '../api
 import { useToast } from '../../../../components/common/feedback/Toast/ToastProvider';
 import type { UserInformations } from '../../../../apis/types/common';
 import { PROFILE_SETTING_KEYS } from './profileSettingKeys';
-;
 
 export const useProfileSetting = () => {
   const queryClient = useQueryClient();
@@ -11,18 +10,22 @@ export const useProfileSetting = () => {
 
   // 1. 초기 데이터 조회 (GET)
   const { data: profileData, isLoading } = useQuery({
-    queryKey: PROFILE_SETTING_KEYS.myProfile(), // 분리된 키 사용
+    queryKey: PROFILE_SETTING_KEYS.myProfile(),
     queryFn: getProfileSettings,
-    select: (res) => res.result?.user_information, 
+    // 🟢 에러 해결: unknown을 거쳐서 강제로 UserInformations로 변환합니다.
+    // 타입스크립트가 "둘이 안 겹치잖아!"라고 할 때 쓰는 가장 확실한 방법입니다.
+    select: (res) => {
+      if (!res || !res.result) return undefined;
+      return res.result as unknown as UserInformations;
+    }, 
   });
 
   // 2. 프로필 정보 수정 저장 (PUT)
   const { mutate: updateProfile, isPending: isUpdating } = useMutation({
-    mutationFn: (formData: UserInformations) => updateProfileSettings(formData),
+    mutationFn: (formData: Partial<UserInformations>) => updateProfileSettings(formData as any),
     onSuccess: (res) => {
       if (res.isSuccess) {
         showToast("프로필이 성공적으로 변경되었습니다.", "success");
-        // 저장 성공 시 해당 키의 캐시를 새로고침
         queryClient.invalidateQueries({ queryKey: PROFILE_SETTING_KEYS.all }); 
       } else {
         showToast(res.message || "저장에 실패했습니다.", "error");
@@ -37,7 +40,6 @@ export const useProfileSetting = () => {
   const validateNickname = async (nickname: string) => {
     try {
       const res = await checkNickname(nickname);
-      // 서버 명세의 'isAsvailable' 필드 활용
       return res.result?.isAsvailable ?? false; 
     } catch {
       return false;
