@@ -8,16 +8,9 @@ export const useHeaderScroll = (threshold: number = 0) => {
     const sentinelEl = sentinelRef.current;
     if (!sentinelEl) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // sentinel이 화면에서 사라지면(스크롤 내리면) isScrolled = true
-        setIsScrolled(!entry.isIntersecting);
-      },
-      {
-        root: null,
-        threshold,
-      }
-    );
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsScrolled(entry.boundingClientRect.top <= -threshold);
+    });
 
     observer.observe(sentinelEl);
 
