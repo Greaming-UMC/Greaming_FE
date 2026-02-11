@@ -1,4 +1,4 @@
-import type { useUploadForm } from "../../config/useUploadForm";
+import type { useUploadForm } from "../../model/useUploadForm";
 
 import { WriteBodyField } from "../../../../components/common/post/WriteBodyField";
 import { HashtagField } from "../components/HashtagField";

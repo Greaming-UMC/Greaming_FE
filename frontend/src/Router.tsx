@@ -7,6 +7,7 @@ import ModalPracticePage from './pages/ModalPracticePage';
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import ErrorPage from './pages/ErrorPage';
 import ProfilePage from './pages/ProfilePage';
+import UploadPageRoute from './pages/UploadPage';
 import LoginPage from './pages/LoginPage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
 import ExamplePage from './pages/ExamplePage';
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
       {
         path: 'journey',
         element: <JourneyPage />,
+      },
+      {
+        path: 'upload',
+        element: <UploadPageRoute />,
       },
     ],
   },

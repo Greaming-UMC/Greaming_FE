@@ -1,4 +1,4 @@
-import type { UploadImageItem } from "../../config/useUploadForm";
+import type { UploadImageItem } from "../../model/types";
 
 export function ImageGrid({
   images,

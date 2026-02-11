@@ -2,7 +2,7 @@ import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 
 import { AnimatedLogoDraw } from "../../../onboarding/ui/AnimatedLogoDraw";
-import { useUploadForm } from "../../config/useUploadForm";
+import { useUploadForm } from "../../model/useUploadForm";
 
 import { UploadImagesSection } from "../sections/UploadImagesSection";
 import { UploadOptionsSection } from "../sections/UploadOptionsSection";

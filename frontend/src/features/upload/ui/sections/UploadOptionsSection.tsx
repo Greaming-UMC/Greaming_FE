@@ -1,4 +1,4 @@
-import type { useUploadForm } from "../../config/useUploadForm";
+import type { useUploadForm } from "../../model/useUploadForm";
 import { Checkbox } from "../../../../components/common/input/Checkbox/Checkbox";
 
 type UploadForm = ReturnType<typeof useUploadForm>;

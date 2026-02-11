@@ -2,7 +2,7 @@
 import { useEffect, useRef, type MouseEventHandler } from "react";
 import clsx from "clsx";
 
-import type { useUploadForm } from "../../config/useUploadForm";
+import type { useUploadForm } from "../../model/useUploadForm";
 import { UploadBox } from "../../../../components/common/post/UploadBox";
 import { ScrollIndicator } from "../../../../components/common/display/ScrollIndicator";
 

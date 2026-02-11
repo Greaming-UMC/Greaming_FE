@@ -1,4 +1,4 @@
-import { UploadView } from "../../features/upload/ui/view/UploadView";
+import { UploadView } from "../../features/upload/ui/pages/UploadView";
 export default function UploadPageRoute() {
   return <UploadView />;
 }
