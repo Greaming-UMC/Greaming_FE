@@ -1,4 +1,5 @@
-export const normalizeApiPath = (path: string) => {
-  // "/api/..." 로 들어오면 "/..." 로 바꿔서 baseURL("/api")와 합쳐도 "/api/..."가 되게
-  return path.replace(/^\/api(?=\/)/, "");
-};
+export function normalizeApiPath(path: string) {
+  const purePath = path.startsWith("/") ? path : `/${path}`;
+  // 앞에 도메인과 https를 명시적으로 붙여줍니다.
+  return `https://api.greaming.com${purePath}`;
+}

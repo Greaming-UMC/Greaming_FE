@@ -1,5 +1,5 @@
 import type React from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { AnimatedLogoDraw } from "../../../onboarding/ui/AnimatedLogoDraw";
 import { useUploadForm } from "../../config/useUploadForm";
@@ -13,7 +13,8 @@ export type UploadHeaderRender = (ctx: {
   uploadButtonNode: React.ReactNode;
 }) => React.ReactNode;
 
-export type UploadMode = "free" | "daily" | "weekly" | "circle";
+//  circle 제외
+export type UploadMode = "free" | "daily" | "weekly";
 
 export type UploadViewProps = {
   mode?: UploadMode;
@@ -30,11 +31,6 @@ export function UploadView({ mode = "free", header }: UploadViewProps) {
     if (mode === "daily") return "DAILY" as const;
     if (mode === "weekly") return "WEEKLY" as const;
     return "FREE" as const;
-  }, [mode]);
-
-  // circle이면 visibility=CIRCLE로 고정(현재 form의 isPrivate 사용)
-  useEffect(() => {
-    if (mode === "circle") form.setIsPrivate(true);
   }, [mode]);
 
   const canUpload = form.canUpload;
