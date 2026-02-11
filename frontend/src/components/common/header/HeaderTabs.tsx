@@ -1,6 +1,8 @@
+import { Fragment, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { Divider } from "../display";
 import { Button, ListBase } from "../input";
-import Icon, { type IconName } from "../Icon";
+import { type IconName } from "../Icon";
 import { Dropdown } from "../feedback/Dropdown";
 
 type NavLinkItem = { type: "link"; path: string; label: string; iconName: IconName };
@@ -17,20 +19,34 @@ interface HeaderTabsProps {
   isScrolled: boolean;
 }
 
+const TAB_STYLE_DELAY_MS = 200;
+
 const HeaderTabs = ({ isScrolled }: HeaderTabsProps) => {
+  const [isTabsScrolled, setIsTabsScrolled] = useState(isScrolled);
+
+  useEffect(() => {
+    if (isScrolled === isTabsScrolled) return;
+
+    const timer = window.setTimeout(() => {
+      setIsTabsScrolled(isScrolled);
+    }, TAB_STYLE_DELAY_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [isScrolled, isTabsScrolled]);
+
   const renderTabContent = (item: NavItemType, isActive: boolean) => {
-    if (!isScrolled) {
+    if (!isTabsScrolled) {
       // 스크롤 안 됐을 때
       return (
         <Button
-          variant="onPrimary"
+          variant="nav"
           size="md"
           icon={item.iconName}
           shape="round"
-          className={`px-4 py-2 border border-on-primary transition-colors ${
-            isActive ? "bg-primary text-on-surface-variant-bright" : ""
-          }`}
+          widthMode="fixed"
+          width={160}
           tabIndex={-1}
+          className="duration-600 ease-in-out"
         >
           {item.label}
         </Button>
@@ -38,16 +54,16 @@ const HeaderTabs = ({ isScrolled }: HeaderTabsProps) => {
     } else {
       // 스크롤 됐을 때
       return (
-        <div
-          className={`
-            flex items-center gap-1.5 transition-all duration-300 rounded-full
-            label-large state-layer px-2 py-1 bg-transparent cursor-pointer
-            ${isActive ? "text-secondary" : "text-on-primary"}
-          `}
+        <Button
+          variant={isActive ? "textSecondary" : "textOnPrimary"}
+          size="xs"
+          icon={item.iconName}
+          shape="round"
+          widthMode="hug"
+          className="duration-600 ease-in-out"
         >
-          <Icon name={item.iconName} size={16} className="text-current" />
-          <span>{item.label}</span>
-        </div>
+          {item.label}
+        </Button>
       );
     }
   };
@@ -55,48 +71,51 @@ const HeaderTabs = ({ isScrolled }: HeaderTabsProps) => {
   return (
     <nav
       className={`flex items-center transition-all duration-300 ease-in-out ${
-        isScrolled ? "gap-2" : "gap-3"
+        isTabsScrolled ? "gap-1" : "gap-3"
       }`}
     >
       {NAV_ITEMS.map((item, index) => {
-        return (
-          <div key={item.label} className="relative flex items-center">
-            {item.type === "link" ? (
-              <NavLink to={item.path}>
-                {({ isActive }) => renderTabContent(item, isActive)}
-              </NavLink>
-            ) : (
-              
-              <Dropdown
-                align="left"
-                trigger={
-                  <button type="button">
-                    {renderTabContent(item, false)} 
-                  </button>
-                }
-              >
-                <div className="w-[200px] bg-surface rounded-lg shadow-xl p-2 animate-in fade-in zoom-in-95 duration-200">
-                  <ListBase
-                    size="md"
-                    title="추가하기"
-                    leadingIcon="plus"
-                    radius="md"
-                    className="cursor-pointer text-on-surface"
-                    onClick={() => console.log("Circle 추가하기 클릭")}
-                  />
-                </div>
-              </Dropdown>
-            )}
+        const showDivider = isTabsScrolled && index < NAV_ITEMS.length - 1;
 
-            <span
-              className={`
-                mx-1 text-outline-variant transition-opacity duration-300
-                ${isScrolled && index < NAV_ITEMS.length - 1 ? "opacity-100" : "opacity-0 hidden"}
-              `}
-            >
-              |
-            </span>
-          </div>
+        return (
+          <Fragment key={item.label}>
+            <div className="relative">
+              {item.type === "link" ? (
+                <NavLink to={item.path} end>
+                  {({ isActive }) => renderTabContent(item, isActive)}
+                </NavLink>
+              ) : (
+                <Dropdown
+                  align="left"
+                  trigger={
+                    <button type="button">
+                      {renderTabContent(item, false)}
+                    </button>
+                  }
+                >
+                  <div className="w-[200px] bg-surface rounded-lg shadow-xl p-2 animate-in fade-in zoom-in-95 duration-200">
+                    <ListBase
+                      size="md"
+                      title="추가하기"
+                      leadingIcon="plus"
+                      radius="md"
+                      className="cursor-pointer text-on-surface"
+                      onClick={() => console.log("Circle 추가하기 클릭")}
+                    />
+                  </div>
+                </Dropdown>
+              )}
+            </div>
+
+            {showDivider && (
+              <Divider
+                orientation="vertical"
+                thickness={1}
+                color="bg-on-primary"
+                style={{ height: "16px" }}
+              />
+            )}
+          </Fragment>
         );
       })}
     </nav>

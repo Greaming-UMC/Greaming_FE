@@ -21,7 +21,7 @@ export const HeaderActions = ({ userInfo, onLogout, onLogin }: HeaderActionsProp
         <Button
           variant="secondary"
           size="sm"
-          shape="square"
+          shape="round"
           className="font-medium shadow-none"
           onClick={onLogin ?? (() => console.log("로그인"))}
         >
