@@ -35,6 +35,17 @@ const router = createBrowserRouter([
         path: 'example',
         element: <ExamplePage />,
       },
+    ],
+  },
+  {
+    path: '/',
+    element: <AppLayout variant="default" />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: 'home/:view',
+        element: <HomePage />,
+      },
       {
         path: 'profile',
         children: [
@@ -60,13 +71,6 @@ const router = createBrowserRouter([
         path: 'journey',
         element: <JourneyPage />,
       },
-    ],
-  },
-  {
-    path: '/',
-    element: <AppLayout variant="default" />,
-    errorElement: <ErrorPage />,
-    children: [
       {
         path: 'setting',
         element: <SettingPage />,
@@ -86,16 +90,23 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: '/',
+    element: <AppLayout variant="logo" />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: '/login',
+        element: <LoginPage />,
+      },
+    ]
+  },
+  {
     path: '/onboarding',
     element: <OnboardingWelcomePage />,
   },
   {
     path: '/onboarding/step1',
     element: <OnboardingPage />,
-  },
-  {
-    path: '/login',
-    element: <LoginPage />,
   },
   {
     path: '/auth/callback',

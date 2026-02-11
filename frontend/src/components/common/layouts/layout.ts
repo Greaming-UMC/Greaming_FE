@@ -1,7 +1,7 @@
 export const HEADER_HEIGHT = {
   MAIN: 82,
   DEFAULT: 62,
-  LOGO: 62,
+  LOGO: 82,
 } as const;
 
 export const Z_INDEX = {

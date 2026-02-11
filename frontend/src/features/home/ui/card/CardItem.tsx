@@ -14,23 +14,19 @@ const CardItem = ({ card, context = "grid" }: Props) => {
     context === "carousel" ? "text-on-surface-variant-bright" : "text-on-surface";
 
   return (
-    <div className="w-[250px] h-[285px]">
-      <Card.Root
-        hoverEffect
-        clickable
-        className="h-full flex flex-col overflow-hidden rounded-2xl"
-      >
+    <div className="w-[250px] h-[285px] rounded-2xl overflow-hidden">
+      <Card.Root hoverEffect clickable className="h-full w-full flex flex-col rounded-2xl overflow-hidden">
         <Card.Media
           src={card.thumbnailUrl}
           alt={card.title}
           aspectRatio="aspect-auto"
           hoverEffect
-          className="h-[237px]"
+          className="h-[237px] w-full rounded-b-2xl"
         />
 
         {/* 하단 정보 영역 */}
-        <Card.Body className="h-[48px] px-3 shrink-0 bg-transparent">
-          <div className={`flex h-full items-center justify-between ${textClass}`}>
+        <Card.Body className="h-[48px] w-full shrink-0 bg-transparent">
+          <div className={`flex h-full w-full items-center justify-between ${textClass}`}>
             {/* 좌 : 프로필, 닉네임 */}
             <div className="flex items-center gap-2 min-w-0">
               <Avatar src={card.profileImgUrl} size="xs" />
@@ -40,19 +36,19 @@ const CardItem = ({ card, context = "grid" }: Props) => {
             </div>
 
             {/* 우 : 아이콘 카운터 */}
-            <div className="flex items-center gap-2 text-xs shrink-0">
+            <div className="flex items-center gap-2 text-sm shrink-0">
               <span className="flex items-center gap-0.5">
-                <Icon name="like" size={12} />
+                <Icon name="like" size={19} />
                 {card.counters.likesCount}
               </span>
 
               <span className="flex items-center gap-0.5">
-                <Icon name="chat" size={12} />
+                <Icon name="chat" size={19} />
                 {card.counters.commentCount}
               </span>
 
               <span className="flex items-center gap-0.5">
-                <Icon name="save" size={12} />
+                <Icon name="save" size={19} />
                 {card.counters.bookmarkCount}
               </span>
             </div>
