@@ -6,7 +6,7 @@ type Props = {
   onSubmit: () => void;
 };
 
-export function UploadActions({ canUpload, isUploading, onSubmit }: Props) {
+export function UploadActionsSection({ canUpload, isUploading, onSubmit }: Props) {
   const base =
     "w-[142px] h-[44px] rounded-[28px] flex items-center justify-center";
 

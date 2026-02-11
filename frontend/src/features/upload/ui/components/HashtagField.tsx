@@ -1,38 +1,46 @@
-import { useMemo } from "react";
 import clsx from "clsx";
+import { useMemo } from "react";
 import { Chip } from "../../../../components/common/display/Chip";
 
 type Props = {
   value: string;
   onChange: (v: string) => void;
 
-  tags: string[];
-  onAddTag: (tag: string) => void;
+  tags: string[]; // "tag" (노샵)로 저장한다고 가정하였슴다
+  onAddTags: (next: string[]) => void;
   onRemoveTag: (tag: string) => void;
 };
 
-const normalizeTag = (raw: string) => {
-  const t = raw.trim().replace(/^#/, "");
-  if (!t) return "";
-  return `#${t}`;
+const normalizeTokens = (raw: string) => {
+  // " #a, b  c" -> ["a","b","c"]
+  return raw
+    .split(/[\s,]+/g)
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .map((t) => (t.startsWith("#") ? t.slice(1) : t));
 };
 
-export function HashtagField({
-  value,
-  onChange,
-  tags,
-  onAddTag,
-  onRemoveTag,
-}: Props) {
-  const canAdd = useMemo(() => normalizeTag(value).length > 1, [value]);
+const normalizeKey = (t: string) => t.trim().replace(/^#/, "").toLowerCase();
+
+export function HashtagField({ value, onChange, tags, onAddTags, onRemoveTag }: Props) {
+  const canAdd = useMemo(() => normalizeTokens(value).length > 0, [value]);
 
   const onComplete = () => {
-    const t = normalizeTag(value);
-    if (!t) return;
-    if (tags.includes(t)) return;
-    onAddTag(t);
+    const tokens = normalizeTokens(value).map(normalizeKey).filter(Boolean);
+    if (tokens.length === 0) return;
+
+    // 기존 tags도 정규화해서 Map으로 합치기 (for 중복방지)
+    const map = new Map<string, string>();
+    tags.forEach((t) => {
+      const key = normalizeKey(t);
+      if (key) map.set(key, key);
+    });
+    tokens.forEach((t) => map.set(t, t));
+
+    onAddTags(Array.from(map.values()));
     onChange("");
   };
+
   const inputRow =
     "w-full box-border flex items-center justify-between " +
     "h-[50px] px-[16px] " +
@@ -61,7 +69,7 @@ export function HashtagField({
           placeholder="작성하기"
           className={inputBase}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter" && !e.nativeEvent.isComposing) {
               e.preventDefault();
               onComplete();
             }
@@ -83,7 +91,7 @@ export function HashtagField({
           {tags.map((t) => (
             <Chip
               key={t}
-              label={t}
+              label={`#${t}`}
               onDelete={() => onRemoveTag(t)}
               variant="filled"
               className={chipClass}

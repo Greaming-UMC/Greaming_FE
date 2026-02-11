@@ -1,4 +1,4 @@
-import { UploadView } from "../view/UploadView";
+import { UploadView } from "./UploadView";
 import { UploadHeader } from "../components/UploadHeader";
 
 export default function WeeklyChallengeUploadPage() {

@@ -1,13 +1,15 @@
+//공통 업로드 화면
+
 import type React from "react";
 import { useMemo, useState } from "react";
 
 import { AnimatedLogoDraw } from "../../../onboarding/ui/AnimatedLogoDraw";
-import { useUploadForm } from "../../model/useUploadForm";
+import { useUploadForm } from "../../config/useUploadForm";
 
 import { UploadImagesSection } from "../sections/UploadImagesSection";
 import { UploadOptionsSection } from "../sections/UploadOptionsSection";
 import { UploadContentSection } from "../sections/UploadContentSection";
-import { UploadActions } from "../sections/UploadActions";
+import { UploadActionsSection } from "../sections/UploadActionsSection";
 
 export type UploadHeaderRender = (ctx: {
   uploadButtonNode: React.ReactNode;
@@ -23,12 +25,7 @@ export function UploadView({ header }: UploadViewProps) {
   const form = useUploadForm();
   const [isUploading, setIsUploading] = useState(false);
 
-  const canUpload = useMemo(() => {
-    const hasImage = form.images.length > 0;
-    const hasBody = form.body.trim().length > 0;
-    const hasTags = form.hashtags.length > 0;
-    return hasImage && hasBody && hasTags;
-  }, [form.images.length, form.body, form.hashtags.length]);
+  const canUpload = useMemo(() => form.canUpload, [form.canUpload]);
 
   const onSubmit = async () => {
     if (!canUpload || isUploading) return;
@@ -42,7 +39,7 @@ export function UploadView({ header }: UploadViewProps) {
   };
 
   const uploadButtonNode = (
-    <UploadActions
+    <UploadActionsSection
       canUpload={canUpload}
       isUploading={isUploading}
       onSubmit={onSubmit}
@@ -61,7 +58,7 @@ export function UploadView({ header }: UploadViewProps) {
               : header}
           </div>
         ) : (
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-[12px]">
             <div className="sub-title-large-emphasized text-on-surface">
               그림 업로드
             </div>
@@ -69,9 +66,9 @@ export function UploadView({ header }: UploadViewProps) {
           </div>
         )}
 
-        <UploadImagesSection form={form} />
+        <UploadImagesSection form={form} pageWidth={PAGE_WIDTH} />
         <UploadOptionsSection form={form} />
-        <UploadContentSection form={form} />
+        <UploadContentSection form={form} pageWidth={window.innerWidth} />
       </div>
 
       {isUploading ? (
