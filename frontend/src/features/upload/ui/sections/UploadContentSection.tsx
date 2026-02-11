@@ -36,7 +36,7 @@ export function UploadContentSection({ form }: Props) {
         "mt-[16px] mb-[40px]",
       ].join(" ")}
     >
-      {/*  제목 */}
+      {/* 제목 */}
       <div className={["flex flex-col w-full", INNER_GAP].join(" ")}>
         <div className="sub-title-large-emphasized text-on-surface">
           제목<span className="text-error">*</span>
