@@ -9,9 +9,28 @@ import { Dropdown } from "../feedback/Dropdown";
 interface HeaderActionsProps {
   userInfo?: UserInfo;
   onLogout?: () => void;
+  onLogin?: () => void;
 }
 
-export const HeaderActions = ({ userInfo, onLogout }: HeaderActionsProps) => {
+export const HeaderActions = ({ userInfo, onLogout, onLogin }: HeaderActionsProps) => {
+  const isLoggedIn = !!userInfo?.nickname;
+
+  if (!isLoggedIn) {
+    return (
+      <div className="ml-auto flex items-center gap-3 relative">
+        <Button
+          variant="secondary"
+          size="sm"
+          shape="square"
+          className="font-medium shadow-none"
+          onClick={onLogin ?? (() => console.log("로그인"))}
+        >
+          로그인
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="ml-auto flex items-center gap-3 relative">
       <Dropdown
