@@ -2,6 +2,7 @@ import { httpRefresh } from "../../http/refreshClient";
 import { ENDPOINTS } from "../endpoints/endpoints";
 import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { clearAccessToken, getAccessToken, setAccessToken } from "../../security/tokenStore";
+import { extractAccessTokenFromReissueResponse } from "../../security/reissueToken";
 import { useAuthStore } from "../../security/authStore";
 
 const REFRESH_PATH = ENDPOINTS.AUTH.REISSUE_TOKEN;
@@ -71,20 +72,15 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
         refreshing = (async () => {
           try {
             const res = await httpRefresh.post(REFRESH_PATH);
-            const authHeader =
-              res.headers?.authorization ?? res.headers?.Authorization;
-
-            if (typeof authHeader === "string") {
-              const match = authHeader.match(/^Bearer\s+(.+)$/i);
-              const nextToken = (match?.[1] ?? authHeader).trim();
-              if (nextToken) {
-                setAccessToken(nextToken);
-              } else {
-                clearAccessToken();
-              }
-            } else {
-              // 쿠키 기반 인증 환경에서는 Authorization 헤더 없이 재발급될 수 있습니다.
+            const nextToken = extractAccessTokenFromReissueResponse(res);
+            if (!nextToken) {
               clearAccessToken();
+              throw new Error("access token missing from reissue response");
+            }
+
+            setAccessToken(nextToken);
+            if (!getAccessToken()) {
+              throw new Error("invalid access token from reissue response");
             }
             useAuthStore.getState().setAuthenticated();
           } catch {
