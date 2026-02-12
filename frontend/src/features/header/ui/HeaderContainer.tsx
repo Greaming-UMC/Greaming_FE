@@ -29,7 +29,7 @@ const HeaderContainer = ({ variant }: HeaderContainerProps) => {
     ? {
         nickname: profile.nickname,
         profileImgUrl: profile.profileImgUrl,
-        level: profile.level,
+        level: profile.journeyLevel,
       }
     : undefined;
 
