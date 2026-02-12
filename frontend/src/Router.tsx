@@ -124,7 +124,7 @@ const router = createBrowserRouter([
     element: <OnboardingWelcomePage />,
   },
   {
-    path: '/onboarding/step1',
+    path: '/onboarding/step/:step',
     element: <OnboardingPage />,
   },
   {

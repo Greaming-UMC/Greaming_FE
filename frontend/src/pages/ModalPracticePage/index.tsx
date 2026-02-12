@@ -4,9 +4,9 @@ import FollowingModal from '../../features/social/ui/FollowingModal';
 import FollowerModal from '../../features/social/ui/FollowerModal';
 import CreateCircleModal from '../../features/social/ui/CircleCreateModal';
 import CircleSearchModal from '../../features/social/ui/CircleSearchModal';
-import CircleMemberModal from '../../features/social/ui/CircleMemberMoal';
-import CircleManageModal from '../../features/social/ui/CircleManageModal';
+import CircleMemberModal from '../../features/social/ui/CircleMemberModal';
 import { MOCK_CURRENT_CIRCLE_ID, MOCK_MY_INFO } from '../../features/social/testing/mockdata';
+import CircleManageModal from '../../features/social/ui/CircleManageModal';
 
 const ModalPracticePage = () => {
   const [isFollowingModalOpen, setIsFollowingModalOpen] = useState(false);
@@ -68,6 +68,7 @@ const ModalPracticePage = () => {
       <CircleManageModal
         isOpen={isCircleManageModalOpen}
         onClose={() => setIsCircleManageModalOpen(false)}
+        circleId={MOCK_CURRENT_CIRCLE_ID}
       />
 
       <CreateCircleModal isOpen={isCreateCircleModalOpen} onClose={() => setIsCreateCircleModalOpen(false)} />

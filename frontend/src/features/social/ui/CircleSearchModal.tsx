@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { Button, Modal, SearchField } from '../../../components/common';
-import type { CircleItem } from '../types';
 import CircleSearchSection from './sections/CircleSearchSection';
 import CircleCreateModal from './CircleCreateModal';
-
-/** 🛠️ [MODE A] 목업 데이터 */
-import { MOCK_CIRCLE_LIST } from '../testing/mockdata'; 
 import { useDebounce } from '../hooks/useDebounce';
+
+// 🟢 실제 API 훅 및 타입 임포트
+import { useInfiniteCircles } from '../hooks/useSocial';
+import type { ExploreCircleInfo } from '../../../apis/types/common';
 
 interface CircleSearchModalProps {
   isOpen: boolean;
@@ -20,50 +20,32 @@ const CircleSearchModal = ({ isOpen, onClose }: CircleSearchModalProps) => {
   // 🟢 모달 상태 관리
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [selectedCircle, setSelectedCircle] = useState<CircleItem | null>(null);
+  const [selectedCircle, setSelectedCircle] = useState<ExploreCircleInfo | null>(null);
 
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
 
   // ==========================================================
-  // 🟢 [SECTION 1] 데이터 제어 섹션
+  // 🟢 [SECTION 1] 실제 데이터 페칭 (React Query)
   // ==========================================================
-  const [circleList, setCircleList] = useState<CircleItem[]>([]);
-  const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
-  
-  const pageSize = 10;
-  
-  const totalFilteredCount = useMemo(() => 
-    MOCK_CIRCLE_LIST.filter(c => 
-      c.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-    ).length
-  , [debouncedSearchTerm]);
-  
-  const hasNextPage = circleList.length < totalFilteredCount;
+  const {
+    data,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useInfiniteCircles(debouncedSearchTerm, 10);
 
-  const fetchMockData = useCallback((pageNum: number, isNext: boolean = false) => {
-    if (isNext) setIsFetchingNextPage(true);
-    else setIsLoading(true);
-
-    setTimeout(() => {
-      const filteredAll = MOCK_CIRCLE_LIST.filter(c => 
-        c.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-      );
-      const end = pageNum * pageSize;
-      setCircleList(filteredAll.slice(0, end));
-      
-      setIsLoading(false);
-      setIsFetchingNextPage(false);
-    }, 300);
-  }, [debouncedSearchTerm]);
+  // Family B 구조 대응: 모든 페이지의 result.circles를 하나로 합침
+  const circleList = useMemo(() => {
+    return data?.pages.flatMap((page) => page.result?.circles ?? []) ?? [];
+  }, [data]);
 
   const handleFetchNext = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage && !isLoading) {
-      setPage(prev => prev + 1);
+      fetchNextPage();
     }
-  }, [hasNextPage, isFetchingNextPage, isLoading]);
+  }, [hasNextPage, isFetchingNextPage, isLoading, fetchNextPage]);
 
   // ==========================================================
   // 🟢 [SECTION 2] 무한 스크롤 감지 (Intersection Observer)
@@ -77,10 +59,7 @@ const CircleSearchModal = ({ isOpen, onClose }: CircleSearchModalProps) => {
           handleFetchNext();
         }
       },
-      { 
-        root: scrollRef.current, 
-        threshold: 0.1 
-      }
+      { root: scrollRef.current, threshold: 0.1 }
     );
 
     observer.observe(loadMoreRef.current);
@@ -88,46 +67,24 @@ const CircleSearchModal = ({ isOpen, onClose }: CircleSearchModalProps) => {
   }, [isOpen, handleFetchNext]);
 
   // ==========================================================
-  // 🟢 [SECTION 3] 이펙트 및 핸들러
+  // 🟢 [SECTION 3] 이벤트 핸들러
   // ==========================================================
 
-  useEffect(() => {
-    if (isOpen) {
-      setPage(1);
-      fetchMockData(1, false);
-    }
-  }, [debouncedSearchTerm, isOpen, fetchMockData]);
-
-  useEffect(() => {
-    if (page > 1 && isOpen) {
-      fetchMockData(page, true);
-    }
-  }, [page, isOpen, fetchMockData]);
-
-  // 🟢 1. 리스트에서 가입 버튼 클릭 시 호출
+  // 1. 리스트에서 가입 버튼 클릭 시 호출
   const handleJoinClick = (id: number) => {
     const target = circleList.find(c => c.circleId === id);
     if (target) {
       setSelectedCircle(target);
-      setIsConfirmOpen(true); // 컨펌 모달 열기
+      setIsConfirmOpen(true); 
     }
   };
 
-  // 🟢 2. 컨펌 모달에서 최종 '가입하기' 클릭 시 호출
+  // 2. 컨펌 모달에서 최종 '가입하기' 클릭 시 호출
   const handleJoinConfirm = () => {
     if (!selectedCircle) return;
 
-    console.log(`[CircleJoin] 가입 승인됨: ${selectedCircle.name} (ID: ${selectedCircle.circleId})`);
-
-    setCircleList(prev => prev.map(circle => 
-      circle.circleId === selectedCircle.circleId 
-        ? { 
-            ...circle, 
-            isJoined: true, 
-            memberCount: circle.memberCount + 1 
-          } 
-        : circle
-    ));
+    // TODO: 실제 가입 API Mutation 연동 (필요 시 useJoinCircle 훅 추가)
+    console.log(`[CircleJoin] 가입 시도: ${selectedCircle.name}`);
     
     setIsConfirmOpen(false);
     setSelectedCircle(null);
@@ -164,19 +121,21 @@ const CircleSearchModal = ({ isOpen, onClose }: CircleSearchModalProps) => {
             ref={scrollRef}
             className="max-h-[540px] overflow-y-auto px-1 custom-scrollbar"
           >
-            {isLoading && page === 1 ? (
-              <div className="py-20 text-center text-label-medium text-on-surface-variant">데이터를 검색하는 중...</div>
+            {isLoading && !isFetchingNextPage ? (
+              <div className="py-20 text-center text-label-medium text-on-surface-variant">
+                써클을 찾는 중입니다...
+              </div>
             ) : (
               <>
                 <CircleSearchSection 
                   circles={circleList} 
-                  onToggle={handleJoinClick} // 👈 핸들러 교체
+                  onToggle={handleJoinClick} 
                 />
                 
-                <div ref={loadMoreRef} className="h-[10px] w-full flex items-center justify-center">
+                <div ref={loadMoreRef} className="h-[20px] w-full flex items-center justify-center">
                   {isFetchingNextPage && (
-                    <span className="text-label-small text-on-surface-variant-lowest">
-                      추가 결과 불러오는 중...
+                    <span className="text-label-small text-on-surface-variant-lowest animate-pulse">
+                      추가 써클 불러오는 중...
                     </span>
                   )}
                 </div>
@@ -186,7 +145,7 @@ const CircleSearchModal = ({ isOpen, onClose }: CircleSearchModalProps) => {
         </Modal.Body>
       </Modal>
 
-      {/* 🟢 가입 확인 컨펌 모달 (FollowingModal과 동일한 스타일) */}
+      {/* 가입 확인 컨펌 모달 */}
       <Modal variant="confirm" open={isConfirmOpen} onClose={() => setIsConfirmOpen(false)}>
         <Modal.Header title="써클 가입" />
         <Modal.Body>

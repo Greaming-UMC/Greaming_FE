@@ -151,8 +151,13 @@ const CalendarWeeks = ({ completedDates = [] }: CalendarWeeksProps) => {
                     setIsOpen(false);
                   }}
                   className={`
+<<<<<<< feature/#84-homepage-api
                     flex items-center justify-center h-[44px] rounded-3xl cursor-pointer transition-colors
                     ${isSelected ? 'bg-secondary text-on-surface border-surface-variant-low state-layer primary-opacity-8' : 'bg-surface text-on-surface border-3 border-surface-variant-low state-layer primary-opacity-8'}
+=======
+                    flex items-center justify-center h-[44px] rounded-3xl cursor-pointer transition-all border-none shadow-1
+                    ${isSelected ? 'bg-primary text-on-primary border-primary' : 'bg-surface text-on-surface border-3 border-surface-variant-low state-layer primary-opacity-8'}
+>>>>>>> dev
                   `}
                 >
                   <span className="label-large-emphasized">{index + 1}주차</span>

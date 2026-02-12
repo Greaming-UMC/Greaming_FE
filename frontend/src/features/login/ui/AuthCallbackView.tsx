@@ -96,6 +96,10 @@ const AuthCallbackView = () => {
           return;
         }
 
+        if (TRUE_SET.has(normalized)) {
+          navigate("/onboarding/step/1", { replace: true });
+          return;
+        }
         if (!canceled) {
           navigate("/login", { replace: true });
         }

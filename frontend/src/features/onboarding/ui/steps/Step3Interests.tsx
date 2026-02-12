@@ -1,42 +1,21 @@
-// Step3Interests.tsx
+import clsx from "clsx";
+import type { ArtField, ArtStyle } from "../../../../apis/types/common";
+import { ART_FIELD_LABEL, ART_STYLE_LABEL } from "../../../../apis/types/common";
 import { Button } from "../../../../components/common/input/Button/Button";
 import { OnboardingTagChip } from "../../../../components/common/display/OnboardingTagChip";
 
-type Props = {
-  interestFields: string[];
-  onChangeInterestFields: (next: string[]) => void;
-
-  interestStyle: string | null;
-  onChangeInterestStyle: (next: string | null) => void;
-
+interface Props {
+  interestFields: ArtField[];
+  onChangeInterestFields: (tag: ArtField) => void; // 부모의 toggleTag('interests', tag) 연결
+  interestStyle: ArtStyle | null;
+  onChangeInterestStyle: (style: ArtStyle) => void; // 부모의 setArtStyle('interests', style) 연결
   onPrev: () => void;
   onNext: () => void;
-};
+}
 
 const MAX_FIELD = 4;
-
-const FIELD_TAGS = [
-  "일러스트",
-  "풍경화",
-  "인물화",
-  "일상",
-  "인사이솔",
-  "캐릭터",
-  "판타지",
-  "추상화",
-  "애니메이션",
-  "수채화",
-  "건축물",
-  "연필",
-  "동물",
-  "전통미술",
-  "팬아트",
-  "꽃",
-  "음식",
-  "크로키",
-] as const;
-
-const STYLE_TAGS = ["컬러", "흑백", "귀여운", "공포", "디테일", "심플"] as const;
+const FIELD_KEYS = Object.keys(ART_FIELD_LABEL) as ArtField[];
+const STYLE_KEYS = Object.keys(ART_STYLE_LABEL) as ArtStyle[];
 
 export function Step3Interests({
   interestFields,
@@ -46,19 +25,8 @@ export function Step3Interests({
   onPrev,
   onNext,
 }: Props) {
+  
   const isFieldMax = interestFields.length >= MAX_FIELD;
-
-  const toggleField = (tag: string) => {
-    const exists = interestFields.includes(tag);
-    if (exists) return onChangeInterestFields(interestFields.filter((t) => t !== tag));
-    if (interestFields.length >= MAX_FIELD) return;
-    onChangeInterestFields([...interestFields, tag]);
-  };
-
-  const toggleStyle = (tag: string) => {
-    onChangeInterestStyle(interestStyle === tag ? null : tag);
-  };
-
   const canNext = interestFields.length >= 1 && interestStyle !== null;
 
   const prevBtnClass =
@@ -77,45 +45,45 @@ export function Step3Interests({
       </div>
 
       <div className="w-full flex flex-col gap-[16px]">
-        {/* 분야 */}
+        {/* 관심 분야 */}
         <div className="w-[666px] flex items-end justify-between">
           <div className="label-large-emphasized text-on-surface">분야</div>
           <div className="label-large text-on-surface-variant-lowest">최소 1개 최대 4개</div>
         </div>
 
         <div className="w-[674px] -mx-[4px] grid grid-cols-6 gap-[10px]">
-          {FIELD_TAGS.map((tag) => {
-            const selected = interestFields.includes(tag);
+          {FIELD_KEYS.map((key) => {
+            const selected = interestFields.includes(key);
             const disabled = !selected && isFieldMax;
 
             return (
               <OnboardingTagChip
-                key={tag}
-                label={`#${tag}`}
+                key={key}
+                label={`#${ART_FIELD_LABEL[key]}`} // 한글 라벨 출력
                 selected={selected}
                 disabled={disabled}
-                onClick={() => !disabled && toggleField(tag)}
+                onClick={() => !disabled && onChangeInterestFields(key)}
               />
             );
           })}
         </div>
 
-        {/* 스타일 */}
+        {/* 관심 스타일 */}
         <div className="w-[666px] flex items-end justify-between mt-[8px]">
           <div className="label-large-emphasized text-on-surface">스타일</div>
           <div className="label-large text-on-surface-variant-lowest">1개 선택</div>
         </div>
 
         <div className="w-[674px] -mx-[4px] grid grid-cols-6 gap-[10px]">
-          {STYLE_TAGS.map((tag) => {
-            const selected = interestStyle === tag;
+          {STYLE_KEYS.map((key) => {
+            const selected = interestStyle === key;
 
             return (
               <OnboardingTagChip
-                key={tag}
-                label={`#${tag}`}
+                key={key}
+                label={`#${ART_STYLE_LABEL[key]}`} // 한글 라벨 출력
                 selected={selected}
-                onClick={() => toggleStyle(tag)}
+                onClick={() => onChangeInterestStyle(key)}
               />
             );
           })}
@@ -124,9 +92,10 @@ export function Step3Interests({
 
       <div className="h-[90px]" />
 
+      {/* 하단 버튼 영역 */}
       <div className="w-full flex items-center justify-between">
         <button type="button" onClick={onPrev} className={prevBtnClass}>
-          <span className="text-on-surface-variant-lowest font-['Pretendard'] text-[16.161px] font-[500] leading-[21.01px]">
+          <span className="text-on-surface-variant-lowest label-xlarge">
             이전
           </span>
         </button>
@@ -135,11 +104,11 @@ export function Step3Interests({
           size="2xl"
           shape="square"
           variant={canNext ? "primary" : "surfaceVariant"}
-          className={[
+          className={clsx(
             "w-[572px] h-[60px]",
             "rounded-[6.465px]",
-            !canNext ? "bg-surface-variant-low" : "",
-          ].join(" ")}
+            !canNext && "bg-surface-variant-low"
+          )}
           onClick={onNext}
           disabled={!canNext}
         >

@@ -1,10 +1,11 @@
+import type { FollowUserInfo } from "../../../../apis/types/common";
 import { ActionItem, EmptyState } from "../../../../components/common";
-import type { IconName } from "../../../../components/common/Icon";
-import type { SocialUserItem } from "../../types"; // 확장된 타입 사용
+
 
 interface FollowingListSectionProps {
-  users: SocialUserItem[]; // SocialUser -> SocialUserItem으로 변경
-  onToggle: (userId: number) => void; // id -> userId로 변경
+  // 🟢 FollowUserInfo 배열로 타입 교체
+  users: FollowUserInfo[];
+  onToggle: (userId: number) => void;
 }
 
 const FollowingListSection = ({ users, onToggle }: FollowingListSectionProps) => {
@@ -28,16 +29,20 @@ const FollowingListSection = ({ users, onToggle }: FollowingListSectionProps) =>
         <ActionItem
           key={user.userId}
           size="lg"
+          // 팔로잉 목록이므로 기본적으로 true겠지만, 언팔로우 시 상태 반영을 위해 체크
           action={user.isFollowing ? "following" : "follow"}
           title={user.nickname}
-          subtitle={user.bio || "소개글이 없습니다."}
+          // 🟢 명세에 bio가 없을 수 있으므로 (user as any) 처리 혹은 빈 값
+          subtitle={(user as any).bio || "소개글이 없습니다."}
           badge={{
-            icon: user.badgeImage as IconName || 'badge_artist', 
+            // 🟢 명세에 뱃지 관련 필드가 추가될 때까지 기본값 유지
+            icon: (user as any).badgeImage || 'badgeArtist', 
             size: "md"
           }}
           avatar={{ 
             src: user.profileImgUrl,
-            icon: (user.profileIcon as IconName) || "avatar_grey"
+            // 🟢 profileIcon 대신 기본 person 아이콘 사용 (명세 준수)
+            icon: "person"
           }}
           // 토글 함수 하나로 관리
           onUnfollow={() => onToggle(user.userId)}

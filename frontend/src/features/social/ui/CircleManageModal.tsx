@@ -2,69 +2,73 @@ import { useEffect, useState, useRef, useMemo } from 'react';
 import { Button, Modal, SearchField } from '../../../components/common';
 import InviteSection from './sections/InviteSection';
 import KickSection from './sections/KickSection';
-
-// 🟢 목업 데이터 및 타입 임포트
-import { 
-  MOCK_CIRCLE_MEMBER_LIST, 
-  MOCK_FOLLOWING_LIST
-} from '../testing/mockdata';
-import type { CircleMemberItem, SocialUserItem } from '../types';
 import { useDebounce } from '../hooks/useDebounce';
+
+// 🟢 [수정] 훅 이름 일치화 (useCircleMembers)
+import { 
+  useSearchUsers, 
+  useCircleMembers, 
+  useKickMember 
+} from '../hooks/useSocial';
 
 interface CircleManageModalProps {
   isOpen: boolean;
   onClose: () => void;
+  circleId: number; 
 }
 
-const CircleManageModal = ({ isOpen, onClose }: CircleManageModalProps) => {
+const CircleManageModal = ({ isOpen, onClose, circleId }: CircleManageModalProps) => {
   const [activeTab, setActiveTab] = useState<'invite' | 'kick'>('invite');
   const [searchTerm, setSearchTerm] = useState("");
-  
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const [selectedMember, setSelectedMember] = useState<CircleMemberItem | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // 1. 내보내기용 상태 (userId 기반)
-  const [members, setMembers] = useState<CircleMemberItem[]>(MOCK_CIRCLE_MEMBER_LIST);
-  
-  // 2. 초대하기용 검색 결과 상태
-  const [searchedUsers, setSearchedUsers] = useState<SocialUserItem[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
+  // ==========================================================
+  // 🟢 [SECTION 1] 데이터 페칭 (React Query)
+  // ==========================================================
+
+  // 1. 초대하기용 유저 검색 (Family B - result 기반)
+  const { 
+    data: searchData, 
+    isLoading: isSearching 
+  } = useSearchUsers(circleId, debouncedSearchTerm);
+
+  // 2. 내보내기용 써클 멤버 조회 (Family B - result 기반)
+  const { 
+    data: memberData, 
+    isLoading: isMemberLoading 
+  } = useCircleMembers(circleId);
+
+  // 3. 멤버 강퇴 Mutation
+  const { mutate: kickMutate } = useKickMember(circleId);
 
   // ==========================================================
-  // 🟢 [SECTION 1] 초대하기 검색 로직
+  // 🟢 [SECTION 2] 데이터 가공 (InfiniteData 구조 대응)
   // ==========================================================
-  useEffect(() => {
-    if (activeTab === 'invite' && debouncedSearchTerm.trim()) {
-      setIsSearching(true);
-      const timer = setTimeout(() => {
-        // MOCK_FOLLOWING_LIST의 userId가 유니크한지 확인 필요
-        const results = MOCK_FOLLOWING_LIST.filter(user =>
-          user.nickname.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-        );
-        setSearchedUsers(results);
-        setIsSearching(false);
-      }, 400);
 
-      return () => clearTimeout(timer);
-    } else {
-      setSearchedUsers([]);
-      setIsSearching(false);
-    }
-  }, [debouncedSearchTerm, activeTab]);
+  // 초대 리스트 가공 (Family B: result 필드 사용)
+  const searchedUsers = useMemo(() => {
+    if (!searchData) return [];
+    // useInfiniteQuery는 pages 배열을 반환하므로 flatMap으로 합침
+    // searchData.pages[i].result 가 검색된 유저 배열인 경우
+    return searchData.pages.flatMap((page) => (page as any).result || []);
+  }, [searchData]);
 
-  // ==========================================================
-  // 🟢 [SECTION 2] 내보내기 필터링 로직
-  // ==========================================================
+  // 내보내기 리스트 가공 (Family B: result.members 필드 사용)
   const filteredMembers = useMemo(() => {
-    if (activeTab !== 'kick') return [];
-    return members.filter(m => 
+    if (!memberData) return [];
+    
+    // 첫 번째 페이지의 result 내 members 배열에 접근
+    const allMembers = memberData.pages[0]?.result?.members || [];
+    
+    return allMembers.filter(m => 
       m.nickname.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [members, searchTerm, activeTab]);
-
+  }, [memberData, searchTerm]);
+  
   // ==========================================================
   // 🟢 [SECTION 3] 이벤트 핸들러
   // ==========================================================
@@ -73,31 +77,23 @@ const CircleManageModal = ({ isOpen, onClose }: CircleManageModalProps) => {
     if (isOpen) {
       setActiveTab('invite');
       setSearchTerm("");
-      setMembers(MOCK_CIRCLE_MEMBER_LIST); 
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (isOpen) {
-      setSearchTerm("");
-      setTimeout(() => searchInputRef.current?.focus(), 0);
-    }
-  }, [activeTab, isOpen]);
-
-  // id -> userId 파라미터명 통일
   const handleKickClick = (userId: number) => {
-    const target = members.find(m => m.userId === userId);
-    if (target) {
-      setSelectedMember(target);
-      setIsConfirmOpen(true);
-    }
+    setSelectedUserId(userId);
+    setIsConfirmOpen(true);
   };
 
   const confirmKick = () => {
-    if (selectedMember) {
-      setMembers(prev => prev.filter(m => m.userId !== selectedMember.userId));
-      setIsConfirmOpen(false);
-      setSelectedMember(null);
+    if (selectedUserId !== null) {
+      kickMutate(selectedUserId, {
+        onSuccess: () => {
+          setIsConfirmOpen(false);
+          setSelectedUserId(null);
+          // 성공 알림 등을 추가할 수 있습니다.
+        }
+      });
     }
   };
 
@@ -106,10 +102,11 @@ const CircleManageModal = ({ isOpen, onClose }: CircleManageModalProps) => {
       <Modal open={isOpen} onClose={onClose}>
         <Modal.Header title="써클 관리" />
         
+        {/* 탭 메뉴 */}
         <div className="flex border-b border-surface-variant-lowest">
           {(['invite', 'kick'] as const).map((tab) => (
             <button
-              key={tab} // 고유 키
+              key={tab}
               onClick={() => setActiveTab(tab)}
               className={`flex-1 py-3 label-large-emphasized transition-colors relative ${
                 activeTab === tab ? 'text-on-surface' : 'text-on-surface-variant-lowest'
@@ -145,20 +142,29 @@ const CircleManageModal = ({ isOpen, onClose }: CircleManageModalProps) => {
                 ) : (
                   <InviteSection 
                     users={debouncedSearchTerm ? searchedUsers : []} 
-                    onInvite={(userId) => console.log(`User ${userId} 초대`)} 
+                    onInvite={(userId) => console.log(`User ${userId} 초대 API 필요`)} 
                   />
                 )}
               </>
             ) : (
-              <KickSection 
-                users={filteredMembers} 
-                onKick={handleKickClick} 
-              />
+              <>
+                {isMemberLoading ? (
+                   <div className="py-20 text-center label-medium text-on-surface-variant-lowest animate-pulse">
+                    멤버 목록을 불러오는 중입니다...
+                  </div>
+                ) : (
+                  <KickSection 
+                    users={filteredMembers} 
+                    onKick={handleKickClick} 
+                  />
+                )}
+              </>
             )}
           </div>
         </Modal.Body>
       </Modal>
 
+      {/* 강퇴 확인 모달 (컨펌) */}
       <Modal variant="confirm" open={isConfirmOpen} onClose={() => setIsConfirmOpen(false)}>
         <Modal.Header title="멤버를 내보내시겠습니까?" />
         <Modal.Body>

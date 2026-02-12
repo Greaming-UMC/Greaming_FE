@@ -42,7 +42,7 @@ const HomePage = () => {
 
   return (
     <>
-      <section
+      <section  
         className="w-full bg-primary bg-no-repeat bg-top"
         style={{ backgroundImage: `url(${HomeBg})`, backgroundSize: "cover" }}
       >
