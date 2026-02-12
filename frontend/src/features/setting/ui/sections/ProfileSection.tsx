@@ -19,7 +19,7 @@ const ProfileSection = () => {
   const [isChecking, setIsChecking] = useState(false);
   const [bio, setBio] = useState("");
   const [selectedJourney, setSelectedJourney] = useState(0);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null); // 🟢 Base64 문자열이 저장될 곳
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null); 
   const [weeklyGoal, setWeeklyGoal] = useState(5);
 
   const [specialtyFields, setSpecialtyFields] = useState<ArtField[]>([]);
@@ -35,80 +35,72 @@ const ProfileSection = () => {
     { title: "전문적으로 활동하는: Master", desc: "전문적으로 그림을 그리는 사람...", icon: "MASTER" },
   ];
 
-  // 1. 데이터 초기화
+  // 1. 데이터 초기화 (journeyLevel 기준)
   useEffect(() => {
     if (profileData) {
-      const info = (profileData as any).userInformation || profileData;
-
-      setNickname(info.nickname || "");
-      setBio(info.introduction || info.intro || ""); 
-      setPreviewUrl(info.profileImgUrl || null); 
-      setWeeklyGoal(info.weeklyGoalScore ?? 5);
+      // 🟢 훅(Hook)에서 이미 정제된 데이터를 주므로 profileData를 바로 사용합니다.
+      setNickname(profileData.nickname || "");
+      setBio(profileData.introduction || ""); 
+      setPreviewUrl(profileData.profileImgUrl || null); 
+      setWeeklyGoal(profileData.weeklyGoalScore ?? 5);
       
-      const sTags = info.specialtyTags || [];
+      const sTags = profileData.specialtyTags || [];
       setSpecialtyFields(sTags.filter((t: any) => t in ART_FIELD_LABEL) as ArtField[]);
       setSpecialtyStyle(sTags.find((t: any) => t in ART_STYLE_LABEL) as ArtStyle || null);
 
-      const iTags = info.interestTags || [];
+      const iTags = profileData.interestTags || [];
       setInterestFields(iTags.filter((t: any) => t in ART_FIELD_LABEL) as ArtField[]);
       setInterestStyle(iTags.find((t: any) => t in ART_STYLE_LABEL) as ArtStyle || null);
 
-      const serverLevel = info.level || info.usagePurpose;
-      if (serverLevel) {
-        const foundIdx = journeyList.findIndex(j => j.icon.toUpperCase() === String(serverLevel).toUpperCase());
+      // 🟢 백엔드 변경 반영: journeyLevel을 사용하여 인덱스 매핑
+      const serverJourney = profileData.journeyLevel;
+      if (serverJourney) {
+        const foundIdx = journeyList.findIndex(j => j.icon.toUpperCase() === String(serverJourney).toUpperCase());
         if (foundIdx !== -1) setSelectedJourney(foundIdx);
       }
     }
   }, [profileData]);
 
-  // 2. 변경 감지 (이미지 문자열 비교 포함)
+  // 2. 변경 감지 (journeyLevel 비교 포함)
   useEffect(() => {
     if (!profileData) return;
-    const info = (profileData as any).userInformation || profileData;
 
-    const serverLevel = info.level || info.usagePurpose || "";
-    const serverIntro = info.introduction || info.intro || "";
-    const serverImg = info.profileImgUrl || null;
-
-    // 🟢 문자열을 직접 비교해서 하나라도 다르면 변경된 것으로 간주
     const isBasicDiff = 
-      nickname !== (info.nickname || "") || 
-      bio !== serverIntro || 
-      journeyList[selectedJourney].icon !== serverLevel || 
-      previewUrl !== serverImg || 
-      weeklyGoal !== (info.weeklyGoalScore ?? 5);
+      nickname !== (profileData.nickname || "") || 
+      bio !== (profileData.introduction || "") || 
+      journeyList[selectedJourney].icon !== (profileData.journeyLevel || "") || // 🟢 비교 대상 변경
+      previewUrl !== profileData.profileImgUrl || 
+      weeklyGoal !== (profileData.weeklyGoalScore ?? 5);
 
     const currentSpecs = [...specialtyFields, ...(specialtyStyle ? [specialtyStyle] : [])].sort();
-    const serverSpecs = [...(info.specialtyTags || [])].sort();
+    const serverSpecs = [...(profileData.specialtyTags || [])].sort();
     const isSpecialtyDiff = JSON.stringify(currentSpecs) !== JSON.stringify(serverSpecs);
 
     const currentInterests = [...interestFields, ...(interestStyle ? [interestStyle] : [])].sort();
-    const serverInterests = [...(info.interestTags || [])].sort();
+    const serverInterests = [...(profileData.interestTags || [])].sort();
     const isInterestDiff = JSON.stringify(currentInterests) !== JSON.stringify(serverInterests);
 
-    const isNicknameValid = nickname === (info.nickname || "") || nicknameStatus === "valid";
+    const isNicknameValid = nickname === (profileData.nickname || "") || nicknameStatus === "valid";
     
     const finalChanged = (isBasicDiff || isSpecialtyDiff || isInterestDiff) && isNicknameValid;
     setIsChanged(finalChanged);
 
-    if (finalChanged) console.log("📸 변경 감지됨 (이미지 포함 여부 확인 필요)");
   }, [nickname, bio, selectedJourney, previewUrl, weeklyGoal, nicknameStatus, profileData, specialtyFields, specialtyStyle, interestFields, interestStyle]);
 
-  // 3. 저장 실행
+  // 3. 저장 실행 (PATCH 전송 시 journeyLevel 사용)
   const handleSave = () => {
     if (!isChanged || isUpdating) return;
     
     const requestData = {
       nickname: nickname,
-      intro: bio,               
-      usagePurpose: journeyList[selectedJourney].icon, 
-      profileImgUrl: previewUrl, // 🟢 여기서 아주 긴 Base64 문자열이 그대로 날아갑니다.
+      intro: bio,               
+      journeyLevel: journeyList[selectedJourney].icon, // 🟢 usagePurpose 대신 journeyLevel로 전송
+      profileImgUrl: previewUrl || "",
       weeklyGoalScore: weeklyGoal,
       specialtyTags: [...specialtyFields, ...(specialtyStyle ? [specialtyStyle] : [])],
       interestTags: [...interestFields, ...(interestStyle ? [interestStyle] : [])],
     };
 
-    console.log("🚀 전송 데이터 확인 (이미지는 매우 김):", { ...requestData, profileImgUrl: requestData.profileImgUrl?.slice(0, 50) + "..." });
     updateProfile(requestData);
   };
 
@@ -128,9 +120,9 @@ const ProfileSection = () => {
       
       <NicknameSection 
         value={nickname} 
-        status={nickname === (profileData as any).nickname ? undefined : nicknameStatus} 
+        status={nickname === profileData.nickname ? undefined : nicknameStatus} 
         isChecking={isChecking} 
-        onChange={(v) => { setNickname(v); setNicknameStatus(v === (profileData as any).nickname ? undefined : "unchecked"); }} 
+        onChange={(v) => { setNickname(v); setNicknameStatus(v === profileData.nickname ? undefined : "unchecked"); }} 
         onCheck={async () => {
           setIsChecking(true);
           const isValid = await validateNickname(nickname);

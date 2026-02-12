@@ -108,7 +108,7 @@ export type VisibilityType = 'PUBLIC' | 'PRIVATE' | 'PROTECTED';
 export type UserInformations = {
   nickname: string;
   profileImgUrl: string;
-  level: UsagePurpose;       
+  journeyLevel: UsagePurpose;    
   introduction: string;      
   followerCount: number;
   followingCount: number;

@@ -12,7 +12,6 @@ export const useProfileSetting = () => {
   const { data: profileData, isLoading } = useQuery({
     queryKey: PROFILE_SETTING_KEYS.myProfile(),
     queryFn: getProfileSettings,
-    // 🟢 unknown을 거쳐 강제 매핑하여 타입 에러를 방지합니다.
     select: (res) => {
       if (!res || !res.result) return undefined;
       return res.result as unknown as UserInformations;
@@ -40,7 +39,7 @@ export const useProfileSetting = () => {
   const validateNickname = async (nickname: string) => {
     try {
       const res = await checkNickname(nickname);
-      return res.result?.isAsvailable ?? false; 
+      return res.result?.isAvailable ?? false; 
     } catch {
       return false;
     }
