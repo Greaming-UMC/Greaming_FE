@@ -1,7 +1,6 @@
-import HeaderDefault from "./HeaderDefault";
-import HeaderLogo from "./HeaderLogo";
+import { HeaderLogo } from "../components";
 import HeaderMain from "./HeaderMain";
-import type { HeaderProps } from "./types";
+import type { HeaderProps } from "../config";
 
 const Header = ({ variant, userInfo, onLogout }: HeaderProps) => {
   switch (variant) {
@@ -12,7 +11,7 @@ const Header = ({ variant, userInfo, onLogout }: HeaderProps) => {
       return <HeaderMain userInfo={userInfo} onLogout={onLogout} />;
 
     case 'default':
-      return <HeaderDefault userInfo={userInfo} onLogout={onLogout} />;
+      return <HeaderMain userInfo={userInfo} onLogout={onLogout} />;
 
     default:
       return null;

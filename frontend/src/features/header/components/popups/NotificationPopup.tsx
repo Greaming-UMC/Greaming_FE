@@ -1,5 +1,5 @@
-import { ListBase } from '../../input';
-import Icon from '../../Icon';
+import { ListBase } from "../../../../components/common/input";
+import Icon from "../../../../components/common/Icon";
 
 const NotificationPopup = () => {
   return (

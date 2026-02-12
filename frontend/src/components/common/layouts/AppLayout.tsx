@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
-import HeaderContainer from "./HeaderContainer";
+import { HeaderContainer } from "../../../features/header";
 import { HEADER_HEIGHT } from "./layout";
-import type { HeaderVariant } from "../header/types";
+import type { HeaderVariant } from "../../../features/header";
 
 interface AppLayoutProps {
   variant: HeaderVariant;
