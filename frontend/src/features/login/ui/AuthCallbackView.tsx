@@ -3,7 +3,7 @@ import { LoadingSpinner } from "../../../components/common/feedback/LoadingSpinn
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../../../libs/security/authStore";
 import axios from "axios";
-import { checkAuthTest } from "../../../apis/types/auth";
+import { checkAuthByReissue } from "../../../apis/types/auth";
 import { getMyProfileHeader } from "../../../apis/user";
 
 const TRUE_SET = new Set(["true", "1", "yes", "y"]);
@@ -52,7 +52,7 @@ const AuthCallbackView = () => {
       }
 
       try {
-        await checkAuthTest();
+        await checkAuthByReissue();
         if (canceled) return;
         setAuthenticated();
       } catch {

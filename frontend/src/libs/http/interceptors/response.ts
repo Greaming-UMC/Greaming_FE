@@ -6,7 +6,6 @@ import { useAuthStore } from "../../security/authStore";
 
 const REFRESH_PATH = ENDPOINTS.AUTH.REISSUE_TOKEN;
 const MY_PROFILE_PATH = ENDPOINTS.USER.GET_MY_PROFILE_HEADER;
-const AUTH_TEST_PATH = ENDPOINTS.AUTH.TEST;
 
 const isBrowser = typeof window !== "undefined";
 const isRefreshRequest = (url?: string) =>
@@ -14,12 +13,6 @@ const isRefreshRequest = (url?: string) =>
     url &&
       (url.includes(REFRESH_PATH) ||
         url.includes(REFRESH_PATH.replace(/^\/api/, ""))),
-  );
-const isAuthTestRequest = (url?: string) =>
-  Boolean(
-    url &&
-      (url.includes(AUTH_TEST_PATH) ||
-        url.includes(AUTH_TEST_PATH.replace(/^\/api/, ""))),
   );
 const isMyProfileRequest = (url?: string) =>
   Boolean(
@@ -56,7 +49,6 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
         const isOnLoginPage = isBrowser && window.location.pathname === "/login";
         if (
           isMyProfileRequest(originalRequest?.url) ||
-          isAuthTestRequest(originalRequest?.url) ||
           isOnLoginPage
         ) {
           return Promise.reject(error);
@@ -112,8 +104,7 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
         const isOnLoginPage = isBrowser && window.location.pathname === "/login";
         if (
           !isOnLoginPage &&
-          !isMyProfileRequest(originalRequest?.url) &&
-          !isAuthTestRequest(originalRequest?.url)
+          !isMyProfileRequest(originalRequest?.url)
         ) {
           handleSessionExpired();
         }

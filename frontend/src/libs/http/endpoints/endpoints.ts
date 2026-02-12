@@ -4,7 +4,6 @@ export const ENDPOINTS = {
     SOCIAL_LOGIN: (provider: string) => `/oauth2/authorization/${provider}`,
     LOGOUT: "/api/auth/logout",
     REISSUE_TOKEN: "/api/auth/reissue",
-    TEST: "/api/auth/test",
   },
 
   ACCOUNT: {

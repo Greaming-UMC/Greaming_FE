@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../../libs/security/authStore";
 import { clearAccessToken } from "../../libs/security/tokenStore";
 import { useHeaderProfileStore } from "../../stores/useHeaderProfileStore";
-import { checkAuthTest, type AuthTestResult } from "../types/auth";
+import { checkAuthByReissue, type AuthCheckResult } from "../types/auth";
 import { logout } from "../logout";
 
 type UseAuthCheckOptions = {
@@ -10,9 +10,9 @@ type UseAuthCheckOptions = {
 };
 
 export const useAuthCheck = (options?: UseAuthCheckOptions) => {
-  return useQuery<AuthTestResult>({
-    queryKey: ["auth", "test"],
-    queryFn: checkAuthTest,
+  return useQuery<AuthCheckResult>({
+    queryKey: ["auth", "reissue"],
+    queryFn: checkAuthByReissue,
     enabled: options?.enabled ?? true,
     staleTime: 1000 * 60,
     retry: false,
