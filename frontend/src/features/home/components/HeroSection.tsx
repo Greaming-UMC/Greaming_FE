@@ -1,21 +1,69 @@
 import type { HomeCardType } from "../../../apis/types/common";
-import { useHeroChallengeProps } from "../hooks/useHeroChallengeProps";
 import type { ChallengeType, HomeView } from "./type";
 import ChallengeHeroLayout from "./ChallengeHeroLayout";
 import HeroHeaderText from "../ui/hero/HeroHeaderText";
 import HeroLayout from "./HeroLayout";
 import { useChallengeCards } from "../api/useChallengeCards";
+import { useHome } from "../api/useHome";
 
 interface HeroSectionProps {
   view: HomeView;
   onJoin: (type: ChallengeType) => void;
+  dateTimeIso: string;
 }
 
-const HeroSection = ({ view, onJoin }: HeroSectionProps) => {
-  const { dailyProps, weeklyProps } = useHeroChallengeProps();
+const HeroSection = ({ view, onJoin, dateTimeIso }: HeroSectionProps) => {
+  const homeQuery = useHome();
+  const home = homeQuery.data;
 
-  const dailyCardsQuery = useChallengeCards("DAILY");
-  const weeklyCardsQuery = useChallengeCards("WEEKLY");
+  const dailyInfo = home?.dailyChallengeInfo ?? null;
+  const weeklyInfo = home?.weeklyChallengeInfo ?? null;
+
+  const dailyProps = dailyInfo
+    ? {
+        type: "DAILY" as const,
+        title: dailyInfo.title,
+        participantText: `${dailyInfo.participant}명 참여 중`,
+        timeLeftText: dailyInfo.endAt ? `${dailyInfo.endAt}까지` : undefined,
+        topic: dailyInfo.description,
+      }
+    : {
+        type: "DAILY" as const,
+        title: "진행 중인 데일리 챌린지가 없어요",
+        participantText: undefined,
+        timeLeftText: undefined,
+        topic: undefined,
+      };
+
+  const weeklyProps = weeklyInfo
+    ? {
+        type: "WEEKLY" as const,
+        title: weeklyInfo.title,
+        participantText: `${weeklyInfo.participant}명 참여 중`,
+        timeLeftText: weeklyInfo.endAt ? `${weeklyInfo.endAt}까지` : undefined,
+        topic: weeklyInfo.description,
+      }
+    : {
+        type: "WEEKLY" as const,
+        title: "진행 중인 주간 챌린지가 없어요",
+        participantText: undefined,
+        timeLeftText: undefined,
+        topic: undefined,
+      };
+
+  const mode = view === "HOME" ? "current" : "date";
+
+  const dailyCardsQuery = useChallengeCards("DAILY", {
+    mode,
+    dateTimeIso: mode === "date" ? dateTimeIso : undefined,
+    size: 50,
+  });
+
+  const weeklyCardsQuery = useChallengeCards("WEEKLY", {
+    mode,
+    dateTimeIso: mode === "date" ? dateTimeIso : undefined,
+    size: 50,
+  });
 
   const dailyCards: HomeCardType[] = dailyCardsQuery.data ?? [];
   const weeklyCards: HomeCardType[] = weeklyCardsQuery.data ?? [];

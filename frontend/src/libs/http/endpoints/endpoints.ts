@@ -1,4 +1,3 @@
-// src/libs/http/endpoints/endpoints.ts
 export const ENDPOINTS = {
   // 도메인: AUTH
   AUTH: {
@@ -94,9 +93,6 @@ export const ENDPOINTS = {
 
   // 도메인: USER
   USER: {
-    // ⚠️ 기존에 /api/user/... 와 /api/users/... 가 섞여있었는데
-    // 아래는 "더 많이 쓰는" /api/users 기반으로 통일했어.
-    // 만약 백엔드가 진짜 /api/user/{id}/info 라면 이 한 줄만 다시 바꿔줘.
     GET_USER_PROFILE_HEADER: (userId: number | string) => `/api/users/${userId}/info`,
     GET_MY_PROFILE_HEADER: "/api/users/me",
     UPDATE_INFO: "/api/users/info",
@@ -138,6 +134,7 @@ export const ENDPOINTS = {
   // 도메인: CHALLENGE
   CHALLENGE: {
     GET_DATE_SUBMISSIONS: "/api/challenges/date/submissions",
+    GET_CURRENT_SUBMISSIONS: "/api/challenges/current/submissions",
   },
 
   // 도메인: WORK
