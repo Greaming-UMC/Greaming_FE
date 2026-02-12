@@ -74,21 +74,21 @@ const ProfileOther = ({ userId }: ProfileOtherProps) => {
 
       <div className="mt-[48px] label-xlarge-emphasized text-on-surface">특기·취향</div>
       <div className="mt-[8px] flex flex-col gap-[8px] p-[12px] bg-on-surface-variant-highest rounded-small label-xlarge">
-        <div className="flex items-start gap-[16px]"> 내 특기
-            <div className="flex flex-wrap gap-[8px]">
-
-              {specialtyTags.map((tag) => (
-                <Chip key={tag} label={`#${tag}`} />
-              ))}
-            </div>
+        <div className="flex items-start gap-[16px]">
+          <span className="shrink-0 whitespace-nowrap">내 특기</span>
+          <div className="flex flex-wrap gap-[8px]">
+            {specialtyTags.map((tag) => (
+              <Chip key={tag} label={`#${tag}`} />
+            ))}
+          </div>
         </div>
-        <div className="flex items-start gap-[16px]"> 내 취향
-            <div className="flex flex-wrap gap-[8px]">
-
-              {interestTags.map((tag) => (
-                <Chip key={tag} label={`#${tag}`} />
-              ))}
-            </div>
+        <div className="flex items-start gap-[16px]">
+          <span className="shrink-0 whitespace-nowrap">내 취향</span>
+          <div className="flex flex-wrap gap-[8px]">
+            {interestTags.map((tag) => (
+              <Chip key={tag} label={`#${tag}`} />
+            ))}
+          </div>
         </div>
       </div>
 
