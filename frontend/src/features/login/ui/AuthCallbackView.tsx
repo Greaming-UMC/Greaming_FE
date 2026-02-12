@@ -21,7 +21,7 @@ const AuthCallbackView = () => {
     }
 
     if (TRUE_SET.has(normalized)) {
-      navigate("/onboarding/step1", { replace: true });
+      navigate("/onboarding/step/1", { replace: true });
       return;
     }
 

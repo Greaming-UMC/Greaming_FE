@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import type { ArtField, UsagePurpose, UserInformations } from "../../../apis/types/common";
 
 export type Step = 1 | 2 | 3 | 4;
@@ -16,11 +17,36 @@ const DEFAULT: UserInformations = {
 };
 
 export function useOnboardingSteps() {
-  const [step, setStep] = useState<Step>(1);
+  const { step: stepParam } = useParams<{ step?: string }>();
+  const navigate = useNavigate();
+
+  const step = useMemo<Step>(() => {
+    const parsed = Number(stepParam);
+    if (parsed >= 1 && parsed <= 4) {
+      return parsed as Step;
+    }
+    return 1;
+  }, [stepParam]);
+
+  useEffect(() => {
+    if (!stepParam || Number(stepParam) !== step) {
+      navigate(`/onboarding/step/${step}`, { replace: true });
+    }
+  }, [navigate, step, stepParam]);
+
+  const setStep = (target: Step) => {
+    navigate(`/onboarding/step/${target}`);
+  };
   const [draft, setDraft] = useState<UserInformations>(DEFAULT);
 
-  const next = () => setStep((s) => (s < 4 ? ((s + 1) as Step) : s));
-  const prev = () => setStep((s) => (s > 1 ? ((s - 1) as Step) : s));
+  const next = () => {
+    const target = (step < 4 ? step + 1 : step) as Step;
+    setStep(target);
+  };
+  const prev = () => {
+    const target = (step > 1 ? step - 1 : step) as Step;
+    setStep(target);
+  };
 
   const setNickname = (nickname: string) =>
     setDraft((d) => ({ ...d, nickname }));
