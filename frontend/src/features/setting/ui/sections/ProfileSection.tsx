@@ -2,12 +2,11 @@ import { useState, useEffect } from "react";
 import { Button, TextAreaField } from "../../../../components/common";
 import { useProfileSetting } from "../hooks/useProfileSetting";
 
-import type { UsagePurpose, ArtField, ArtStyle, UserInformations } from "../../../../apis/types/common";
+import type { UsagePurpose, ArtField, ArtStyle } from "../../../../apis/types/common";
 import { ART_FIELD_LABEL, ART_STYLE_LABEL } from "../../../../apis/types/common";
 
 import { ProfileImageSection, NicknameSection, JourneySection, GoalSection, TagGroupSection } from "./components";
 
-// 🟢 common.ts의 라벨 정보를 기반으로 키 배열 생성
 const FIELD_KEYS = Object.keys(ART_FIELD_LABEL) as ArtField[];
 const STYLE_KEYS = Object.keys(ART_STYLE_LABEL) as ArtStyle[];
 
@@ -20,83 +19,97 @@ const ProfileSection = () => {
   const [isChecking, setIsChecking] = useState(false);
   const [bio, setBio] = useState("");
   const [selectedJourney, setSelectedJourney] = useState(0);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null); // 🟢 Base64 문자열이 저장될 곳
   const [weeklyGoal, setWeeklyGoal] = useState(5);
 
-  // 🟢 한글 라벨이 아닌 '영문 키(ID)'로 상태를 관리해야 서버와 통신이 편합니다.
   const [specialtyFields, setSpecialtyFields] = useState<ArtField[]>([]);
   const [specialtyStyle, setSpecialtyStyle] = useState<ArtStyle | null>(null);
   const [interestFields, setInterestFields] = useState<ArtField[]>([]);
   const [interestStyle, setInterestStyle] = useState<ArtStyle | null>(null);
-  
   const [isChanged, setIsChanged] = useState(false);
 
   const journeyList: { title: string; desc: string; icon: UsagePurpose }[] = [
-    { title: "재미로 그림 그리기: Sketcher", desc: "순위 상관없이 자유롭게 그림그리고 싶어요... : 랭킹시스템이 없어요.", icon: "SKETCHER" },
-    { title: "꾸준한 습관: Painter", desc: "그림 초보자 추천... : ‘출석점수’를 합산하여 랭킹이 나눠져요", icon: "PAINTER" },
-    { title: "성장을 이어가는: Artist", desc: "그림 초보자는 아니지만... : ‘좋아요’를 합산하여 랭킹이 나눠져요", icon: "ARTIST" },
-    { title: "전문적으로 활동하는: Master", desc: "전문적으로 그림을 그리는 사람... : ‘출석점수’와 ‘좋아요’를 합산하여 랭킹이 나눠져요", icon: "MASTER" },
+    { title: "재미로 그림 그리기: Sketcher", desc: "순위 상관없이 자유롭게 그림그리고 싶어요...", icon: "SKETCHER" },
+    { title: "꾸준한 습관: Painter", desc: "그림 초보자 추천...", icon: "PAINTER" },
+    { title: "성장을 이어가는: Artist", desc: "그림 초보자는 아니지만...", icon: "ARTIST" },
+    { title: "전문적으로 활동하는: Master", desc: "전문적으로 그림을 그리는 사람...", icon: "MASTER" },
   ];
 
-  // 1. 초기 데이터 로드 (서버 영문 키 -> 로컬 상태)
+  // 1. 데이터 초기화
   useEffect(() => {
     if (profileData) {
-      setNickname(profileData.nickname || "");
-      setBio(profileData.introduction || ""); 
-      setPreviewUrl(profileData.profileImgUrl || null);
-      setWeeklyGoal(profileData.weeklyGoalScore ?? 5);
+      const info = (profileData as any).userInformation || profileData;
+
+      setNickname(info.nickname || "");
+      setBio(info.introduction || info.intro || ""); 
+      setPreviewUrl(info.profileImgUrl || null); 
+      setWeeklyGoal(info.weeklyGoalScore ?? 5);
       
-      const sTags = profileData.specialtyTags || [];
-      // 🟢 서버에서 온 태그 중 Field에 속하는 것과 Style에 속하는 것을 필터링
-      setSpecialtyFields(sTags.filter(t => t in ART_FIELD_LABEL) as ArtField[]);
-      setSpecialtyStyle(sTags.find(t => t in ART_STYLE_LABEL) as ArtStyle || null);
+      const sTags = info.specialtyTags || [];
+      setSpecialtyFields(sTags.filter((t: any) => t in ART_FIELD_LABEL) as ArtField[]);
+      setSpecialtyStyle(sTags.find((t: any) => t in ART_STYLE_LABEL) as ArtStyle || null);
 
-      const iTags = profileData.interestTags || [];
-      setInterestFields(iTags.filter(t => t in ART_FIELD_LABEL) as ArtField[]);
-      setInterestStyle(iTags.find(t => t in ART_STYLE_LABEL) as ArtStyle || null);
+      const iTags = info.interestTags || [];
+      setInterestFields(iTags.filter((t: any) => t in ART_FIELD_LABEL) as ArtField[]);
+      setInterestStyle(iTags.find((t: any) => t in ART_STYLE_LABEL) as ArtStyle || null);
 
-      const levelIdx = journeyList.findIndex(j => j.icon === profileData.level);
-      if (levelIdx !== -1) setSelectedJourney(levelIdx);
+      const serverLevel = info.level || info.usagePurpose;
+      if (serverLevel) {
+        const foundIdx = journeyList.findIndex(j => j.icon.toUpperCase() === String(serverLevel).toUpperCase());
+        if (foundIdx !== -1) setSelectedJourney(foundIdx);
+      }
     }
   }, [profileData]);
 
-  // 2. 변경 감지
+  // 2. 변경 감지 (이미지 문자열 비교 포함)
   useEffect(() => {
     if (!profileData) return;
+    const info = (profileData as any).userInformation || profileData;
 
+    const serverLevel = info.level || info.usagePurpose || "";
+    const serverIntro = info.introduction || info.intro || "";
+    const serverImg = info.profileImgUrl || null;
+
+    // 🟢 문자열을 직접 비교해서 하나라도 다르면 변경된 것으로 간주
     const isBasicDiff = 
-      nickname !== (profileData.nickname || "") || 
-      bio !== (profileData.introduction || "") || 
-      journeyList[selectedJourney].icon !== profileData.level || 
-      previewUrl !== profileData.profileImgUrl ||
-      weeklyGoal !== (profileData.weeklyGoalScore ?? 5);
+      nickname !== (info.nickname || "") || 
+      bio !== serverIntro || 
+      journeyList[selectedJourney].icon !== serverLevel || 
+      previewUrl !== serverImg || 
+      weeklyGoal !== (info.weeklyGoalScore ?? 5);
 
     const currentSpecs = [...specialtyFields, ...(specialtyStyle ? [specialtyStyle] : [])].sort();
-    const serverSpecs = [...(profileData.specialtyTags || [])].sort();
+    const serverSpecs = [...(info.specialtyTags || [])].sort();
     const isSpecialtyDiff = JSON.stringify(currentSpecs) !== JSON.stringify(serverSpecs);
 
     const currentInterests = [...interestFields, ...(interestStyle ? [interestStyle] : [])].sort();
-    const serverInterests = [...(profileData.interestTags || [])].sort();
+    const serverInterests = [...(info.interestTags || [])].sort();
     const isInterestDiff = JSON.stringify(currentInterests) !== JSON.stringify(serverInterests);
 
-    const isNicknameValid = nickname === profileData.nickname || nicknameStatus === "valid";
-    setIsChanged((isBasicDiff || isSpecialtyDiff || isInterestDiff) && isNicknameValid);
+    const isNicknameValid = nickname === (info.nickname || "") || nicknameStatus === "valid";
+    
+    const finalChanged = (isBasicDiff || isSpecialtyDiff || isInterestDiff) && isNicknameValid;
+    setIsChanged(finalChanged);
+
+    if (finalChanged) console.log("📸 변경 감지됨 (이미지 포함 여부 확인 필요)");
   }, [nickname, bio, selectedJourney, previewUrl, weeklyGoal, nicknameStatus, profileData, specialtyFields, specialtyStyle, interestFields, interestStyle]);
 
+  // 3. 저장 실행
   const handleSave = () => {
     if (!isChanged || isUpdating) return;
     
-    const requestData: Partial<UserInformations> = {
-      nickname,
-      introduction: bio,
-      level: journeyList[selectedJourney].icon,
-      profileImgUrl: previewUrl || "",
+    const requestData = {
+      nickname: nickname,
+      intro: bio,               
+      usagePurpose: journeyList[selectedJourney].icon, 
+      profileImgUrl: previewUrl, // 🟢 여기서 아주 긴 Base64 문자열이 그대로 날아갑니다.
       weeklyGoalScore: weeklyGoal,
       specialtyTags: [...specialtyFields, ...(specialtyStyle ? [specialtyStyle] : [])],
       interestTags: [...interestFields, ...(interestStyle ? [interestStyle] : [])],
     };
 
-    updateProfile(requestData as any);
+    console.log("🚀 전송 데이터 확인 (이미지는 매우 김):", { ...requestData, profileImgUrl: requestData.profileImgUrl?.slice(0, 50) + "..." });
+    updateProfile(requestData);
   };
 
   if (isLoading) return <div className="w-full py-20 text-center">데이터 로딩 중...</div>;
@@ -112,11 +125,12 @@ const ProfileSection = () => {
       </div>
 
       <ProfileImageSection previewUrl={previewUrl} onUpload={setPreviewUrl} />
+      
       <NicknameSection 
         value={nickname} 
-        status={nickname === profileData?.nickname ? undefined : nicknameStatus} 
+        status={nickname === (profileData as any).nickname ? undefined : nicknameStatus} 
         isChecking={isChecking} 
-        onChange={(v) => { setNickname(v); setNicknameStatus(v === profileData?.nickname ? undefined : "unchecked"); }} 
+        onChange={(v) => { setNickname(v); setNicknameStatus(v === (profileData as any).nickname ? undefined : "unchecked"); }} 
         onCheck={async () => {
           setIsChecking(true);
           const isValid = await validateNickname(nickname);
@@ -131,7 +145,6 @@ const ProfileSection = () => {
       
       <div className="flex flex-col gap-8 mb-10">
         <h3 className="label-xlarge-emphasized text-on-surface"># 내 특기 선택</h3>
-        {/* 🟢 TagGroupSection이 ART_FIELD_LABEL을 참조하여 내부에서 #을 붙여줄 것입니다. */}
         <TagGroupSection title="분야" options={FIELD_KEYS} labelMap={ART_FIELD_LABEL} selected={specialtyFields} onChange={(val) => setSpecialtyFields(val as ArtField[])} />
         <TagGroupSection title="스타일" options={STYLE_KEYS} labelMap={ART_STYLE_LABEL} selected={specialtyStyle ? [specialtyStyle] : []} onChange={(val) => setSpecialtyStyle(val[0] as ArtStyle || null)} max={1} />
       </div>

@@ -12,20 +12,20 @@ export const useProfileSetting = () => {
   const { data: profileData, isLoading } = useQuery({
     queryKey: PROFILE_SETTING_KEYS.myProfile(),
     queryFn: getProfileSettings,
-    // 🟢 에러 해결: unknown을 거쳐서 강제로 UserInformations로 변환합니다.
-    // 타입스크립트가 "둘이 안 겹치잖아!"라고 할 때 쓰는 가장 확실한 방법입니다.
+    // 🟢 unknown을 거쳐 강제 매핑하여 타입 에러를 방지합니다.
     select: (res) => {
       if (!res || !res.result) return undefined;
       return res.result as unknown as UserInformations;
-    }, 
+    },
   });
 
-  // 2. 프로필 정보 수정 저장 (PUT)
+  // 2. 프로필 정보 수정 저장 (PATCH)
   const { mutate: updateProfile, isPending: isUpdating } = useMutation({
-    mutationFn: (formData: Partial<UserInformations>) => updateProfileSettings(formData as any),
+    mutationFn: (formData: any) => updateProfileSettings(formData),
     onSuccess: (res) => {
       if (res.isSuccess) {
         showToast("프로필이 성공적으로 변경되었습니다.", "success");
+        // 저장 성공 시 캐시를 무효화하여 최신 데이터를 다시 불러옵니다.
         queryClient.invalidateQueries({ queryKey: PROFILE_SETTING_KEYS.all }); 
       } else {
         showToast(res.message || "저장에 실패했습니다.", "error");
