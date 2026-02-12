@@ -45,11 +45,26 @@ const ProfileSubmissions = ({
   circleId,
 }: ProfileSubmissionsProps) => {
   const [type, setType] = useState<CheckMySubmissionType>("ALL");
+  const isCircleContext = context.type === "circle";
+  const isOtherUserContext = context.type === "user" && context.role === "other";
+  const isMyUserContext = context.type === "user" && context.role === "self";
 
-  if (context.type === "circle") {
+  const circleQuery = useCircleSubmissions(
+    isCircleContext ? circleId : undefined,
+    { page: 1, size: 12 },
+  );
+  const userQuery = useUserSubmissions(
+    isOtherUserContext ? userId : undefined,
+    { type: "ALL", page: 1, size: 12 },
+  );
+  const myQuery = useMySubmissions(
+    { type, page: 1, size: 12 },
+    { enabled: isMyUserContext },
+  );
+
+  if (isCircleContext) {
     if (typeof circleId !== "number") return null;
-    const query = useCircleSubmissions(circleId, { page: 1, size: 12 });
-    const rawItems = query.data?.result?.circle_list ?? [];
+    const rawItems = circleQuery.data?.result?.circle_list ?? [];
     const items: SubmissionMetadata[] =
       rawItems.map((item) => ({
         submissionId: item.submissionId,
@@ -84,10 +99,9 @@ const ProfileSubmissions = ({
     );
   }
 
-  if (context.role === "other") {
+  if (isOtherUserContext) {
     if (typeof userId !== "number") return null;
-    const query = useUserSubmissions(userId, { type: "ALL", page: 1, size: 12 });
-    const items = query.data?.result?.submission_list ?? [];
+    const items = userQuery.data?.result?.submission_list ?? [];
     return (
       <div className="flex flex-col gap-[24px]">
         <div className="main-title-small-emphasized text-on-surface">
@@ -101,8 +115,7 @@ const ProfileSubmissions = ({
     );
   }
 
-  const query = useMySubmissions({ type, page: 1, size: 12 });
-  const items = query.data?.result?.submission_list ?? [];
+  const items = myQuery.data?.result?.submission_list ?? [];
 
   return (
     <div className="flex flex-col gap-[24px]">

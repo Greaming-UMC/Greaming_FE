@@ -23,14 +23,15 @@ export const useFollowRequest = () => {
           profileQueryKeys.user(targetId),
           (prev) => {
             if (!prev?.result) return prev;
+            const currentInfo =
+              prev.result.user_information ?? prev.result.userInformation;
+            if (!currentInfo) return prev;
+
             return {
               ...prev,
               result: {
                 ...prev.result,
-                user_information: {
-                  ...prev.result.user_information,
-                  followState: nextState,
-                },
+                user_information: { ...currentInfo, followState: nextState },
               },
             };
           },

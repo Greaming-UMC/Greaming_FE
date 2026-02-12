@@ -14,6 +14,14 @@ export const ENDPOINTS = {
     DELETE_ACCOUNT: "/api/users/me",
     GET_ACCOUNT_SETTINGS: "/api/users/me/account",
   },
+    // 도메인: AUTH
+    AUTH : {
+        REGISTER_INFO: "/api/user/registinfo",
+        SOCIAL_LOGIN: (provider: string) => `/oauth2/authorization/${provider}`,
+        TEST: "/api/auth/test",
+        LOGOUT: "/api/auth/logout",
+        REISSUE_TOKEN: "/api/auth/reissue",
+    },
 
   // 도메인: PROFILE_SETTINGS
   PROFILE_SETTINGS: {
@@ -44,6 +52,32 @@ export const ENDPOINTS = {
   CHALLENGE: {
     GET_DATE_SUBMISSIONS: "/api/challenges/date/submissions",
   },
+    // 도메인: USER
+    USER : {
+        GET_USER_PROFILE_HEADER: (userId: number | string) => `/api/users/${userId}/info`,
+        GET_MY_PROFILE_HEADER: "/api/users/me",
+        UPDATE_INFO: "/api/users/info",
+    },
+
+    // 도메인: USER_SUBMISSIONS (제출물 관련은 여기서 통합 관리)
+    USER_SUBMISSIONS : {
+        GET_MY_SUBMISSIONS: "/api/users/me/submissions",
+        GET_USER_SUBMISSIONS: (userId: number | string) => `/api/users/${userId}/submissions`,
+    },
+
+    // 도메인: SUBMISSION
+    SUBMISSION : {
+        UPDATE_SUBMISSION: (submissionId: number | string) => `/api/submissions/${submissionId}`,
+        DELETE_SUBMISSION: (submissionId: number | string) => `/api/submissions/${submissionId}`,
+        GET_SUBMISSION_DETAIL: (submissionId: number | string) => `/api/submissions/${submissionId}`,
+        GET_SUBMISSION_PREVIEW: (submissionId: number | string) => `/api/submissions/${submissionId}/preview`,
+        GET_SUBMISSIONS: "/api/submissions",
+        GET_CHALLENGE_SUBMISSIONS: (challengeId: number | string) => `/api/challenges/${challengeId}/submissions`,
+        UPLOAD_SUBMISSION: "/api/users/upload",
+        
+        // 💡 (선택) 홈 화면은 성격이 좀 달라서 따로 빼도 좋음 (일단 여기 둠)
+        GET_HOME_TOP: "/api/home",
+    },
 
   // 도메인: USER_WORKS (작품 관련은 여기서 통합 관리)
   USER_WORKS: {
@@ -64,6 +98,19 @@ export const ENDPOINTS = {
     // (레거시 호환) 홈
     GET_HOME_TOP: "/api/home",
   },
+    // 도메인: CIRCLE
+    CIRCLE: {
+        CREATE: "/api/circles",
+        SEARCH: "/api/circles/search",
+        UPDATE: (circleId: number | string) => `/api/circles/${circleId}`,
+        SEARCH_USER: (circleId: number | string) => `/api/circles/${circleId}/users/search`,
+        GET_MEMBERS: (circleId: number | string) => `/api/circles/${circleId}/members`,
+        KICK_MEMBER: (circleId: number | string, memberId: number | string) => 
+            `/api/circles/${circleId}/members/${memberId}`,
+        INVITE_USER: (targetId: number | string) => `/api/users/${targetId}/invites`,
+        GET_CIRCLE_SUBMISSIONS: (circleId: number | string) => `/api/circles/${circleId}/submissions`,
+        GET_CIRCLE_PROFILE: (circleId: number | string) => `/api/circles/${circleId}`,
+    },
 
   // 도메인: FOLLOW
   FOLLOW: {

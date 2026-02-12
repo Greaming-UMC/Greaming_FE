@@ -2,17 +2,47 @@ import { httpRefresh } from "../../http/refreshClient";
 import { ENDPOINTS } from "../endpoints/endpoints";
 import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { clearAccessToken, getAccessToken, setAccessToken } from "../../security/tokenStore";
+import { useAuthStore } from "../../security/authStore";
 
-const REFRESH_PATH = ENDPOINTS.AUTH.REISSUE_TOKEN.replace(/^\/api/, "");
+const REFRESH_PATH = ENDPOINTS.AUTH.REISSUE_TOKEN;
+const MY_PROFILE_PATH = ENDPOINTS.USER.GET_MY_PROFILE_HEADER;
+const AUTH_TEST_PATH = ENDPOINTS.AUTH.TEST;
 
 const isBrowser = typeof window !== "undefined";
-const isRefreshRequest = (url?: string) => Boolean(url && url.includes(REFRESH_PATH));
+const isRefreshRequest = (url?: string) =>
+  Boolean(
+    url &&
+      (url.includes(REFRESH_PATH) ||
+        url.includes(REFRESH_PATH.replace(/^\/api/, ""))),
+  );
+const isAuthTestRequest = (url?: string) =>
+  Boolean(
+    url &&
+      (url.includes(AUTH_TEST_PATH) ||
+        url.includes(AUTH_TEST_PATH.replace(/^\/api/, ""))),
+  );
+const isMyProfileRequest = (url?: string) =>
+  Boolean(
+    url &&
+      (url.includes(MY_PROFILE_PATH) ||
+        url.includes(MY_PROFILE_PATH.replace(/^\/api/, ""))),
+  );
 
 interface RetryConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
 let refreshing: Promise<void> | null = null;
+let sessionExpiredHandled = false;
+
+const handleSessionExpired = () => {
+  if (!isBrowser || sessionExpiredHandled) {
+    return;
+  }
+  sessionExpiredHandled = true;
+  alert("로그인 세션이 만료되었습니다.");
+  window.location.href = "/login";
+};
 
 export const attachResponseInterceptor = (http: AxiosInstance) => {
   http.interceptors.response.use(
@@ -22,10 +52,16 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
       const originalRequest = error.config as RetryConfig;
 
       if (status === 403) {
-        if (isBrowser) {
-          alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-          window.location.href = "/login";
+        useAuthStore.getState().setUnauthenticated();
+        const isOnLoginPage = isBrowser && window.location.pathname === "/login";
+        if (
+          isMyProfileRequest(originalRequest?.url) ||
+          isAuthTestRequest(originalRequest?.url) ||
+          isOnLoginPage
+        ) {
+          return Promise.reject(error);
         }
+        handleSessionExpired();
         return Promise.reject(error);
       }
 
@@ -57,6 +93,7 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
             }
 
             setAccessToken(nextToken);
+            useAuthStore.getState().setAuthenticated();
           } catch {
             clearAccessToken();
             throw error;
@@ -70,9 +107,10 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
         await refreshing;
       } catch (refreshError) {
         clearAccessToken();
-        if (isBrowser) {
-          alert("로그인 세션이 만료되었습니다.");
-          window.location.href = "/login";
+        useAuthStore.getState().setUnauthenticated();
+        const isOnLoginPage = isBrowser && window.location.pathname === "/login";
+        if (!isOnLoginPage) {
+          handleSessionExpired();
         }
         return Promise.reject(refreshError);
       }
