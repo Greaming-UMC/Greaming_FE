@@ -29,8 +29,10 @@ const ProfileView = ( { context, userId, circleId }: ProfileViewProps) => {
     const challengeCalendar =
       context.type === "user"
         ? context.role === "self"
-          ? myProfileQuery.data?.result?.challenge_calender
-          : userProfileQuery.data?.result?.challenge_calender
+          ? myProfileQuery.data?.result?.challenge_calender ??
+            myProfileQuery.data?.result?.challengeCalendar
+          : userProfileQuery.data?.result?.challenge_calender ??
+            userProfileQuery.data?.result?.challengeCalendar
         : undefined;
 
     return (
