@@ -12,8 +12,9 @@ interface HeaderMainProps {
 const HeaderMain = ({ userInfo, onLogout }: HeaderMainProps) => {
   const location = useLocation();
   const { isScrolled: isHomeScrolled } = useHeaderScroll(920);
-  const isHome = location.pathname === "/home";
-  const isScrolled = isHome ? isHomeScrolled : true;
+  const isHomeRoute =
+    location.pathname === "/home" || location.pathname.startsWith("/home/");
+  const isScrolled = isHomeRoute ? isHomeScrolled : true;
 
   const headerClass = `fixed top-0 z-50 w-full transition-all duration-300 ease ${
     isScrolled ? "h-16" : "h-24"
