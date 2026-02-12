@@ -48,7 +48,7 @@ const HomePage = () => {
       >
         <PageContainer>
           <div className="pt-[100px] pb-10">
-            <HeroSection view={view} onJoin={handleJoin} />
+            <HeroSection view={view} onJoin={handleJoin} dateTimeIso={dateTimeIso} />
           </div>
         </PageContainer>
       </section>

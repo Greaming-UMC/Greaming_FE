@@ -9,9 +9,10 @@ import { useHome } from "../api/useHome";
 interface HeroSectionProps {
   view: HomeView;
   onJoin: (type: ChallengeType) => void;
+  dateTimeIso: string;
 }
 
-const HeroSection = ({ view, onJoin }: HeroSectionProps) => {
+const HeroSection = ({ view, onJoin, dateTimeIso }: HeroSectionProps) => {
   const homeQuery = useHome();
   const home = homeQuery.data;
 
@@ -50,8 +51,19 @@ const HeroSection = ({ view, onJoin }: HeroSectionProps) => {
         topic: undefined,
       };
 
-  const dailyCardsQuery = useChallengeCards("DAILY");
-  const weeklyCardsQuery = useChallengeCards("WEEKLY");
+  const mode = view === "HOME" ? "current" : "date";
+
+  const dailyCardsQuery = useChallengeCards("DAILY", {
+    mode,
+    dateTimeIso: mode === "date" ? dateTimeIso : undefined,
+    size: 50,
+  });
+
+  const weeklyCardsQuery = useChallengeCards("WEEKLY", {
+    mode,
+    dateTimeIso: mode === "date" ? dateTimeIso : undefined,
+    size: 50,
+  });
 
   const dailyCards: HomeCardType[] = dailyCardsQuery.data ?? [];
   const weeklyCards: HomeCardType[] = weeklyCardsQuery.data ?? [];
