@@ -60,8 +60,8 @@ type LoadingSpinnerProps = {
   /** ✅ 애니메이션 1회 끝나면 호출 */
   onComplete?: () => void;
 
-  /** ✅ 반복 횟수: 1이면 1번만 그리고 끝 (기본 1) */
-  iterations?: number;
+  /** ✅ 반복 횟수 또는 무한 반복 (기본 infinite) */
+  iterations?: number | "infinite";
 };
 
 type LoadingOverlayProps = LoadingSpinnerProps & {
@@ -73,7 +73,7 @@ export const LoadingSpinner = ({
   durationMs = 1400,
   className,
   onComplete,
-  iterations = 1,
+  iterations = "infinite",
 }: LoadingSpinnerProps) => {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const firedRef = useRef(false);
@@ -84,6 +84,7 @@ export const LoadingSpinner = ({
   };
 
   useEffect(() => {
+    if (iterations === "infinite") return;
     if (!onComplete) return;
 
     const root = rootRef.current;
@@ -105,11 +106,16 @@ export const LoadingSpinner = ({
     return () => {
       path.removeEventListener("animationend", handleEnd);
     };
-  }, [onComplete]);
+  }, [onComplete, iterations]);
 
   return (
-    <div ref={rootRef} className={clsx("logo-draw", className)} style={style} aria-hidden="true">
-      <LogoDots width={size} height={size} className="logo-draw__svg" />
+    <div
+      ref={rootRef}
+      className={clsx("loading-spinner", className)}
+      style={style}
+      aria-hidden="true"
+    >
+      <LogoDots width={size} height={size} className="loading-spinner__svg" />
     </div>
   );
 };
