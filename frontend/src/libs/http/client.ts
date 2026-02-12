@@ -44,7 +44,7 @@
 // });
 
 
-// src/libs/http/client.ts (너희 경로 맞춰)
+// src/libs/http/client.ts 
 import axios from "axios";
 import { getAccessToken, setAccessToken } from "../security/tokenStore";
 
@@ -70,10 +70,10 @@ const wake = (token: string | null) => {
   waiters.forEach((w) => w(token));
   waiters = [];
 };
+console.log("BASE", import.meta.env.VITE_API_BASE_URL);
 
 http.interceptors.response.use(
   (res) => {
-    // 혹시 매 응답마다 Authorization으로 새 토큰 내려주면 여기서 갱신
     const auth = res.headers["authorization"];
     if (typeof auth === "string" && auth.startsWith("Bearer ")) {
       setAccessToken(auth.slice("Bearer ".length));
@@ -98,7 +98,7 @@ http.interceptors.response.use(
 
     refreshing = true;
     try {
-      // ✅ 재발급
+      //  재발급
       const r = await http.post("/api/auth/reissue");
       const auth = r.headers["authorization"];
       const token =
@@ -119,5 +119,6 @@ http.interceptors.response.use(
     } finally {
       refreshing = false;
     }
+    
   }
 );

@@ -53,12 +53,16 @@ export function Step2Profile({
   };
 
   // 다음 버튼 활성화 조건
-  const canNext = useMemo(() => {
-    return nickname.trim().length > 0 && 
-           nicknameStatus === "valid" && 
-           fieldTags.length >= 1 && 
-           styleTag !== null;
-  }, [nickname, nicknameStatus, fieldTags, styleTag]);
+      const canNext = useMemo(() => {
+      const hasNickname = nickname.trim().length > 0;
+      const nicknameOk = nicknameStatus === "valid";
+
+      const hasField = fieldTags.length >= 1;
+
+      const hasStyle = styleTag !== null && STYLE_KEYS.includes(styleTag);
+
+      return hasNickname && nicknameOk && hasField && hasStyle;
+    }, [nickname, nicknameStatus, fieldTags, styleTag]);
 
   return (
     <div className="w-full flex flex-col items-center gap-[48px]">

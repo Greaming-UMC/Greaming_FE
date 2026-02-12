@@ -95,7 +95,7 @@ export function Step4Purpose({ onPrev, draft, setPurpose, setWeeklyGoal }: Props
 
       setCompleteOpen(true);
       timerRef.current = window.setTimeout(() => {
-        navigate("/home"); // 홈 라우트에 맞게 변경
+        navigate("/home"); 
       }, 3000);
     } catch (e) {
       console.error(e);

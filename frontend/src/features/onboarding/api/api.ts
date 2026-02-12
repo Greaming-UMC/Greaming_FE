@@ -34,25 +34,13 @@ export const registerOnboardingInfo = async (params: UserInformations) => {
     const status = e?.response?.status;
     const data = e?.response?.data;
 
-    // ✅ 이미 정보 등록된 유저(=온보딩 완료)면 성공처럼 처리
-    // 서버 응답 예: { isSuccess:false, code:"USER_409", message:"이미 정보가 등록된 유저입니다." }
+    // 이미 정보 등록된 유저(=온보딩 완료)면 성공처럼 처리 , 오류해결 위해 일시적으로 해결해봤습니다.
     if (status === 409 && data?.code === "USER_409") {
       return {
         ...data,
-        isSuccess: true, // ✅ 프론트에서는 성공으로 취급
+        isSuccess: true, // 
       } as ApiResultResponse<null>;
     }
-
-    // ✅ (임시) 서버 게이트웨이 장애(502)면 "일단 통과" 처리
-  if (status === 502) {
-    return {
-      isSuccess: true,
-      code: "GATEWAY_502",
-      message: "서버 응답이 불안정하지만 계속 진행합니다.",
-      result: null,
-    } as ApiResultResponse<null>;
-  }
-
     throw e;
   }
 };

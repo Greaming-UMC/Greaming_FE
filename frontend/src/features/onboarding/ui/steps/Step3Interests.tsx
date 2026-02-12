@@ -26,8 +26,14 @@ export function Step3Interests({
   onNext,
 }: Props) {
   
-  const isFieldMax = interestFields.length >= MAX_FIELD;
-  const canNext = interestFields.length >= 1 && interestStyle !== null;
+    const isFieldMax = interestFields.length >= MAX_FIELD;
+
+    const canNext = (() => {
+      const hasField = interestFields.length >= 1;
+      const hasStyle = interestStyle !== null && STYLE_KEYS.includes(interestStyle);
+      return hasField && hasStyle;
+    })();
+
 
   const prevBtnClass =
     "w-[82px] h-[60px] rounded-[10px] flex items-center justify-center bg-on-surface-variant-low";
@@ -59,7 +65,7 @@ export function Step3Interests({
             return (
               <OnboardingTagChip
                 key={key}
-                label={`#${ART_FIELD_LABEL[key]}`} // 한글 라벨 출력
+                label={`#${ART_FIELD_LABEL[key]}`} 
                 selected={selected}
                 disabled={disabled}
                 onClick={() => !disabled && onChangeInterestFields(key)}
@@ -81,7 +87,7 @@ export function Step3Interests({
             return (
               <OnboardingTagChip
                 key={key}
-                label={`#${ART_STYLE_LABEL[key]}`} // 한글 라벨 출력
+                label={`#${ART_STYLE_LABEL[key]}`} 
                 selected={selected}
                 onClick={() => onChangeInterestStyle(key)}
               />
