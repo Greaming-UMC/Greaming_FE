@@ -79,8 +79,9 @@ const ChattingSection = ({
       try {
         const response = await getCommentReplies(id, {});
         if (response.isSuccess && response.result) {
-          setReplyCounts((prev) => ({ ...prev, [id]: response.result.totalCount }));
-          setReplies((prev) => ({ ...prev, [id]: response.result.replies }));
+          const replyResult = response.result;
+          setReplyCounts((prev) => ({ ...prev, [id]: replyResult.totalCount }));
+          setReplies((prev) => ({ ...prev, [id]: replyResult.replies }));
         } else {
           alert(`답글을 불러오는 데 실패했습니다: ${response.message}`);
         }

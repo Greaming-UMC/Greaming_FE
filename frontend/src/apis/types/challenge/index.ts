@@ -1,1 +1,1 @@
-export * from './checkChallengeSubmissions';
+export * from "../submission/checkChallengeSubmissions";

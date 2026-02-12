@@ -1,5 +1,3 @@
-import mainBackground from "../../../assets/background/main_background.svg";
-
 const ProfileBanner = () => {
 
     return (

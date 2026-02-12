@@ -1,4 +1,4 @@
 export * from './editSubmission';
 export * from './deleteSubmission';
-export * from './previewCounterSubmissions';
+export * from './checkSubmissionPreview';
 export * from './checkSubmissionDetails';

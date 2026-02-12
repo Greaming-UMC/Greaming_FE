@@ -1,14 +1,13 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAccountSettings, updateAccountStatus, deleteAccount } from '../api/api';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { getAccountSettings, deleteAccount } from '../api/api';
 import { useToast } from '../../../../components/common/feedback/Toast/ToastProvider';
-import type { DeleteAccountRequest, UpdateAccountRequest } from '../../../../apis/types/account';
+import type { DeleteAccountRequest } from '../../../../apis/types/account';
 
 export const useAccountSetting = () => {
-  const queryClient = useQueryClient();
   const { showToast } = useToast();
 
   // 🟢 조회를 잠시 비활성화하여 무한 로딩을 방지합니다.
-  const { data: accountData, isLoading: isQueryLoading } = useQuery({
+  const { data: accountData } = useQuery({
     queryKey: ['accountSettings'],
     queryFn: getAccountSettings,
     select: (res) => res.result,

@@ -5,13 +5,13 @@ import CardHeader from "./section/CardHeaderSection";
 import CardMain from "./section/CardMainSection";
 import ChattingSection from "./section/ChattingSection";
 import type {
-  SubmissionDetails,
   CommentDetail,
+  WorkDetail,
 } from "../../../apis/types/submission/checkSubmissionDetails";
 import type { CreateCommentResult } from "../../../apis/types/submission/createComment";
 
 export interface DetailPostProps {
-  submission: SubmissionDetails["work"];
+  submission: WorkDetail;
   comment_list?: CommentDetail[];
   submissionId: number;
   onCommentCreated: (newComment: CreateCommentResult) => void;

@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import type {
   CommentDetail,
-  SubmissionDetails,
+  WorkDetail,
 } from "../../../apis/types/submission/checkSubmissionDetails";
 import type { CreateCommentResult } from "../../../apis/types/submission/createComment";
 import ArtistArtwork from "./ArtistArtwork";
@@ -24,10 +24,9 @@ const DetailView = () => {
   // 일반적인 키 이름인 'id', 'submissionId', 'postId'를 모두 확인합니다.
   const params = useParams<{ id?: string; submissionId?: string; postId?: string }>();
   const id = params.id || params.submissionId || params.postId;
-  console.log("DetailView rendered with all params:", params);
   const [submissionId, setSubmissionId] = useState<number | null>(null);
 
-  const [submission, setSubmission] = useState<SubmissionDetails["work"] | null>(
+  const [submission, setSubmission] = useState<WorkDetail | null>(
     null,
   );
   // 최적화: 동적으로 변하는 카운트(댓글, 좋아요 등)를 submission 객체에서 분리합니다.
@@ -72,9 +71,9 @@ const DetailView = () => {
           const { submission: apiSubmission, commentPage } = response.result;
 
           // submission 객체는 이제부터 내용이 변하지 않는 "원본 데이터"로 취급합니다.
-          const transformedSubmission: SubmissionDetails["work"] = {
+          const transformedSubmission: WorkDetail = {
             nickname: apiSubmission.nickname,
-            profileImageUrl: apiSubmission.profileImageUrl,
+            profileImageUrl: apiSubmission.profileImageUrl ?? "",
             level: apiSubmission.level,
             image_list: apiSubmission.imageList,
             title: apiSubmission.title,
@@ -180,11 +179,12 @@ const DetailView = () => {
     try {
       const response = await toggleSubmissionLike(submissionId);
       if (response.isSuccess && response.result) {
+        const likeResult = response.result;
         // API 응답으로 '좋아요' 상태와 개수를 즉시 업데이트
         setCounts((prev) => ({
           ...prev,
-          likes: response.result.likeCount,
-          liked: response.result.isLiked,
+          likes: likeResult.likeCount,
+          liked: likeResult.isLiked,
         }));
       } else {
         alert(`좋아요 처리 실패: ${response.message}`);

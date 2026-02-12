@@ -1,27 +1,23 @@
+import type { PageInfo } from "../common";
+
 /**
  * 댓글 정보
  */
 export interface CommentDetail {
+  commentId?: number;
+  userId?: number;
   writer_nickname: string;
-  writer_profileImgUrl: string;
+  writer_profileImgUrl?: string | null;
   content: string;
-  /**
-   * API 응답에서 `isLike`와 `isLiked`가 혼용되고 있어 `isLike`로 통일합니다.
-   * 백엔드와 협의하여 필드명을 하나로 통일하는 것을 권장합니다.
-   */
+  createdAt?: string;
+  replyCount?: number;
+  isWriter?: boolean;
   isLike: boolean;
+  likeCount?: number;
 }
 
 /**
- * 작가의 다른 작품 정보 (썸네일 URL 목록)
- */
-export interface OtherWorks {
-  artist_works: string[];
-  more_works: string[];
-}
-
-/**
- * 작품의 상세 정보
+ * 상세 화면에서 사용하는 작품 표시 타입
  */
 export interface WorkDetail {
   nickname: string;
@@ -38,10 +34,34 @@ export interface WorkDetail {
 }
 
 /**
+ * 작품 상세 조회 API - 작품 본문
+ */
+export interface SubmissionDetail {
+  submissionId: number;
+  userId: number;
+  nickname: string;
+  profileImageUrl: string | null;
+  level: string;
+  imageList: string[];
+  title: string;
+  caption: string;
+  tags: Array<{ tagName: string }>;
+  uploadAt: string;
+  likesCount: number;
+  commentCount: number;
+  bookmarkCount: number;
+  liked: boolean;
+}
+
+export interface SubmissionDetailsCommentPage {
+  comments: CommentDetail[];
+  pageInfo: PageInfo;
+}
+
+/**
  * 작품 상세 정보 API의 `result` 필드 타입
  */
 export interface SubmissionDetails {
-  work: WorkDetail;
-  other_works: OtherWorks;
-  comment_list: CommentDetail[];
+  submission: SubmissionDetail;
+  commentPage: SubmissionDetailsCommentPage;
 }
