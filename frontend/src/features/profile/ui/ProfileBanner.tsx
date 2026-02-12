@@ -1,7 +1,9 @@
+import mainBackground from "../../../assets/background/main_background.svg";
+
 const ProfileBanner = () => {
 
     return (
-        <div className="absolute top-0 w-full h-110 bg-profile-banner">
+        <div className="-mt-20 w-full h-120 bg-profile-banner">
         </div>
     )
 

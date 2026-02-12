@@ -14,5 +14,5 @@ export interface CheckNicknameParamas {
 // ./common.ts 에서 ApiResultSuccessResponse<T> 사용
 export type CheckNicknameResult = {
     nickname: string;
-    isAsvailable: boolean;
+    isAvailable: boolean;
 };

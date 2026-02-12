@@ -28,11 +28,13 @@ export const getProfileSettings = async () => {
 
 /**
  * 프로필 설정 수정 저장
- * @param params UserInformations 규격의 수정 데이터
+ * @param params 유저 정보 수정 데이터
  */
 export const updateProfileSettings = async (params: EditProfileSettingsParams) => {
-    const { data } = await http.put<ApiResultResponse<EditProfileSettingsResult>>(
-        ENDPOINTS.PROFILE_SETTINGS.GET_PROFILE_SETTINGS,
+    // 🟢 http.put -> http.patch로 변경
+    // 🟢 주소도 UPDATE_PROFILE_INFO (/api/users/info)로 변경
+    const { data } = await http.patch<ApiResultResponse<EditProfileSettingsResult>>(
+        ENDPOINTS.PROFILE_SETTINGS.UPDATE_PROFILE_INFO, 
         params
     );
     return data;

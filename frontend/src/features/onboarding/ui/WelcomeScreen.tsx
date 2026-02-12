@@ -29,9 +29,9 @@ export function WelcomeScreen() {
       </div>
 
       {/* 중앙 컨텐츠 */}
-      <div className="relative z-20 flex min-h-dvh items-center justify-center px-4">
+      <div className="relative z-50 flex min-h-dvh items-center justify-center px-4">
         <div className="flex flex-col items-center text-center">
-          <LoadingSpinner size={116} className="text-white" />
+          <LoadingSpinner size={128} className="text-white" iterations="infinite" />
 
           {/* 텍스트 블록 */}
           <div className="mt-6 flex flex-col items-center gap-2">

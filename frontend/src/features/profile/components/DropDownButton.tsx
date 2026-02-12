@@ -14,7 +14,7 @@ const DropdownButton = ({ onEdit }: DropDownsButtonProps) => {
       open={open}
       onOpenChange={setOpen}
       align="right"
-      menuClassName="bg-surface rounded-medium shadow-md p-[8px] w-50"
+      menuClassName="bg-surface rounded-medium shadow-md p-[8px] min-w-[150px]"
       trigger={
         <Button
           variant="text"

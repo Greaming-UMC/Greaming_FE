@@ -103,6 +103,13 @@
   background-repeat: no-repeat;
 }
 
+.bg-home {
+  background-image: url("./assets/background/home_bg.svg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 .bg-profile-banner {
   background-image: url("./assets/background/profile_banner.jpg");
   background-size: cover;

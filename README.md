@@ -1,77 +1,192 @@
-# Git 협업 규칙
+# Greaming FE
 
-## 1. 커밋 유형 (Commit Type)
+<p align="center">
+  <img src="./frontend/src/assets/logo/primary-wordmark.svg" alt="Greaming" width="320" />
+</p>
 
-커밋은 다음과 같이 분류하여 메시지를 작성한다.
+그리밍 프론트엔드는 사용자가 그림을 올리고, 챌린지에 참여하고, 써클/팔로우를 통해 서로의 작업을 발견하는 창작 커뮤니티 웹 서비스입니다.
 
-- **feat** : 기능 개발
-- **fix** : 버그 수정
-- **style** : UI 스타일 수정 (CSS, Tailwind class, 디자인 토큰 값 변경 등 **기능 변경 없음**)
-- **docs** : 문서 작업 (주로 `main`에서 `README.md` 작성)
-- **refactor** : 리팩토링 (**기능 변경 없이** 구조/설계 개선, 함수 추출, 클래스 구조 변경 등)
-- **chore** : 설정 변경, 파일 이동/이름 변경, 주석 추가 등 빌드/기능에 영향 없는 작업
+<br/>
 
----
+## 서비스 개요
 
-## 2. 커밋 메시지 작성 규칙
+Greaming은 "꾸준히 그리게 만드는 환경"을 목표로 시작했습니다.
+혼자 그리면 흐름이 끊기기 쉽기 때문에, 홈 피드와 챌린지, 업로드, 프로필, 커뮤니티 경험을 하나의 여정으로 연결했습니다.
 
-커밋 메시지는 다음과 같은 형태로 작성한다. (띄어쓰기 및 형식 준수)
+- 챌린지 중심 홈 피드: `HOME` / `DAILY` / `WEEKLY`
+- 업로드 플로우: 일반 업로드 + 챌린지 업로드 + 써클 업로드
+- 관계/탐색: 내 프로필, 유저 프로필, 팔로우/팔로잉, 써클 탐색
+- 온보딩/인증: 소셜 로그인 + 초기 관심사/목표 설정
 
-### 규칙
-- 커밋 유형은 **반드시 영문 소문자**로 작성한다.
-- 커밋 메시지는 **기본적으로 한글**로 작성하되, 라이브러리명/기술 용어/에러 메시지는 **영어 사용을 허용**한다.
-- 필요 시 커밋 메시지 가장 앞에 **이슈 번호를 추가**한다.
-- 커밋은 “논리적으로 독립적인 작업” 단위로 작성한다.
-  - 독립적으로 **빌드 및 테스트가 가능**한 단위
-  - 롤백 시 **최소한의 영향을 주는** 단위
-
-### 예시
-- `[#12] feat : 로그인 페이지 UI 구현`
-- `[#8] fix : 회원가입 시 상태 코드 오류 수정`
-- `[#3] chore : ESLint/Prettier 설정 추가`
+<br/>
 
 ---
 
-## 3. 브랜치 전략 (Branch Strategy)
+<br/>
 
-### main : 배포용 브랜치
-- 실제 서비스에 배포되는 코드만 포함
-- 직접 개발하지 않고 `dev` 또는 `fix` 등의 브랜치를 이용하여 병합하여 사용
+## 설계 스토리
 
-### dev : 개발 통합 브랜치
-- `main` 브랜치에서 분기
-- 여러 기능이 개발되고 통합되는 브랜치
-- `feature` 브랜치에서 작업한 기능들을 이 곳으로 병합
-- 충분히 테스트한 후 `main`으로 배포
+초기 설계 단계에서 우리 서비스는 피드 성격과 확장성을 고려하면 SSR 구조가 유리할 수 있다고 판단했습니다.
+다만 데모데이 개발 기간 안에 Next.js 학습과 실서비스 구현을 동시에 병행하기에는 팀 리스크가 컸습니다.
+그래서 10주 스터디에서 이미 실습하고 검증한 `Vite + React`를 선택해, 학습 비용보다 구현 속도와 안정성을 우선했습니다.
 
-### feature/#이슈번호-기능명 : 신규 기능 개발 브랜치
-- `dev` 브랜치에서 분기되어 기능 단위로 개발
-- 개발 완료 후 `dev`로 병합
-- 브랜치명은 `kebab-case` 사용  
-  - 예) `feature/#1-get-user`
+이 결정은 "지금 가장 잘 만들 수 있는 방식으로 먼저 완성하고, 이후 단계적으로 고도화한다"는 팀의 기준과도 맞았습니다.
 
-### fix/#이슈번호-기능명 : 버그 수정용 브랜치
-- `dev` 또는 `main`에서 분기하여 버그 수정
-- `dev`에서 분기 : 개발 중 발견된 버그 수정
-- 기능 구현에 대한 버그 수정 시, 반드시 해당 기능 브랜치가 `dev`와 병합되어 있는지 확인 후 수정 진행
-- 수정 완료 후 `dev`로 병합
+<br/>
 
-예시) 회원가입 시 발생하는 오류의 상태 코드를 변경하고 싶음
-1) `feature/#1-signup` 브랜치가 `dev`와 병합되어 있는지 확인  
-2) `dev`에서 `fix/#2-status-code-error` 생성하여 버그 수정  
-3) 이후 `dev`와 병합
+초기에는 화면을 빠르게 만드는 것이 우선이었지만, 기능이 늘어나면서 같은 문제를 반복해서 마주쳤습니다.
 
-### hotfix/#이슈번호-기능명 : 긴급 수정 브랜치
-- 운영 환경(`main`)에서 발생한 긴급 버그 수정
-- `main`에서 분기하여 수정 후 **`main`과 `dev`에 모두 병합**
+- 화면마다 스타일 기준이 달라지는 문제
+- 공통 컴포넌트에 도메인 로직이 섞이는 문제
+- API/인증 처리 방식이 페이지마다 달라지는 문제
+
+그래서 아래 3가지를 핵심 원칙으로 고정했습니다.
+
+<br/>
+
+### 1) 디자인 언어를 먼저 통일한다: GDS
+
+`@greaming/gds`와 토큰 기반 스타일을 기준으로 UI를 맞췄습니다.
+"예쁜 화면"보다 "팀 전체가 같은 규칙으로 빨리 만드는 화면"에 초점을 맞췄습니다.
+
+- 디자인 토큰 우선: 컬러/타이포/라운드의 임의값 남용 방지
+- 컴포넌트 역할 분리: `input`, `display`, `feedback`, `layout`
+- 패턴 기준화: 단순 UI는 Flat, 복합 UI는 Compound
+- 공통 컴포넌트는 껍데기, 도메인 조합은 `features`에서 수행
+
+이 방식으로 디자이너-프론트 개발자 간 해석 차이를 줄이고, 리뷰 기준을 명확하게 맞출 수 있었습니다.
+
+<br/>
+
+### 2) 기능 단위로 쪼개고, 책임은 고정한다: 현재 폴더 구조
+
+라우팅 진입점과 도메인 기능, 공통 UI, 인프라 코드를 분리해 변경 범위를 작게 유지했습니다.
+
+```bash
+frontend/src
+├─ pages/               # 라우트 엔트리(페이지 단위 진입)
+├─ features/            # 도메인 기능 모듈(화면+훅+API 조합)
+├─ components/common/   # 재사용 UI 프리미티브
+├─ apis/                # API 타입/도메인 인터페이스
+├─ libs/http/           # axios client, interceptor, endpoint
+├─ libs/security/       # auth/token store, refresh 처리
+└─ assets/              # 아이콘/배경/로고
+```
+
+이 구조를 선택한 이유는 명확합니다.
+
+- `pages`는 얇게 유지하고, 실질 기능은 `features`로 집중
+- 공통 UI와 비즈니스 로직의 결합 차단
+- 인증/네트워크 같은 횡단 관심사는 `libs`에서 단일 관리
+
+결과적으로 기능 추가 시 "어디를 고쳐야 하는지"가 빠르게 결정되고, 충돌 범위도 줄었습니다.
+
+<br/>
+
+### 3) 상태 흐름을 역할별로 분리한다
+
+- 서버 상태: `@tanstack/react-query`
+- 경량 전역 상태(인증 등): `zustand`
+- HTTP/토큰 재발급: `axios` + interceptor
+
+이 분리 덕분에 무한 스크롤/재요청/인증 만료 대응 같은 복잡한 흐름을 페이지 코드에서 걷어낼 수 있었습니다.
+
+<br/>
+
+### 4) 이미지 업로드는 S3 직접 업로드 전략으로 분리한다
+
+초기에는 "이미지를 백엔드로 받아서 다시 저장"하는 방식도 검토했지만, 트래픽과 파일 크기가 커질수록 백엔드 병목이 커지는 문제가 있었습니다.
+그래서 업로드 경로를 아래처럼 분리했습니다.
+
+- 백엔드: Presigned URL 발급 + 업로드 메타데이터 검증/저장
+- 프론트엔드: Presigned URL로 S3에 직접 PUT 업로드
+
+이 전략을 선택한 이유는 다음과 같습니다.
+
+- 대용량 이미지 업로드 시 백엔드 I/O/메모리 부담 감소
+- 업로드 구간 단축으로 체감 속도 개선
+- 백엔드는 비즈니스 검증/기록에 집중 가능
+- 만료 시간이 있는 URL로 업로드 권한을 제한해 보안성 확보
+
+현재 업로드 플로우도 이 전략을 기준으로 구성되어 있습니다.
+
+<br/>
 
 ---
 
-## 4. 브랜치 규칙 (Branching Rule)
+<br/>
 
-- 기능 개발은 반드시 `feature` 브랜치에서 개발한다.
-- 개발 완료 시 `dev` 브랜치로 합병한다.
-- 브랜치명은 `kebab-case`를 사용한다.  
-  - 예) `feature/#1-get-user`
-- 모든 QA 및 버그 수정 완료 시 `main`으로 병합한다.
-- 긴급 수정은 `hotfix` 브랜치에서 진행 후 `main`과 `dev`에 병합한다.
+## 아키텍처 인포그래픽
+
+### 기술 스택 맵 (Logo)
+
+<p>
+  <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=111" alt="React" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind" />
+  <img src="https://img.shields.io/badge/Greaming_GDS-111111?style=for-the-badge&logo=storybook&logoColor=FF4785" alt="Greaming GDS" />
+</p>
+<p>
+  <img src="https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=reactrouter&logoColor=white" alt="React Router" />
+  <img src="https://img.shields.io/badge/React_Query-FF4154?style=for-the-badge&logo=reactquery&logoColor=white" alt="React Query" />
+  <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white" alt="Axios" />
+  <img src="https://img.shields.io/badge/Zustand-4B5563?style=for-the-badge&logo=react&logoColor=white" alt="Zustand" />
+  <img src="https://img.shields.io/badge/Storybook-FF4785?style=for-the-badge&logo=storybook&logoColor=white" alt="Storybook" />
+</p>
+
+### 레이어 아키텍처
+
+```mermaid
+flowchart LR
+    U[User Browser] --> R[Router Layer\nreact-router-dom]
+    R --> P[Pages\nRoute Entry]
+    P --> F[Feature Modules\nhome upload profile social onboarding]
+    F --> C[Common UI\ncomponents/common + GDS]
+    F --> Q[Server State\nTanStack Query]
+    F --> Z[Client State\nZustand]
+    Q --> H[HTTP Layer\nAxios + Interceptors]
+    Z --> A[Auth/Token Store]
+    H --> A
+    H --> B[(Backend API)]
+```
+
+### 업로드 플로우
+
+```mermaid
+sequenceDiagram
+    participant User as User
+    participant FE as Frontend
+    participant API as Backend API
+    participant S3 as Storage
+
+    User->>FE: 이미지 선택 + 업로드
+    FE->>API: Presigned URL 요청
+    API-->>FE: URL + Key 반환
+    FE->>S3: 이미지 PUT 업로드
+    FE->>API: Submission 메타데이터 생성
+    API-->>FE: 업로드 완료 응답
+```
+
+<br/>
+
+---
+
+<br/>
+
+## 실행 방법
+
+```bash
+cd frontend
+pnpm install
+pnpm dev
+```
+
+---
+
+협업 규칙은 하위 문서에서 확인: [frontend/README.md](./frontend/README.md)
+
+Greaming 링크 모음:
+[Service](https://www.greaming.com/home)
+[GDS Repository](https://github.com/Greaming-UMC/GDS)
+[GDS on npm](https://www.npmjs.com/package/@greaming/gds)

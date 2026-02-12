@@ -16,8 +16,10 @@
   stroke-dashoffset: 2000;
   fill-opacity: 0;
   animation:
-    logo-stroke var(--logo-draw-duration, 1400ms) ease-in-out infinite,
-    logo-fill var(--logo-draw-duration, 1400ms) ease-in-out infinite;
+    logo-stroke var(--logo-draw-duration, 1400ms) ease-in-out
+      var(--logo-draw-iterations, 1),
+    logo-fill var(--logo-draw-duration, 1400ms) ease-in-out
+      var(--logo-draw-iterations, 1);
   animation-direction: alternate;
 }
 

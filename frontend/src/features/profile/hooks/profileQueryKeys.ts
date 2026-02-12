@@ -16,6 +16,7 @@ export const profileQueryKeys = {
     [
       "profile",
       "mySubmissions",
+      params?.type ?? null,
       params?.page ?? null,
       params?.size ?? null,
     ] as const,
@@ -25,6 +26,7 @@ export const profileQueryKeys = {
       "profile",
       "userSubmissions",
       userId,
+      params?.type ?? null,
       params?.page ?? null,
       params?.size ?? null,
     ] as const,

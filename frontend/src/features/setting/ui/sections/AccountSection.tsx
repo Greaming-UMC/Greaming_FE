@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { BaseField, Button, Modal } from "../../../../components/common";
+import { useState, useEffect } from "react";
+import { Button, Modal } from "../../../../components/common";
 import clsx from "clsx";
 import Icon from "../../../../components/common/Icon";
 import { useAccountSetting } from "../hooks/useAccountSetting";
@@ -13,20 +13,16 @@ const VISIBILITY_OPTIONS: { type: VisibilityType; label: string; desc: string }[
 ];
 
 const AccountSection = () => {
-  const { accountData, updateStatus, removeAccount, isLoading: isAccountLoading, isDeleting } = useAccountSetting();
-  const { profileData, updateProfile, isUpdating } = useProfileSetting();
+  const { accountData, removeAccount, isLoading: isAccountLoading, isDeleting } = useAccountSetting();
+  const { isUpdating } = useProfileSetting();
 
-  // --- 상태 관리 ---
   const [visibility, setVisibility] = useState<VisibilityType>('PUBLIC');
-  const [password, setPassword] = useState(""); 
   const [isChanged, setIsChanged] = useState(false);
-
-  const [isSuspendedOpen, setIsSuspendedOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   // 1. 초기 데이터 동기화
   useEffect(() => {
-    if (accountData?.visibility) setVisibility(accountData.visibility);
+    if (accountData?.visibility) setVisibility(accountData.visibility as VisibilityType);
   }, [accountData]);
 
   // 2. 변경 감지
@@ -35,35 +31,16 @@ const AccountSection = () => {
     setIsChanged(visibility !== accountData.visibility);
   }, [visibility, accountData]);
 
-  // 3. 입력창 핸들러 (메모이제이션으로 리렌더링 최적화)
-  const handlePasswordChange = useCallback((val: string) => {
-    setPassword(val);
-  }, []);
-
   // --- 핸들러 ---
 
   const handleSave = () => {
     if (!isChanged || isUpdating) return;
-    updateProfile({
-      ...profileData,
-      visibility: visibility,
-    } as any);
-  };
-
-  const handleSuspendAccount = () => {
-    if (!password) return; // 알럿 대신 버튼 disabled 처리 권장
-    updateStatus({ 
-      status: 'SUSPENDED', 
-      password: password,
-      reason: "사용자 요청",
-      duration: 30 
-    });
-    setIsSuspendedOpen(false);
-    setPassword("");
+    alert("공개 범위 설정 API는 현재 준비 중입니다.");
   };
 
   const handleDeleteAccount = () => {
-    removeAccount({ agreed: true });
+    // 🟢 스웨거에 활성화된 삭제 API 호출
+    removeAccount({ agreed: true } as any);
     setIsDeleteOpen(false);
   };
 
@@ -87,10 +64,16 @@ const AccountSection = () => {
       <article className="flex flex-col gap-2">
         <h3 className="sub-title-large-emphasized text-on-surface mb-2">연동된 이메일</h3>
         <div className="bg-surface-variant-high px-6 py-4 rounded-xl flex items-center justify-between">
-          <span className="label-xlarge-emphasized text-on-surface">{accountData?.email}</span>
+          <span className="label-xlarge-emphasized text-on-surface">
+            {accountData?.email || ""} 
+          </span>
           <div className="flex items-center gap-3">
-            <Icon name={accountData?.loginType?.toLowerCase() as any || 'google'} size={24}/>
-            <span className="label-small text-secondary-fixed bg-secondary-fixed-dim px-2 py-0.5 rounded-md">연동됨</span>
+            {accountData?.email && (
+              <>
+                <Icon name={(accountData?.loginType?.toLowerCase() as any) || 'google'} size={24}/>
+                <span className="label-small text-secondary-fixed bg-secondary-fixed-dim px-2 py-0.5 rounded-md">연동됨</span>
+              </>
+            )}
           </div>
         </div>
       </article>
@@ -116,48 +99,20 @@ const AccountSection = () => {
         </div>
       </article>
 
-      {/* 위험 구역 */}
+      {/* 위험 구역: 삭제 버튼만 유지 */}
       <article className="flex flex-col gap-3 mb-20">
-        <Button variant="surface" widthMode="fill" className="shadow-1 py-6 rounded-medium" onClick={() => setIsSuspendedOpen(true)}>
-          계정 일시정지
-        </Button>
-        <Button variant="surface" widthMode="fill" className="shadow-1 py-6 rounded-medium" textClassName="!text-error" onClick={() => setIsDeleteOpen(true)}>
+        <Button 
+          variant="surface" 
+          widthMode="fill" 
+          className="shadow-1 py-6 rounded-medium" 
+          textClassName="!text-error" 
+          onClick={() => setIsDeleteOpen(true)}
+        >
           계정 삭제
         </Button>
       </article>
 
-      {/* 1. 일시정지 모달 */}
-      <Modal variant="confirm" open={isSuspendedOpen} onClose={() => { setIsSuspendedOpen(false); setPassword(""); }}>
-        <Modal.Header title="계정 일시정지" />
-        <Modal.Body>
-          <div className="flex flex-col gap-6 py-4">
-            <div className="text-center">
-              <p className="body-large text-on-surface mb-1">정말로 계정을 일시정지하시겠습니까?</p>
-              <p className="label-medium text-on-surface-variant opacity-70">안전을 위해 비밀번호를 입력해주세요.</p>
-            </div>
-            <BaseField 
-              type="password"
-              placeholder="비밀번호 입력"
-              value={password}
-              onChange={handlePasswordChange}
-              widthMode="fill"
-              autoFocus // 모달 열리자마자 바로 입력 가능하게
-            />
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <div className="flex justify-center gap-4 w-full">
-            <Button variant="secondary" className="flex-1" onClick={handleSuspendAccount} disabled={!password}>
-              일시정지
-            </Button>
-            <Button variant="primary" className="flex-1" onClick={() => setIsSuspendedOpen(false)}>
-              취소
-            </Button>
-          </div>
-        </Modal.Footer>
-      </Modal>
-
-      {/* 2. 삭제 모달 */}
+      {/* 삭제 확인 모달 */}
       <Modal variant="confirm" open={isDeleteOpen} onClose={() => setIsDeleteOpen(false)}>
         <Modal.Header title="계정 삭제" />
         <Modal.Body>
@@ -181,4 +136,4 @@ const AccountSection = () => {
   );
 };
 
-export default AccountSection; 
+export default AccountSection;
