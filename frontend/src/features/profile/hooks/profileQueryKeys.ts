@@ -1,7 +1,6 @@
 import type {
-  CheckMySubmissionsRequest,
-  CheckUserSubmissionsRequest,
-} from "../../../apis/types/userSubmissions";
+  CheckSubmissionInterceptor,
+} from "../../../apis/types/common";
 import type { CheckCircleSubmissionsRequest } from "../../../apis/types/circle";
 
 export const profileQueryKeys = {
@@ -12,21 +11,19 @@ export const profileQueryKeys = {
 
   circle: (circleId: number) => ["profile", "circle", circleId] as const,
 
-  mySubmissions: (params?: CheckMySubmissionsRequest) =>
+  mySubmissions: (params?: CheckSubmissionInterceptor) =>
     [
       "profile",
       "mySubmissions",
-      params?.type ?? null,
       params?.page ?? null,
       params?.size ?? null,
     ] as const,
 
-  userSubmissions: (userId: number, params?: CheckUserSubmissionsRequest) =>
+  userSubmissions: (userId: number, params?: CheckSubmissionInterceptor) =>
     [
       "profile",
       "userSubmissions",
       userId,
-      params?.type ?? null,
       params?.page ?? null,
       params?.size ?? null,
     ] as const,

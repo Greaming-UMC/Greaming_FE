@@ -9,6 +9,7 @@ import type { CheckMyProfileResult } from "../../../../apis/types/user";
 
 const MOCK_PROFILE_RESULT: CheckMyProfileResult = {
   user_information: {
+    userId: 0,
     nickname: "닉네임",
     profileImgUrl: "",
     journeyLevel: "SKETCHER",

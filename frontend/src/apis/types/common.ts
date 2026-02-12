@@ -192,10 +192,8 @@ export interface HomeCardType extends SubmissionMetadata {
   profileImgUrl: string;
 }
 
-// 작품 조회 타입 및 요청 인터페이스
-export type CheckMySubmissionType = 'ALL' | 'SAVED';
+// 작품 조회 요청 인터페이스
 export interface CheckSubmissionInterceptor {
-  type?: CheckMySubmissionType | null;
   page?: number | null;
   size?: number | null;
 };

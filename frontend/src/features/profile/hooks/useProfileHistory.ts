@@ -61,12 +61,12 @@ export const useProfileHistory = (params: UseProfileHistoryParams): ProfileHisto
   const myProfileQuery = useMyProfile({ enabled: isSelf });
   const userProfileQuery = useUserProfile(!isSelf ? params.userId : undefined);
   const mySubmissionsQuery = useMySubmissions(
-    { type: "ALL" },
+    {},
     { enabled: isSelf },
   );
   const userSubmissionsQuery = useUserSubmissions(
     !isSelf ? params.userId : undefined,
-    { type: "ALL" },
+    {},
   );
 
   const profileResult = isSelf
@@ -88,7 +88,7 @@ export const useProfileHistory = (params: UseProfileHistoryParams): ProfileHisto
     [challengeDates],
   );
 
-  const uploadCount = submissionsResult?.submission_list?.length ?? 0;
+  const uploadCount = submissionsResult?.submissions?.length ?? 0;
 
   const isLoading = isSelf
     ? myProfileQuery.isLoading || mySubmissionsQuery.isLoading

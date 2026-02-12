@@ -1,7 +1,3 @@
-import { useState } from "react";
-
-import TabButtons from "../components/TabButtons";
-
 import Submissions from "./section/Submissions";
 
 import {
@@ -11,10 +7,8 @@ import {
 } from "../hooks";
 
 import type { ProfileViewContext } from "../config/profileRoleConfig";
-import type {
-  CheckMySubmissionType,
-  SubmissionMetadata,
-} from "../../../apis/types/common";
+import type { SubmissionMetadata } from "../../../apis/types/common";
+import type { UserSubmission } from "../../../apis/types/submission/getUserSubmissions";
 import mockFeed from "../../../assets/background/mock_feed.jpg";
 
 const USE_MOCK_FEED = false;
@@ -33,6 +27,18 @@ const mockAuthorById = (items: SubmissionMetadata[]) =>
 const withMock = (items: SubmissionMetadata[]) =>
   USE_MOCK_FEED ? (items.length > 0 ? items : MOCK_ITEMS) : items;
 
+const toSubmissionMetadata = (items: UserSubmission[]): SubmissionMetadata[] =>
+  items.map((item) => ({
+    submissionId: item.submissionId,
+    thumbnailUrl: item.thumbnailUrl,
+    counters: {
+      likesCount: item.likesCount,
+      commentCount: item.commentCount,
+      bookmarkCount: item.bookmarkCount,
+    },
+    isLiked: false,
+  }));
+
 type ProfileSubmissionsProps = {
   context: ProfileViewContext;
   userId?: number;
@@ -44,7 +50,6 @@ const ProfileSubmissions = ({
   userId,
   circleId,
 }: ProfileSubmissionsProps) => {
-  const [type, setType] = useState<CheckMySubmissionType>("ALL");
   const isCircleContext = context.type === "circle";
   const isOtherUserContext = context.type === "user" && context.role === "other";
   const isMyUserContext = context.type === "user" && context.role === "self";
@@ -55,10 +60,10 @@ const ProfileSubmissions = ({
   );
   const userQuery = useUserSubmissions(
     isOtherUserContext ? userId : undefined,
-    { type: "ALL", page: 1, size: 12 },
+    { page: 1, size: 12 },
   );
   const myQuery = useMySubmissions(
-    { type, page: 1, size: 12 },
+    { page: 1, size: 12 },
     { enabled: isMyUserContext },
   );
 
@@ -101,7 +106,7 @@ const ProfileSubmissions = ({
 
   if (isOtherUserContext) {
     if (typeof userId !== "number") return null;
-    const items = userQuery.data?.result?.submission_list ?? [];
+    const items = toSubmissionMetadata(userQuery.data?.result?.submissions ?? []);
     return (
       <div className="flex flex-col gap-[24px]">
         <div className="main-title-small-emphasized text-on-surface">
@@ -115,20 +120,13 @@ const ProfileSubmissions = ({
     );
   }
 
-  const items = myQuery.data?.result?.submission_list ?? [];
+  const items = toSubmissionMetadata(myQuery.data?.result?.submissions ?? []);
 
   return (
     <div className="flex flex-col gap-[24px]">
-      <TabButtons value={type} onChange={setType} />
       <Submissions
         items={withMock(items)}
-        showAuthor={type === "SAVED"}
-        authorById={type === "SAVED" ? mockAuthorById(withMock(items)) : undefined}
-        emptyMessage={
-          type === "SAVED"
-            ? "저장된 그림이 없어요"
-            : "포스팅한 그림이 없어요"
-        }
+        emptyMessage="포스팅한 그림이 없어요"
       />
     </div>
   );

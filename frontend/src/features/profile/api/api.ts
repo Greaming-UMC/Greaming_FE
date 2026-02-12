@@ -1,12 +1,14 @@
 import { http } from "../../../libs/http/client";
 import { ENDPOINTS } from "../../../libs/http/endpoints/endpoints";
 
-import type { ApiResultResponse } from "../../../apis/types/common";
+import type {
+    ApiResultResponse,
+    CheckSubmissionInterceptor,
+} from "../../../apis/types/common";
 import type { CheckUserProfileResult } from "../../../apis/types/user";
-import type { 
-    CheckMySubmissionsRequest, CheckMySubmissionsResult, 
-    CheckUserSubmissionsRequest, CheckUserSubmissionsResult 
-} from "../../../apis/types/userSubmissions";
+import type {
+    GetUserSubmissionsResult,
+} from "../../../apis/types/submission/getUserSubmissions";
 import type { 
     CheckCircleProfileResult, 
     CheckCircleSubmissionsRequest, CheckCircleSubmissionsResult 
@@ -20,21 +22,13 @@ export const getUserProfile = async (userId: number) => {
     );
     return data;
   };
-  
-export const getMySubmissions = async (params: CheckMySubmissionsRequest) => {
-    const { data } = await http.get<ApiResultResponse<CheckMySubmissionsResult>>(
-        ENDPOINTS.USER_SUBMISSIONS.GET_MY_SUBMISSIONS,
-        { params },
-    );
-    return data;
-};
 
 export const getUserSubmissions = async (
     userId: number,
-    params: CheckUserSubmissionsRequest,
+    params: CheckSubmissionInterceptor,
     ) => {
-    const { data } = await http.get<ApiResultResponse<CheckUserSubmissionsResult>>(
-        ENDPOINTS.USER_SUBMISSIONS.GET_USER_SUBMISSIONS(userId),
+    const { data } = await http.get<ApiResultResponse<GetUserSubmissionsResult>>(
+        ENDPOINTS.SUBMISSION.GET_USER_SUBMISSIONS(userId),
         { params },
     );
     return data;

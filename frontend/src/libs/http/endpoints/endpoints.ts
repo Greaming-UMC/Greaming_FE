@@ -1,6 +1,6 @@
 export const ENDPOINTS = {
   AUTH: {
-    REGISTER_INFO: "/api/user/registinfo",
+    REGISTER_INFO: "/api/users/registinfo",
     SOCIAL_LOGIN: (provider: string) => `/oauth2/authorization/${provider}`,
     LOGOUT: "/api/auth/logout",
     REISSUE_TOKEN: "/api/auth/reissue",
@@ -25,8 +25,7 @@ export const ENDPOINTS = {
   },
 
   USER_SUBMISSIONS: {
-    GET_MY_SUBMISSIONS: "/api/users/me/submissions",
-    GET_USER_SUBMISSIONS: (userId: number | string) => `/api/users/${userId}/submissions`,
+    GET_USER_SUBMISSIONS: (userId: number | string) => `/api/submissions/user/${userId}`,
   },
 
   USER_WORKS: {
@@ -40,6 +39,7 @@ export const ENDPOINTS = {
 
   SUBMISSION: {
     GET_SUBMISSIONS: "/api/submissions",
+    GET_USER_SUBMISSIONS: (userId: number | string) => `/api/submissions/user/${userId}`,
     GET_SUBMISSION_DETAIL: (submissionId: number | string) => `/api/submissions/${submissionId}`,
     GET_SUBMISSION_PREVIEW: (submissionId: number | string) =>
       `/api/submissions/${submissionId}/preview`,
@@ -59,19 +59,6 @@ export const ENDPOINTS = {
   CHALLENGE: {
     GET_DATE_SUBMISSIONS: "/api/challenges/date/submissions",
     GET_CURRENT_SUBMISSIONS: "/api/challenges/current/submissions",
-  },
-
-  WORK: {
-    UPDATE_WORK: (workId: number | string) => `/api/works/${workId}`,
-    DELETE_WORK: (workId: number | string) => `/api/works/${workId}`,
-    GET_WORK_DETAIL: (workId: number | string) => `/api/works/${workId}`,
-    GET_WORK_PREVIEW: (workId: number | string) => `/api/works/${workId}/preview`,
-    GET_WORKS: "/api/works",
-    GET_CHALLENGE_WORKS: (challengeId: number | string) => `/api/challenges/${challengeId}/works`,
-    UPLOAD_WORK: "/api/users/upload",
-
-    // 레거시 호환: 기존 코드에서 참조 가능
-    GET_HOME_TOP: "/api/home",
   },
 
   CIRCLE: {
