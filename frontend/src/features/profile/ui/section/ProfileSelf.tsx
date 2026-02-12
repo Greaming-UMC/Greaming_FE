@@ -11,12 +11,19 @@ const MOCK_PROFILE_RESULT: CheckMyProfileResult = {
   user_information: {
     nickname: "닉네임",
     profileImgUrl: "",
-    level: "SKETCHER",
-    introduction: "소개글 내용",
+    usagePurpose: "SKETCHER",   
+    intro: "소개글 내용",       
+    weeklyGoalScore: 0,         
     followerCount: 10,
     followingCount: 10,
-    specialtyTags: ["태그", "태그", "태그"],
-    interestTags: ["태그"],
+    specialties: {              
+      fields: ["ILLUSTRATION", "DAILY"],
+      style: "디지털"
+    },
+    interests: {               
+      fields: ["ARCHITECTURE", "FAN_ART"],
+      style: "컬러"
+    },
   },
   challenge_calender: {
     dailyChallenge: [],
@@ -27,18 +34,12 @@ const MOCK_PROFILE_RESULT: CheckMyProfileResult = {
 const ProfileSelf = () => {
   const query = useMyProfile();
 
-  //if (query.isPending) return <div className="text-[14px]">Loading...</div>;
-  //if (query.error) return <div className="text-[14px]">에러가 발생했어요.</div>;
-
   const result = query.data?.result ?? MOCK_PROFILE_RESULT;
-  const fallbackInfo = MOCK_PROFILE_RESULT.user_information!;
-  const info =
-    result.user_information ??
-    result.userInformation ??
-    fallbackInfo;
-  const specialtyTags = info.specialtyTags ?? [];
-  const interestTags = info.interestTags ?? [];
-  const usageIcon = info.level as IconName;
+  const info = result.user_information;
+
+  const specialtyFields = info.specialties?.fields ?? [];
+  const interestFields = info.interests?.fields ?? [];
+  const usageIcon = info.usagePurpose as IconName; 
 
   return (
     <section className="flex flex-col">
@@ -70,14 +71,14 @@ const ProfileSelf = () => {
 
         <div className="flex items-start gap-[16px]"> 내 특기
             <div className="flex flex-wrap gap-[8px]">
-              {specialtyTags.map((tag) => (
+              {specialtyFields.map((tag) => (
                 <Chip key={tag} label={`#${tag}`} />
               ))}
             </div>
         </div>
         <div className="flex items-start gap-[16px]"> 내 취향
             <div className="flex flex-wrap gap-[8px]">
-              {interestTags.map((tag) => (
+              {interestFields.map((tag) => (
                 <Chip key={tag} label={`#${tag}`} />
               ))}
             </div>
@@ -86,7 +87,8 @@ const ProfileSelf = () => {
 
       {/* Introduction */}
       <div className="mt-[36px] label-xlarge-emphasized text-on-surface"> 소개글 </div>
-      <div className="mt-[8px] label-xlarge text-on-surface"> {info.introduction} </div>
+      {/* introduction -> intro 로 수정 */}
+      <div className="mt-[8px] label-xlarge text-on-surface"> {info.intro} </div>
 
       {/* History */}
       <div className="mt-[36px] label-xlarge-emphasized text-on-surface"> 활동 정보 </div>
