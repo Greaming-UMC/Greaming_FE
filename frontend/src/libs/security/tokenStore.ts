@@ -3,8 +3,14 @@ const normalizeToken = (value?: string | null): string | null => {
   const trimmed = value.trim();
   if (!trimmed) return null;
 
-  const bearerMatch = trimmed.match(/^Bearer\s+(.+)$/i);
-  const token = (bearerMatch?.[1] ?? trimmed).trim();
+  const unwrapped =
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+      ? trimmed.slice(1, -1).trim()
+      : trimmed;
+
+  const bearerMatch = unwrapped.match(/^Bearer\s+(.+)$/i);
+  const token = (bearerMatch?.[1] ?? unwrapped).trim();
   return token.length > 0 ? token : null;
 };
 
