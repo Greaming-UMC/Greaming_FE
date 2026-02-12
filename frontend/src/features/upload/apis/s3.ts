@@ -1,19 +1,26 @@
 import { http } from "../../../libs/http/client";
+import { ENDPOINTS } from "../../../libs/http/endpoints/endpoints";
+import type { ApiResultResponse } from "../../../apis/types/common";
+
+export const S3_PREFIX = {
+  PROFILE: "profile",
+  POST: "post",
+  SUBMISSION: "submission",
+} as const;
+
+export type S3Prefix = (typeof S3_PREFIX)[keyof typeof S3_PREFIX];
 
 export type PresignedUrlResult = {
   url: string;
   key: string;
 };
 
-type PresignedUrlResponse = {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: PresignedUrlResult | null;
-};
+type PresignedUrlResponse = ApiResultResponse<PresignedUrlResult>;
 
-export async function getPresignedUrl(params: { prefix: string; fileName: string }) {
-  const res = await http.get<PresignedUrlResponse>("/api/v1/s3/presigned-url", { params });
+export async function getPresignedUrl(params: { prefix: S3Prefix; fileName: string }) {
+  const res = await http.get<PresignedUrlResponse>(ENDPOINTS.S3.GET_PRESIGNED_URL, {
+    params,
+  });
 
   if (!res.data?.isSuccess || !res.data.result) {
     throw new Error(res.data?.message ?? "Presigned URL 발급 실패");

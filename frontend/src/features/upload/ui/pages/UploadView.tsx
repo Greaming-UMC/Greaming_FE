@@ -15,8 +15,7 @@ export type UploadHeaderRender = (ctx: {
   uploadButtonNode: React.ReactNode;
 }) => React.ReactNode;
 
-// circle 제외
-export type UploadMode = "free" | "daily" | "weekly";
+export type UploadMode = "free" | "daily" | "weekly" | "circle";
 
 export type UploadViewProps = {
   mode?: UploadMode;

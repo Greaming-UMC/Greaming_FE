@@ -1,25 +1,13 @@
 import { useMemo, useRef, useState } from "react";
-import { getPresignedUrl, putToS3, postSubmission } from "../apis";
+import { getPresignedUrl, postSubmission, putToS3, S3_PREFIX } from "../apis";
+import type { UploadSubmissionField } from "../../../apis/types/upload";
+import type { UploadSubmissionPayload } from "./types";
 
 export type UploadImageItem = {
   id: string;
   file: File;
   previewUrl: string;
   signature: string;
-};
-
-type UploadField = "FREE" | "DAILY" | "WEEKLY";
-type UploadVisibility = "PUBLIC"; // 서클 제외 
-
-type CreateSubmissionRequest = {
-  title: string;
-  caption: string;
-  visibility: UploadVisibility;
-  field: UploadField;
-  thumbnailKey: string;
-  commentEnabled: boolean;
-  tags: string[];
-  imageList: string[];
 };
 
 const uid = () => `${Date.now()}_${Math.random().toString(16).slice(2)}`;
@@ -117,7 +105,7 @@ export function useUploadForm() {
     setHashtags((prev) => prev.filter((t) => t !== normalized));
   };
 
-  const submit = async (field: UploadField) => {
+  const submit = async (field: UploadSubmissionField) => {
     if (!canUpload) return;
     if (submitLockRef.current) return;
     submitLockRef.current = true;
@@ -127,7 +115,7 @@ export function useUploadForm() {
 
       for (const img of images) {
         const presigned = await getPresignedUrl({
-          prefix: "submissions", 
+          prefix: S3_PREFIX.SUBMISSION,
           fileName: img.file.name,
         });
 
@@ -137,10 +125,10 @@ export function useUploadForm() {
 
       if (uploadedKeys.length === 0) return;
 
-      const payload: CreateSubmissionRequest = {
+      const payload: UploadSubmissionPayload = {
         title: title.trim(),
         caption: body,
-        visibility: "PUBLIC", 
+        visibility: "PUBLIC",
         field,
         commentEnabled: allowComments,
         tags: hashtags,
