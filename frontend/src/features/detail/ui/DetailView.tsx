@@ -1,261 +1,240 @@
-import type { CommentDetail } from "../../../apis/types/submission/checkSubmissionDetails";
+import { useEffect, useState, useCallback } from "react";
+import { useParams } from "react-router-dom";
+import type {
+  CommentDetail,
+  SubmissionDetails,
+} from "../../../apis/types/submission/checkSubmissionDetails";
+import type { CreateCommentResult } from "../../../apis/types/submission/createComment";
 import ArtistArtwork from "./ArtistArtwork";
 import DetailPost from "./DetailPost";
 import ActionSideBar from "./section/ActionSideBar";
 import RecommendedGrid from "./section/RecommendedGrid";
-import type { RecommendedArt } from "../../../apis/types/art";
+import {
+  getSubmissionDetails,
+  toggleSubmissionLike,
+  checkIsMe,
+  getRecommendedSubmissions,
+  getUserSubmissions,
+} from "../api/api";
+import type { RecommendedSubmission } from "../../../apis/types/submission/getRecommendedSubmissions";
+import type { UserSubmission } from "../../../apis/types/submission/getUserSubmissions";
 
 const DetailView = () => {
-  const mockSubmission = {
-    nickname: "테스트 작가",
-    profileImageUrl: "sample-profile.jpg",
-    level: "ARTIST",
-    image_list: [
-      "https://picsum.photos/400/300?random=1",
-      "https://picsum.photos/300/400?random=2",
-      "https://picsum.photos/400/400?random=3",
-      "https://picsum.photos/300/300?random=4",
-    ],
-    likes_count: 12,
-    comment_count: 3,
-    bookmark_count: 5,
-    title: "샘플 작품 제목",
-    caption: "간단한 작품 설명입니다.",
-    tags: ["digital", "illustration"],
-    upload_at: "2023-01-01T12:00:00Z",
-  };
+  // useParams가 반환하는 전체 파라미터 객체를 확인하여 정확한 키 이름을 찾습니다.
+  // 일반적인 키 이름인 'id', 'submissionId', 'postId'를 모두 확인합니다.
+  const params = useParams<{ id?: string; submissionId?: string; postId?: string }>();
+  const id = params.id || params.submissionId || params.postId;
+  console.log("DetailView rendered with all params:", params);
+  const [submissionId, setSubmissionId] = useState<number | null>(null);
 
-  const mockComments: CommentDetail[] = [
-    {
-      writer_nickname: "유저A",
-      writer_profileImgUrl: "https://i.pravatar.cc/150?img=1",
-      content: "멋진 작품이네요! 색감이 마음에 들어요.",
-      isLike: false,
-    },
-    {
-      writer_nickname: "유저B",
-      writer_profileImgUrl: "https://i.pravatar.cc/150?img=2",
-      content: "특히 질감 표현이 인상적입니다.",
-      isLike: true,
-    },
-    {
-      writer_nickname: "유저C",
-      writer_profileImgUrl: "",
-      content: "참고하고 싶은 스타일이네요.",
-      isLike: false,
-    },
-     {
-      writer_nickname: "유저C",
-      writer_profileImgUrl: "",
-      content: "참고하고 싶은 스타일이네요.",
-      isLike: false,
-    },
-     {
-      writer_nickname: "유저C",
-      writer_profileImgUrl: "",
-      content: "참고하고 싶은 스타일이네요.",
-      isLike: false,
-    }, 
-    {
-      writer_nickname: "유저C",
-      writer_profileImgUrl: "",
-      content: "참고하고 싶은 스타일이네요.",
-      isLike: false,
-    },
-    {
-      writer_nickname: "유저C",
-      writer_profileImgUrl: "",
-      content: "참고하고 싶은 스타일이네요.",
-      isLike: false,
-    },
-    {
-      writer_nickname: "유저C",
-      writer_profileImgUrl: "",
-      content: "참고하고 싶은 스타일이네요.",
-      isLike: false,
-    },
-  ];
+  const [submission, setSubmission] = useState<SubmissionDetails["work"] | null>(
+    null,
+  );
+  // 최적화: 동적으로 변하는 카운트(댓글, 좋아요 등)를 submission 객체에서 분리합니다.
+  const [counts, setCounts] = useState({
+    likes: 0,
+    comments: 0,
+    scraps: 0,
+    liked: false, // '좋아요' 상태 추가
+  });
+  const [isMe, setIsMe] = useState(false);
+  const [comments, setComments] = useState<CommentDetail[]>([]);
+  const [recommendedSubmissions, setRecommendedSubmissions] = useState<
+    RecommendedSubmission[]
+  >([]);
+  const [userSubmissions, setUserSubmissions] = useState<
+    UserSubmission[]
+  >([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const myArtData = [
-    {
-      id: 1,
-      title: "작품 1",
-      src: "https://picsum.photos/200/300?random=11",
-      likes_count: 120,
-      comment_count: 12,
-      bookmark_count: 3,
-    },
-    {
-      id: 2,
-      title: "작품 2",
-      src: "https://picsum.photos/200/300?random=12",
-      likes_count: 88,
-      comment_count: 5,
-      bookmark_count: 1,
+  useEffect(() => {
+    if (!id) {
+      setError("게시물 ID가 제공되지 않았습니다.");
+      setLoading(false);
+      return;
     }
 
-  
-  ];
+    const fetchDetails = async () => {
+      try {
+        setLoading(true);
+        const parsedId = parseInt(id, 10);
+        if (isNaN(parsedId)) {
+          setError("잘못된 게시물 ID입니다.");
+          setLoading(false);
+          return;
+        }
+        setSubmissionId(parsedId);
 
-  const mockRecommendedArts: RecommendedArt[] = [
-    {
-      id: 101,
-      src: "https://picsum.photos/300/300?random=21",
-      title: "추천 작품 1: 고요한 호수",
-      likes_count: 123,
-      comment_count: 4,
-      bookmark_count: 15,
+        const response = await getSubmissionDetails(parsedId);
+
+        if (response.isSuccess && response.result) {
+          const { submission: apiSubmission, commentPage } = response.result;
+
+          // submission 객체는 이제부터 내용이 변하지 않는 "원본 데이터"로 취급합니다.
+          const transformedSubmission: SubmissionDetails["work"] = {
+            nickname: apiSubmission.nickname,
+            profileImageUrl: apiSubmission.profileImageUrl,
+            level: apiSubmission.level,
+            image_list: apiSubmission.imageList,
+            title: apiSubmission.title,
+            caption: apiSubmission.caption,
+            tags: apiSubmission.tags.map(
+              (tag: { tagName: string }) => tag.tagName,
+            ),
+            upload_at: apiSubmission.uploadAt,
+            // 카운트 정보는 별도 state로 관리하므로 여기서는 제외하거나 초기값으로만 사용합니다.
+            likes_count: apiSubmission.likesCount,
+            comment_count: apiSubmission.commentCount,
+            bookmark_count: apiSubmission.bookmarkCount,
+          };
+
+          setSubmission(transformedSubmission);
+          setComments(commentPage.comments);
+          setCounts({
+            likes: apiSubmission.likesCount,
+            comments: apiSubmission.commentCount,
+            scraps: apiSubmission.bookmarkCount,
+            liked: apiSubmission.liked,
+          });
+
+          // 본인 여부 확인 API 호출
+          if (apiSubmission.userId) {
+            const isMeResponse = await checkIsMe(apiSubmission.userId);
+            if (isMeResponse.isSuccess && isMeResponse.result) {
+              setIsMe(isMeResponse.result.isMe);
+            }
+
+            // 작가의 다른 작품 목록 조회
+            try {
+              const userSubmissionsResponse = await getUserSubmissions(
+                apiSubmission.userId,
+                { size: 10 }, // 캐러셀에 표시할 개수
+              );
+              if (
+                userSubmissionsResponse.isSuccess &&
+                userSubmissionsResponse.result
+              ) {
+                setUserSubmissions(
+                  userSubmissionsResponse.result.submissions,
+                );
+              }
+            } catch (userSubmissionsError) {
+              console.error(
+                "작가의 다른 작품을 불러오는 데 실패했습니다.",
+                userSubmissionsError,
+              );
+            }
+          }
+
+          // 추천 게시물 목록 조회
+          try {
+            const recommendedResponse = await getRecommendedSubmissions({
+              page: 1,
+              size: 8, // 그리드에 표시할 개수
+              sortBy: "recommend",
+            });
+            if (recommendedResponse.isSuccess && recommendedResponse.result) {
+              setRecommendedSubmissions(
+                recommendedResponse.result.submissions,
+              );
+            }
+          } catch (recommendedError) {
+            // 추천 게시물 로딩 실패는 전체 페이지 로딩을 막지 않도록 별도로 처리합니다.
+            console.error("추천 게시물을 불러오는 데 실패했습니다.", recommendedError);
+          }
+        } else {
+          setError(response.message || "게시물 정보를 불러오는데 실패했습니다.");
+        }
+      } catch (e) {
+        setError("데이터를 불러오는 중 오류가 발생했습니다.");
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetails();
+  }, [id]);
+
+  // 최적화: onCommentCreated 함수가 DetailView 리렌더링 시 재생성되는 것을 방지합니다.
+  const handleCommentCreated = useCallback(
+    (newApiComment: CreateCommentResult) => {
+      // API 응답을 기존 댓글 목록 타입(CommentDetail)에 맞게 변환합니다.
+      const newComment = {
+        ...newApiComment,
+      } as CommentDetail & { commentId: number };
+
+      setComments((prevComments) => [...prevComments, newComment]);
+
+      // submission 객체를 직접 수정하는 대신, 분리된 counts state만 업데이트합니다.
+      // 이로 인해 submission prop의 참조 안정성이 유지됩니다.
+      setCounts((prev) => ({ ...prev, comments: prev.comments + 1 }));
     },
-    {
-      id: 102,
-      src: "https://picsum.photos/300/300?random=22",
-      title: "추천 작품 2: 도시의 밤",
-      likes_count: 45,
-      comment_count: 12,
-      bookmark_count: 2,
-    },
-    {
-      id: 103,
-      src: "https://picsum.photos/300/300?random=23",
-      title: "추천 작품 3: 숲속의 아침",
-      likes_count: 99,
-      comment_count: 8,
-      bookmark_count: 22,
-    },
-    {
-      id: 104,
-      src: "https://picsum.photos/300/300?random=24",
-      title: "추천 작품 4: 겨울 산책",
-      likes_count: 256,
-      comment_count: 23,
-      bookmark_count: 45,
-    },
-    {
-      id: 105,
-      src: "https://picsum.photos/300/300?random=25",
-      title: "추천 작품 5: 해변의 노을",
-      likes_count: 180,
-      comment_count: 15,
-      bookmark_count: 30,
-    },
-    {
-      id: 106,
-      src: "https://picsum.photos/300/300?random=26",
-      title: "추천 작품 6: 오래된 골목",
-      likes_count: 77,
-      comment_count: 3,
-      bookmark_count: 7,
-    },
-    {
-      id: 107,
-      src: "https://picsum.photos/300/300?random=27",
-      title: "추천 작품 7: 별이 빛나는 밤",
-      likes_count: 301,
-      comment_count: 35,
-      bookmark_count: 50,
-    },
-    {
-      id: 108,
-      src: "https://picsum.photos/300/300?random=28",
-      title: "추천 작품 8: 비 오는 거리",
-      likes_count: 112,
-      comment_count: 9,
-      bookmark_count: 11,
-    },
-     {
-      id: 108,
-      src: "https://picsum.photos/300/300?random=28",
-      title: "추천 작품 8: 비 오는 거리",
-      likes_count: 112,
-      comment_count: 9,
-      bookmark_count: 11,
-    },
-     {
-      id: 108,
-      src: "https://picsum.photos/300/300?random=29",
-      title: "추천 작품 8: 비 오는 거리",
-      likes_count: 112,
-      comment_count: 9,
-      bookmark_count: 11,
-    },
-     {
-      id: 108,
-      src: "https://picsum.photos/300/300?random=28",
-      title: "추천 작품 8: 비 오는 거리",
-      likes_count: 112,
-      comment_count: 9,
-      bookmark_count: 11,
-    },
-    {
-      id: 108,
-      src: "https://picsum.photos/300/300?random=28",
-      title: "추천 작품 8: 비 오는 거리",
-      likes_count: 112,
-      comment_count: 9,
-      bookmark_count: 11,
-    },
-    {
-      id: 108,
-      src: "https://picsum.photos/300/300?random=28",
-      title: "추천 작품 8: 비 오는 거리",
-      likes_count: 112,
-      comment_count: 9,
-      bookmark_count: 11,
-    },
-    {
-      id: 108,
-      src: "https://picsum.photos/300/300?random=28",
-      title: "추천 작품 8: 비 오는 거리",
-      likes_count: 112,
-      comment_count: 9,
-      bookmark_count: 11,
-    },
-    {
-      id: 108,
-      src: "https://picsum.photos/300/300?random=28",
-      title: "추천 작품 8: 비 오는 거리",
-      likes_count: 112,
-      comment_count: 9,
-      bookmark_count: 11,
-    },
-    {
-      id: 108,
-      src: "https://picsum.photos/300/300?random=28",
-      title: "추천 작품 8: 비 오는 거리",
-      likes_count: 112,
-      comment_count: 9,
-      bookmark_count: 11,
-    },
-    {
-      id: 108,
-      src: "https://picsum.photos/300/300?random=28",
-      title: "추천 작품 8: 비 오는 거리",
-      likes_count: 112,
-      comment_count: 9,
-      bookmark_count: 11,
-    },
-  ];
+    [],
+  );
+
+  const handleToggleLike = useCallback(async () => {
+    if (submissionId === null) return;
+
+    try {
+      const response = await toggleSubmissionLike(submissionId);
+      if (response.isSuccess && response.result) {
+        // API 응답으로 '좋아요' 상태와 개수를 즉시 업데이트
+        setCounts((prev) => ({
+          ...prev,
+          likes: response.result.likeCount,
+          liked: response.result.isLiked,
+        }));
+      } else {
+        alert(`좋아요 처리 실패: ${response.message}`);
+      }
+    } catch (error) {
+      console.error("좋아요 처리 중 오류 발생:", error);
+      alert("좋아요를 처리하는 동안 오류가 발생했습니다.");
+    }
+  }, [submissionId]);
+
+  if (loading) {
+    return <div>로딩 중...</div>; // TODO: 로딩 스피너 컴포넌트로 교체
+  }
+
+  if (error) {
+    return <div>오류: {error}</div>; // TODO: 에러 처리 UI 컴포넌트로 교체
+  }
+
+  if (!submission || submissionId === null) {
+    return <div>게시물을 찾을 수 없습니다.</div>; // TODO: "찾을 수 없음" UI 컴포넌트로 교체
+  }
 
   return (
-    <div className="bg-surface-variant-high relative w-full min-h-screen h-fit flex flex-col items-center gap-12 pb-24 p-10 mt-16 max-w-[1531px] mx-auto px-40">
+    <div className="bg-surface-variant-high relative w-full min-h-screen h-fit flex flex-col items-center gap-12 pb-24 p-10 max-w-[1531px] mx-auto px-40">
       <aside className="absolute left-10 top-0 h-full hidden lg:block pointer-events-none z-10">
-          <div className="sticky top-24 pt-[88px] pointer-events-auto">
-            <ActionSideBar 
-               likes={mockSubmission.likes_count}
-               comments={mockSubmission.comment_count}
-               scraps={mockSubmission.bookmark_count}
-            />
-          </div>
+        <div className="sticky top-24 pt-[88px] pointer-events-auto">
+          <ActionSideBar
+            likes={counts.likes}
+            comments={counts.comments}
+            scraps={counts.scraps}
+            liked={counts.liked}
+            onToggleLike={handleToggleLike}
+          />
+        </div>
       </aside>
-      
+
       <div className="shrink-0 w-full relative">
-        <DetailPost submission={mockSubmission} comment_list={mockComments} />     
+        <DetailPost
+          submission={submission}
+          comment_list={comments}
+          submissionId={submissionId}
+          onCommentCreated={handleCommentCreated}
+          isMe={isMe}
+        />
       </div>
       <div className="shrink-0  w-full">
-        <ArtistArtwork artworks={myArtData} />
+        <ArtistArtwork artworks={userSubmissions} />
       </div>
       <div className="w-full shrink-0">
-        <RecommendedGrid artworks={mockRecommendedArts} />
+        <RecommendedGrid artworks={recommendedSubmissions} />
       </div>
     </div>
   );

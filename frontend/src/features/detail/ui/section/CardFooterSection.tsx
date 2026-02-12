@@ -1,14 +1,21 @@
+import { memo } from "react";
 import { Chip } from "../../../../components/common/display";
-import type { SubmissionDetails } from "../../../../apis/types/submission/checkSubmissionDetails";
 
 export interface CardFooterProps {
-  submission: SubmissionDetails["work"];
+  title: string;
+  caption: string | null; // caption은 null일 수 있습니다.
+  tags: string[];
+  upload_at: string;
   className?: string;
 }
 
-const CardFooter = ({ submission, className = "" }: CardFooterProps) => {
-  const { title, caption, tags, upload_at } = submission;
-
+const CardFooter = ({
+  title,
+  caption,
+  tags,
+  upload_at,
+  className = "",
+}: CardFooterProps) => {
   return (
     <div
       className={`flex flex-col gap-2 items-start self-stretch ${className}`}
@@ -38,4 +45,5 @@ const CardFooter = ({ submission, className = "" }: CardFooterProps) => {
   );
 };
 
-export default CardFooter;
+// 최적화: React.memo를 사용하여 props가 변경되지 않으면 리렌더링을 방지합니다.
+export default memo(CardFooter);
