@@ -4,19 +4,28 @@ import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { clearAccessToken, getAccessToken, setAccessToken } from "../../security/tokenStore";
 import { useAuthStore } from "../../security/authStore";
 
-const REFRESH_PATH = ENDPOINTS.AUTH.REISSUE_TOKEN.replace(/^\/api/, "");
-const MY_PROFILE_PATH = ENDPOINTS.USER.GET_MY_PROFILE_HEADER.replace(/^\/api/, "");
-const AUTH_TEST_PATH = ENDPOINTS.AUTH.TEST.replace(/^\/api/, "");
+const REFRESH_PATH = ENDPOINTS.AUTH.REISSUE_TOKEN;
+const MY_PROFILE_PATH = ENDPOINTS.USER.GET_MY_PROFILE_HEADER;
+const AUTH_TEST_PATH = ENDPOINTS.AUTH.TEST;
 
 const isBrowser = typeof window !== "undefined";
-const isRefreshRequest = (url?: string) => Boolean(url && url.includes(REFRESH_PATH));
+const isRefreshRequest = (url?: string) =>
+  Boolean(
+    url &&
+      (url.includes(REFRESH_PATH) ||
+        url.includes(REFRESH_PATH.replace(/^\/api/, ""))),
+  );
 const isAuthTestRequest = (url?: string) =>
-  Boolean(url && (url.includes(AUTH_TEST_PATH) || url.includes(ENDPOINTS.AUTH.TEST)));
+  Boolean(
+    url &&
+      (url.includes(AUTH_TEST_PATH) ||
+        url.includes(AUTH_TEST_PATH.replace(/^\/api/, ""))),
+  );
 const isMyProfileRequest = (url?: string) =>
   Boolean(
     url &&
       (url.includes(MY_PROFILE_PATH) ||
-        url.includes(ENDPOINTS.USER.GET_MY_PROFILE_HEADER)),
+        url.includes(MY_PROFILE_PATH.replace(/^\/api/, ""))),
   );
 
 interface RetryConfig extends InternalAxiosRequestConfig {
