@@ -1,9 +1,9 @@
 import { Fragment, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Divider } from "../display";
-import { Button, ListBase } from "../input";
-import { type IconName } from "../Icon";
-import { Dropdown } from "../feedback/Dropdown";
+import { Divider } from "../../../components/common/display";
+import { Button } from "../../../components/common/input";
+import { type IconName } from "../../../components/common/Icon";
+import CircleDropdown from "./dropdowns/CircleDropdown";
 
 type NavLinkItem = { type: "link"; path: string; label: string; iconName: IconName };
 type NavPopoverItem = { type: "popover"; id: string; label: string; iconName: IconName };
@@ -85,25 +85,10 @@ const HeaderTabs = ({ isScrolled }: HeaderTabsProps) => {
                   {({ isActive }) => renderTabContent(item, isActive)}
                 </NavLink>
               ) : (
-                <Dropdown
-                  align="left"
-                  trigger={
-                    <button type="button">
-                      {renderTabContent(item, false)}
-                    </button>
-                  }
-                >
-                  <div className="w-[200px] bg-surface rounded-lg shadow-xl p-2 animate-in fade-in zoom-in-95 duration-200">
-                    <ListBase
-                      size="md"
-                      title="추가하기"
-                      leadingIcon="plus"
-                      radius="md"
-                      className="cursor-pointer text-on-surface"
-                      onClick={() => console.log("Circle 추가하기 클릭")}
-                    />
-                  </div>
-                </Dropdown>
+                <CircleDropdown
+                  trigger={renderTabContent(item, false)}
+                  onAddCircle={() => console.log("Circle 추가하기 클릭")}
+                />
               )}
             </div>
 

@@ -1,6 +1,6 @@
-import HeaderLogo from "./HeaderLogo";
+import { HeaderLogo } from "../components";
 import HeaderMain from "./HeaderMain";
-import type { HeaderProps } from "./types";
+import type { HeaderProps } from "../config";
 
 const Header = ({ variant, userInfo, onLogout }: HeaderProps) => {
   switch (variant) {

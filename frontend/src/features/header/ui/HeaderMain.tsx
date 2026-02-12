@@ -1,8 +1,7 @@
-import HeaderTabs from "./HeaderTabs";
-import { HeaderActions } from "./HeaderActions";
-import Logo from "../Logo";
-import type { UserInfo } from "./types";
-import { useHeaderScroll } from "./hooks/useHeaderScroll";
+import { HeaderActions, HeaderTabs } from "../components";
+import Logo from "../../../components/common/Logo";
+import type { UserInfo } from "../config";
+import { useHeaderScroll } from "../hooks";
 import { NavLink, useLocation } from "react-router-dom";
 
 interface HeaderMainProps {
