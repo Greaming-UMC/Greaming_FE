@@ -6,6 +6,8 @@
 
 그리밍 프론트엔드는 사용자가 그림을 올리고, 챌린지에 참여하고, 써클/팔로우를 통해 서로의 작업을 발견하는 창작 커뮤니티 웹 서비스입니다.
 
+<br/>
+
 ## 서비스 개요
 
 Greaming은 "꾸준히 그리게 만드는 환경"을 목표로 시작했습니다.
@@ -16,6 +18,12 @@ Greaming은 "꾸준히 그리게 만드는 환경"을 목표로 시작했습니�
 - 관계/탐색: 내 프로필, 유저 프로필, 팔로우/팔로잉, 써클 탐색
 - 온보딩/인증: 소셜 로그인 + 초기 관심사/목표 설정
 
+<br/>
+
+---
+
+<br/>
+
 ## 설계 스토리
 
 초기에는 화면을 빠르게 만드는 것이 우선이었지만, 기능이 늘어나면서 같은 문제를 반복해서 마주쳤습니다.
@@ -25,6 +33,8 @@ Greaming은 "꾸준히 그리게 만드는 환경"을 목표로 시작했습니�
 - API/인증 처리 방식이 페이지마다 달라지는 문제
 
 그래서 아래 3가지를 핵심 원칙으로 고정했습니다.
+
+<br/>
 
 ### 1) 디자인 언어를 먼저 통일한다: GDS
 
@@ -37,6 +47,8 @@ Greaming은 "꾸준히 그리게 만드는 환경"을 목표로 시작했습니�
 - 공통 컴포넌트는 껍데기, 도메인 조합은 `features`에서 수행
 
 이 방식으로 디자이너-프론트 개발자 간 해석 차이를 줄이고, 리뷰 기준을 명확하게 맞출 수 있었습니다.
+
+<br/>
 
 ### 2) 기능 단위로 쪼개고, 책임은 고정한다: 현재 폴더 구조
 
@@ -61,6 +73,8 @@ frontend/src
 
 결과적으로 기능 추가 시 "어디를 고쳐야 하는지"가 빠르게 결정되고, 충돌 범위도 줄었습니다.
 
+<br/>
+
 ### 3) 상태 흐름을 역할별로 분리한다
 
 - 서버 상태: `@tanstack/react-query`
@@ -68,6 +82,12 @@ frontend/src
 - HTTP/토큰 재발급: `axios` + interceptor
 
 이 분리 덕분에 무한 스크롤/재요청/인증 만료 대응 같은 복잡한 흐름을 페이지 코드에서 걷어낼 수 있었습니다.
+
+<br/>
+
+---
+
+<br/>
 
 ## 아키텍처 인포그래픽
 
@@ -121,6 +141,12 @@ sequenceDiagram
     API-->>FE: 업로드 완료 응답
 ```
 
+<br/>
+
+---
+
+<br/>
+
 ## 실행 방법
 
 ```bash
@@ -132,4 +158,8 @@ pnpm dev
 ---
 
 협업 규칙은 하위 문서에서 확인: [frontend/README.md](./frontend/README.md)
-Greaming 링크 모음: [Service](https://www.greaming.com/home) | [GDS Repository](https://github.com/Greaming-UMC/GDS) | [GDS on npm](https://www.npmjs.com/package/@greaming/gds)
+
+Greaming 링크 모음:
+[Service](https://www.greaming.com/home)
+[GDS Repository](https://github.com/Greaming-UMC/GDS)
+[GDS on npm](https://www.npmjs.com/package/@greaming/gds)
