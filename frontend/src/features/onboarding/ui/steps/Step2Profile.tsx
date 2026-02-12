@@ -7,16 +7,16 @@ import { ART_FIELD_LABEL, ART_STYLE_LABEL } from "../../../../apis/types/common"
 import { Button } from "../../../../components/common/input/Button/Button";
 import { OnboardingTagChip } from "../../../../components/common/display/OnboardingTagChip";
 import { NicknameSection } from "../components/NickNameSection";
+// 1. 훅 임포트
+import { useOnboarding } from "../../hooks/useOnboarding";
 
 type NicknameStatus = "unchecked" | "valid" | "invalid";
 
 interface Props {
   nickname: string;
   onChangeNickname: (v: string) => void;
-  fieldTags: ArtField[];
-  onChangeFieldTags: (tag: ArtField) => void; // 부모의 toggleTag와 연결
-  styleTag: ArtStyle | null;
-  onChangeStyleTag: (style: ArtStyle) => void; // 부모의 setArtStyle와 연결
+  tags: (ArtField | ArtStyle)[];
+  onToggleTag: (tag: ArtField | ArtStyle) => void;
   onNext: () => void;
 }
 
@@ -27,38 +27,55 @@ const STYLE_KEYS = Object.keys(ART_STYLE_LABEL) as ArtStyle[];
 export function Step2Profile({
   nickname,
   onChangeNickname,
-  fieldTags,
-  onChangeFieldTags,
-  styleTag,
-  onChangeStyleTag,
+  tags,
+  onToggleTag,
   onNext,
 }: Props) {
+  const { validateNickname } = useOnboarding();
   const [checkingNickname, setCheckingNickname] = useState(false);
   const [nicknameStatus, setNicknameStatus] = useState<NicknameStatus | undefined>(undefined);
 
-  // 닉네임 변경 시 상태 초기화
   const handleNicknameChange = (v: string) => {
     onChangeNickname(v);
     setNicknameStatus("unchecked");
   };
 
-  // 닉네임 중복 확인 (임시 시뮬레이션 유지하되 깔끔하게 정리)
+  // 2. 중복 확인 시점 로그
   const handleCheckNickname = async () => {
+    console.log("🔍 중복 확인 시작 - 닉네임:", nickname);
     if (!nickname.trim()) return;
+    
     setCheckingNickname(true);
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    const isAvailable = !["admin", "test", "중복"].includes(nickname.trim());
-    setNicknameStatus(isAvailable ? "valid" : "invalid");
-    setCheckingNickname(false);
+    
+    try {
+      const isAvailable = await validateNickname(nickname);
+      
+      // 🟢 API 결과 로그 확인 (Swagger 결과와 비교)
+      console.log("🌐 API 응답 결과 (isAvailable):", isAvailable);
+      
+      const nextStatus = isAvailable ? "valid" : "invalid";
+      console.log("✅ 결정된 닉네임 상태:", nextStatus);
+      
+      setNicknameStatus(nextStatus);
+    } catch (err) {
+      console.error("❌ 중복 확인 중 에러 발생:", err);
+    } finally {
+      setCheckingNickname(false);
+    }
   };
 
-  // 다음 버튼 활성화 조건
+  const selectedFields = tags.filter((tag) => tag in ART_FIELD_LABEL);
+  const hasStyle = tags.some((tag) => tag in ART_STYLE_LABEL);
+  const isFieldMax = selectedFields.length >= MAX_FIELD;
+
   const canNext = useMemo(() => {
-    return nickname.trim().length > 0 && 
-           nicknameStatus === "valid" && 
-           fieldTags.length >= 1 && 
-           styleTag !== null;
-  }, [nickname, nicknameStatus, fieldTags, styleTag]);
+    return (
+      nickname.trim().length > 0 &&
+      nicknameStatus === "valid" &&
+      selectedFields.length >= 1 &&
+      hasStyle
+    );
+  }, [nickname, nicknameStatus, selectedFields, hasStyle]);
 
   return (
     <div className="w-full flex flex-col items-center gap-[48px]">
@@ -66,7 +83,6 @@ export function Step2Profile({
         당신을 소개해주세요.
       </h2>
 
-      {/* 닉네임 섹션 */}
       <div className="w-[666px]">
         <NicknameSection
           value={nickname}
@@ -79,8 +95,7 @@ export function Step2Profile({
 
       <div className="w-full flex flex-col gap-[16px]">
         <div className="sub-title-large-emphasized text-on-surface">내 특기 선택</div>
-        
-        {/* 분야 선택 */}
+
         <div className="w-full flex flex-col gap-[10px]">
           <div className="w-[666px] flex items-end justify-between">
             <div className="label-large-emphasized text-on-surface">분야</div>
@@ -88,36 +103,38 @@ export function Step2Profile({
           </div>
           <div className="w-[674px] -mx-[4px] grid grid-cols-6 gap-[10px]">
             {FIELD_KEYS.map((key) => {
-              const selected = fieldTags.includes(key);
-              const disabled = !selected && fieldTags.length >= MAX_FIELD;
+              const selected = tags.includes(key);
               return (
                 <OnboardingTagChip
                   key={key}
                   label={`#${ART_FIELD_LABEL[key]}`}
                   selected={selected}
-                  disabled={disabled}
-                  onClick={() => !disabled && onChangeFieldTags(key)}
+                  disabled={!selected && isFieldMax}
+                  onClick={() => onToggleTag(key)}
                 />
               );
             })}
           </div>
         </div>
 
-        {/* 스타일 선택 */}
         <div className="w-full flex flex-col gap-[10px]">
           <div className="w-[666px] flex items-end justify-between">
             <div className="label-large-emphasized text-on-surface">스타일</div>
             <div className="label-large text-on-surface-variant-lowest">1개 선택</div>
           </div>
           <div className="w-[674px] -mx-[4px] grid grid-cols-6 gap-[10px]">
-            {STYLE_KEYS.map((key) => (
-              <OnboardingTagChip
-                key={key}
-                label={`#${ART_STYLE_LABEL[key]}`}
-                selected={styleTag === key}
-                onClick={() => onChangeStyleTag(key)}
-              />
-            ))}
+            {STYLE_KEYS.map((key) => {
+              const selected = tags.includes(key);
+              return (
+                <OnboardingTagChip
+                  key={key}
+                  label={`#${ART_STYLE_LABEL[key]}`}
+                  selected={selected}
+                  // 스타일은 해제가 안 되므로 onClick에서 별도 분기 처리는 훅(toggleTag)이 담당
+                  onClick={() => onToggleTag(key)}
+                />
+              );
+            })}
           </div>
         </div>
       </div>

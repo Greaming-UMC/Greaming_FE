@@ -44,7 +44,7 @@ const ProfileView = ( { context, userId, circleId }: ProfileViewProps) => {
             {/* Body */}
             <div className="mx-auto w-full flex gap-[40px] px-[200px]">
 
-                <div className="relative flex flex-col w-fit gap-8 mt-50">
+                <div className="relative flex flex-col w-fit gap-[32px] -mt-[200px]">
                     <ProfileDashboard context={context} userId={userId} circleId={circleId} />
                     {ui.showCalendar && (
                       <ChallengeCalendar
@@ -54,7 +54,7 @@ const ProfileView = ( { context, userId, circleId }: ProfileViewProps) => {
                     )}
                 </div>
 
-                <div className="mt-106 flex-1 min-w-[400px]">
+                <div className="relative top-[64px] flex-1 min-w-[400px]">
                     <ProfileSubmissions context={context} userId={userId} circleId={circleId} />
                 </div>
             </div>

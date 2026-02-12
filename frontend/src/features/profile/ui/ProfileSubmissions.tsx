@@ -6,17 +6,15 @@ import Submissions from "./section/Submissions";
 
 import {
   useCircleSubmissions,
-  useMyProfile,
+  useMySubmissions,
   useUserSubmissions,
 } from "../hooks";
 
 import type { ProfileViewContext } from "../config/profileRoleConfig";
 import type {
   CheckMySubmissionType,
-  SubmissionCounters,
   SubmissionMetadata,
 } from "../../../apis/types/common";
-import type { CheckUserSubmissionsResult } from "../../../apis/types/userSubmissions";
 import mockFeed from "../../../assets/background/mock_feed.jpg";
 
 const USE_MOCK_FEED = false;
@@ -35,27 +33,6 @@ const mockAuthorById = (items: SubmissionMetadata[]) =>
 const withMock = (items: SubmissionMetadata[]) =>
   USE_MOCK_FEED ? (items.length > 0 ? items : MOCK_ITEMS) : items;
 
-const toSubmissionMetadata = (
-  result: CheckUserSubmissionsResult | null | undefined,
-): SubmissionMetadata[] => {
-  if (!result) return [];
-
-  if (Array.isArray(result.submission_list)) {
-    return result.submission_list;
-  }
-
-  return (result.submissions ?? []).map((item) => ({
-    submissionId: item.submissionId,
-    thumbnailUrl: item.thumbnailUrl,
-    counters: {
-      likesCount: item.likesCount,
-      commentCount: item.commentCount,
-      bookmarkCount: item.bookmarkCount,
-    } as SubmissionCounters,
-    isLiked: false,
-  }));
-};
-
 type ProfileSubmissionsProps = {
   context: ProfileViewContext;
   userId?: number;
@@ -71,13 +48,6 @@ const ProfileSubmissions = ({
   const isCircleContext = context.type === "circle";
   const isOtherUserContext = context.type === "user" && context.role === "other";
   const isMyUserContext = context.type === "user" && context.role === "self";
-  const myProfileQuery = useMyProfile({ enabled: isMyUserContext });
-  const myResult = myProfileQuery.data?.result;
-  const myUserId =
-    myResult?.user_information?.userId ??
-    myResult?.userInformation?.userId;
-  const shouldFetchMySubmissions =
-    isMyUserContext && typeof myUserId === "number";
 
   const circleQuery = useCircleSubmissions(
     isCircleContext ? circleId : undefined,
@@ -85,11 +55,11 @@ const ProfileSubmissions = ({
   );
   const userQuery = useUserSubmissions(
     isOtherUserContext ? userId : undefined,
-    { page: 1, size: 12 },
+    { type: "ALL", page: 1, size: 12 },
   );
-  const myQuery = useUserSubmissions(
-    shouldFetchMySubmissions ? myUserId : undefined,
-    { page: 1, size: 12 },
+  const myQuery = useMySubmissions(
+    { type, page: 1, size: 12 },
+    { enabled: isMyUserContext },
   );
 
   if (isCircleContext) {
@@ -131,7 +101,7 @@ const ProfileSubmissions = ({
 
   if (isOtherUserContext) {
     if (typeof userId !== "number") return null;
-    const items = toSubmissionMetadata(userQuery.data?.result);
+    const items = userQuery.data?.result?.submission_list ?? [];
     return (
       <div className="flex flex-col gap-[24px]">
         <div className="main-title-small-emphasized text-on-surface">
@@ -145,16 +115,15 @@ const ProfileSubmissions = ({
     );
   }
 
-  const items = toSubmissionMetadata(myQuery.data?.result);
-  const visibleItems = type === "SAVED" ? [] : items;
+  const items = myQuery.data?.result?.submission_list ?? [];
 
   return (
     <div className="flex flex-col gap-[24px]">
       <TabButtons value={type} onChange={setType} />
       <Submissions
-        items={withMock(visibleItems)}
+        items={withMock(items)}
         showAuthor={type === "SAVED"}
-        authorById={type === "SAVED" ? mockAuthorById(withMock(visibleItems)) : undefined}
+        authorById={type === "SAVED" ? mockAuthorById(withMock(items)) : undefined}
         emptyMessage={
           type === "SAVED"
             ? "저장된 그림이 없어요"

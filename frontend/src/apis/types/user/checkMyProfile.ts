@@ -1,25 +1,37 @@
-import type {
-  ApiResultResponse,
-  ProfileInterceptor,
-  UserInformations,
-} from "../common";
+import { http } from "../../../libs/http/client";
+import { ENDPOINTS } from "../../../libs/http/endpoints/endpoints";
+import type { ApiResultResponse, ProfileInterceptor } from "../common";
 
 /**
  * 내 프로필 정보 (GET /api/users/me)
  * URI: /api/users/me
  */
-export type MyProfileUserInformation = UserInformations & {
-  userId: number;
-};
-
-export type CheckMyProfileResult = Omit<
-  ProfileInterceptor,
-  "user_information" | "userInformation"
-> & {
-  user_information?: MyProfileUserInformation;
-  userInformation?: MyProfileUserInformation;
-};
+export type CheckMyProfileResult = ProfileInterceptor;
 export type CheckMyProfileResponse = ApiResultResponse<CheckMyProfileResult>;
+
+
+export type UserInformation = {
+  nickname: string;
+  profileImgUrl: string;
+  level: string;     
+  introduction: string;      
+  followerCount: number;
+  followingCount: number;
+  specialtyTags: string[];   
+  interestTags: string[];    
+};
 
 // 호환성 유지용 alias
 export type UserProfileResponse = CheckMyProfileResponse;
+
+
+// 공용 API 함수: 헤더/공통 영역에서 내 프로필 요약 조회
+export const getMyProfileHeader = async (): Promise<CheckMyProfileResponse> => {
+  const { data } = await http.get<CheckMyProfileResponse>(
+    ENDPOINTS.USER.GET_MY_PROFILE_HEADER,
+  );
+  return data;
+};
+
+// 기존 호출부 호환성 유지
+export const getUserProfile = getMyProfileHeader;

@@ -1,15 +1,16 @@
-import type {
-  CheckUserSubmissionsRequest,
-  CheckUserSubmissionsResult,
-  UserSubmissionItem,
-  UserSubmissionPageInfo,
-} from "./checkUserSubmissions";
+import type { CheckSubmissionInterceptor, SubmissionMetadata } from '../common';
 
 /**
- * 통일 타입 alias
- * - self/other 모두 /api/submissions/user/{userId} 기반으로 조회
+ * 내 다음 페이지 제출물 조회 (GET /api/users/me/submissions)
+ * URI: /api/users/me/submissions
  */
-export type CheckMySubmissionsRequest = CheckUserSubmissionsRequest;
-export type CheckMySubmissionsResult = CheckUserSubmissionsResult;
-export type MySubmissionItem = UserSubmissionItem;
-export type MySubmissionPageInfo = UserSubmissionPageInfo;
+
+// Request
+export type CheckMySubmissionsRequest = CheckSubmissionInterceptor;
+
+
+// Response
+// ./common.ts 에서 ApiResultSuccessResponse<T> 사용
+export type CheckMySubmissionsResult = {
+    submission_list: SubmissionMetadata[];
+};

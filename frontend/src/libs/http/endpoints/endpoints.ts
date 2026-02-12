@@ -20,6 +20,7 @@ export const ENDPOINTS = {
     PROFILE_SETTINGS: {
         CHECK_NICKNAME: "/api/users/checkNickname",
         GET_PROFILE_SETTINGS: "/api/users/me/profile",
+        UPDATE_PROFILE_INFO: "/api/users/info",
     },
 
     // 도메인: USER
@@ -31,9 +32,8 @@ export const ENDPOINTS = {
 
     // 도메인: USER_SUBMISSIONS (제출물 관련은 여기서 통합 관리)
     USER_SUBMISSIONS : {
-        // TODO: 점진 제거 예정 (userId 기반 단일 API 사용)
         GET_MY_SUBMISSIONS: "/api/users/me/submissions",
-        GET_USER_SUBMISSIONS: (userId: number | string) => `/api/submissions/user/${userId}`,
+        GET_USER_SUBMISSIONS: (userId: number | string) => `/api/users/${userId}/submissions`,
     },
 
     // 도메인: SUBMISSION

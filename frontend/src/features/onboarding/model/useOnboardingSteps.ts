@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import type { ArtField, UsagePurpose, UserInformations } from "../../../apis/types/common";
+import { ART_FIELD_LABEL, ART_STYLE_LABEL, type ArtField, type ArtStyle, type UsagePurpose, type UserInformations } from "../../../apis/types/common";
 
 export type Step = 1 | 2 | 3 | 4;
 
 const DEFAULT: UserInformations = {
   nickname: "",
   profileImgUrl: "",
-  intro: "",
-  usagePurpose: "SKETCHER",
+  introduction: "",
+  journeyLevel: "SKETCHER",
   weeklyGoalScore: 0,
-  specialties: { fields: [], style: "" },
-  interests: { fields: [], style: "" },
+  specialtyTags: [], 
+  interestTags: [],
   followerCount: 0,
   followingCount: 0,
 };
@@ -52,42 +52,47 @@ export function useOnboardingSteps() {
     setDraft((d) => ({ ...d, nickname }));
 
   // 🟢 1. 에러 해결을 위한 setIntro 추가
-  const setIntro = (intro: string) =>
-    setDraft((d) => ({ ...d, intro }));
+  const setIntro = (introduction: string) =>
+    setDraft((d) => ({ ...d, introduction }));
 
-  // 🟢 2. specialties와 interests를 구분해서 토글할 수 있게 수정
-  const toggleTag = (type: 'specialties' | 'interests', tag: ArtField, max = 4) =>
-    setDraft((d) => {
-      const { fields } = d[type];
-      const exists = fields.includes(tag);
-      const newFields = exists 
-        ? fields.filter((t) => t !== tag) 
-        : fields.length < max ? [...fields, tag] : fields;
+  const toggleTag = (type: 'specialtyTags' | 'interestTags', tag: ArtField | ArtStyle, maxFields = 4) =>
+  setDraft((d) => {
+    const tags = d[type] || [];
+    
+    // 🟢 1. 스타일 태그인지 확인 (ART_STYLE_LABEL의 키 중 하나인지)
+    const isStyleTag = tag in ART_STYLE_LABEL;
 
-      return { 
-        ...d, 
-        [type]: { ...d[type], fields: newFields } 
-      };
-    });
+    if (isStyleTag) {
+      if (tags.includes(tag)) return d;
+      const otherTags = tags.filter((t) => !(t in ART_STYLE_LABEL));
+      return { ...d, [type]: [...otherTags, tag] };
+    }
 
-  // 🟢 3. 스타일(style) 설정 함수 (Step 2, 3에서 필요)
-  const setArtStyle = (type: 'specialties' | 'interests', style: string) =>
-    setDraft((d) => ({
-      ...d,
-      [type]: { ...d[type], style }
-    }));
+    // 🟢 2. 분야 태그 로직: 기존 토글 방식 유지하되 최대 개수 제한
+    const exists = tags.includes(tag);
+    const fieldCount = tags.filter((t) => t in ART_FIELD_LABEL).length;
 
-  const setPurpose = (usagePurpose: UsagePurpose) =>
-    setDraft((d) => ({ ...d, usagePurpose }));
+    if (!exists && fieldCount >= maxFields) {
+      return d; // 최대 개수 도달 시 변화 없음
+    }
+
+    const newTags = exists 
+      ? tags.filter((t) => t !== tag) 
+      : [...tags, tag];
+
+    return { ...d, [type]: newTags };
+  });
+
+  const setPurpose = (journeyLevel: UsagePurpose) => setDraft((d) => ({ ...d, journeyLevel }));
 
   const setWeeklyGoal = (weeklyGoalScore: number) =>
     setDraft((d) => ({ ...d, weeklyGoalScore }));
 
   const canNext = useMemo(() => {
     if (step === 1) return true;
-    if (step === 2) return draft.nickname.trim().length >= 2 && draft.specialties.fields.length >= 1 && !!draft.specialties.style;
-    if (step === 3) return draft.interests.fields.length >= 1 && !!draft.interests.style;
-    if (step === 4) return !!draft.usagePurpose && draft.weeklyGoalScore > 0;
+    if (step === 2) return draft.nickname.trim().length >= 2 && draft.specialtyTags.length >= 1;
+    if (step === 3) return draft.interestTags.length >= 1;
+    if (step === 4) return !!draft.journeyLevel && (draft.weeklyGoalScore ?? 0) > 0;
     return true;
   }, [step, draft]);
 
@@ -101,8 +106,7 @@ export function useOnboardingSteps() {
     canNext,
     setNickname,
     setIntro,      
-    toggleTag,
-    setArtStyle,   
+    toggleTag,   
     setPurpose,
     setWeeklyGoal,
   };

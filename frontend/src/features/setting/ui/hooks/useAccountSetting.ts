@@ -7,22 +7,24 @@ export const useAccountSetting = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
-  // 1. 계정 설정 조회 (GET)
-  const { data: accountData, isLoading } = useQuery({
-    queryKey: ['accountSettings'], // 또는 ACCOUNT_SETTING_KEYS.all
+  // 🟢 조회를 잠시 비활성화하여 무한 로딩을 방지합니다.
+  const { data: accountData, isLoading: isQueryLoading } = useQuery({
+    queryKey: ['accountSettings'],
     queryFn: getAccountSettings,
-    select: (res) => res.result, // CheckSettingsResult 반환
+    select: (res) => res.result,
+    enabled: false, // 👈 백엔드 준비 전까지 자동 호출 방지
   });
 
-  // 2. 계정 상태/공개 범위 수정 (PUT)
-  const { mutate: updateStatus, isPending: isUpdating } = useMutation({
-    mutationFn: (params: UpdateAccountRequest) => updateAccountStatus(params),
+  // 계정 삭제 Mutation
+  const { mutate: removeAccount, isPending: isDeleting } = useMutation({
+    mutationFn: (params: DeleteAccountRequest) => deleteAccount(params),
     onSuccess: (res) => {
       if (res.isSuccess) {
-        showToast("계정 설정이 변경되었습니다.", "success");
-        queryClient.invalidateQueries({ queryKey: ['accountSettings'] });
+        showToast("계정이 성공적으로 삭제되었습니다.", "success");
+        // 삭제 성공 후 메인이나 로그인 페이지로 이동
+        window.location.href = "/";
       } else {
-        showToast(res.message || "변경에 실패했습니다.", "error");
+        showToast(res.message || "삭제 실패", "error");
       }
     },
     onError: () => {
@@ -30,25 +32,11 @@ export const useAccountSetting = () => {
     }
   });
 
-  // 3. 계정 삭제 (DELETE)
-  const { mutate: removeAccount, isPending: isDeleting } = useMutation({
-    mutationFn: (params: DeleteAccountRequest) => deleteAccount(params),
-    onSuccess: (res) => {
-      if (res.isSuccess) {
-        showToast("계정이 삭제되었습니다. 이용해 주셔서 감사합니다.", "success");
-        // 삭제 후 로그인 페이지로 이동 등의 로직 추가 가능
-      } else {
-        showToast(res.message || "삭제 실패", "error");
-      }
-    }
-  });
-
   return {
-    accountData,
-    updateStatus,
+    accountData: accountData || { email: ".", loginType: "GOOGLE", visibility: "PUBLIC" }, // 기본값 제공
+    updateStatus: () => showToast("현재 준비 중인 기능입니다.", "error"), 
     removeAccount,
-    isLoading,
-    isUpdating,
+    isLoading: false, // 👈 강제로 로딩 상태 해제
     isDeleting
   };
 };
