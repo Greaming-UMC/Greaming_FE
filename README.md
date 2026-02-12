@@ -1,77 +1,87 @@
-# Git 협업 규칙
+# Greaming FE
 
-## 1. 커밋 유형 (Commit Type)
+![Greaming Logo](./frontend/src/assets/logo/primary-wordmark.svg)
 
-커밋은 다음과 같이 분류하여 메시지를 작성한다.
+그리밍 프론트엔드 레포지토리입니다.  
+사용자가 그림을 업로드하고, 데일리/위클리 챌린지에 참여하고, 써클 기반으로 서로의 작업을 탐색/소통할 수 있는 창작 커뮤니티 경험을 제공합니다.
 
-- **feat** : 기능 개발
-- **fix** : 버그 수정
-- **style** : UI 스타일 수정 (CSS, Tailwind class, 디자인 토큰 값 변경 등 **기능 변경 없음**)
-- **docs** : 문서 작업 (주로 `main`에서 `README.md` 작성)
-- **refactor** : 리팩토링 (**기능 변경 없이** 구조/설계 개선, 함수 추출, 클래스 구조 변경 등)
-- **chore** : 설정 변경, 파일 이동/이름 변경, 주석 추가 등 빌드/기능에 영향 없는 작업
+## 서비스 개요
+
+Greaming은 "혼자 그리기 어렵지 않게, 함께 꾸준히 그리도록" 설계한 그림 커뮤니티 서비스입니다.
+
+- 챌린지 중심 홈 피드: `HOME` / `DAILY` / `WEEKLY`
+- 업로드 플로우: 일반 업로드 + 챌린지 업로드 + 써클 업로드
+- 프로필/관계: 내 프로필, 유저 프로필, 팔로우/팔로잉, 써클 탐색
+- 온보딩/로그인: 소셜 로그인 + 초기 설정
+
+## 왜 이런 구조와 기술을 썼는가
+
+| 선택 | 이유 | 기대 효과 |
+| --- | --- | --- |
+| `React 19` + `TypeScript` | 기능 단위 UI를 빠르게 개발하면서 타입 안정성을 확보 | 화면 확장 시 회귀 버그 감소 |
+| `Vite` | 빠른 HMR/빌드 속도로 개발 피드백 루프 단축 | 협업 시 개발 생산성 향상 |
+| `react-router-dom` | 레이아웃 단위 라우트 분리(`main/default/logo`)와 인증 가드 구성 용이 | 페이지 구조 확장 시 라우팅 일관성 유지 |
+| `@tanstack/react-query` | 서버 상태 캐싱/무한 스크롤/재요청 제어 | API 호출 중복 감소, UX 안정화 |
+| `axios` + 인터셉터 | 공통 인증 헤더, 401/403 처리, 토큰 재발급 흐름 중앙화 | 인증 관련 중복 로직 제거 |
+| `zustand` | 인증 상태처럼 전역이지만 가벼운 상태를 간단하게 관리 | 보일러플레이트 감소 |
+| `Tailwind CSS v4` + `@greaming/gds` | 디자인 토큰 기반 UI 일관성 확보 | 팀원 간 스타일 편차 감소 |
+
+## 아키텍처 인포그래픽
+
+### 1) 프론트엔드 계층 구조
+
+```mermaid
+flowchart LR
+    U[User Browser] --> R[Router Layer<br/>react-router-dom]
+    R --> P[Pages]
+    P --> F[Feature Modules<br/>home, upload, profile, social, onboarding]
+    F --> C[Common UI<br/>components/common + @greaming/gds]
+    F --> Q[Server State<br/>@tanstack/react-query]
+    F --> Z[Client State<br/>zustand]
+    Q --> H[HTTP Client<br/>axios + interceptors]
+    Z --> A[Auth Store / Token Store]
+    H --> A
+    H --> B[(Backend API)]
+```
+
+### 2) 업로드 데이터 플로우
+
+```mermaid
+sequenceDiagram
+    participant User as User
+    participant FE as Frontend
+    participant API as Backend API
+    participant S3 as Storage
+
+    User->>FE: 이미지 선택 + 업로드 요청
+    FE->>API: Presigned URL 요청
+    API-->>FE: URL + object key 반환
+    FE->>S3: 이미지 PUT 업로드
+    FE->>API: submission 메타데이터 생성 요청
+    API-->>FE: 업로드 완료 응답
+```
+
+## 프로젝트 구조
+
+```bash
+frontend/src
+├─ pages/               # 라우트 엔트리
+├─ features/            # 도메인 기능 모듈
+├─ components/common/   # 공통 UI 컴포넌트
+├─ apis/                # API 타입/도메인 인터페이스
+├─ libs/http/           # axios client, interceptor, endpoint
+├─ libs/security/       # auth/token store, refresh 처리
+└─ assets/              # 아이콘/배경/로고
+```
+
+## 실행 방법
+
+```bash
+cd frontend
+pnpm install
+pnpm dev
+```
 
 ---
 
-## 2. 커밋 메시지 작성 규칙
-
-커밋 메시지는 다음과 같은 형태로 작성한다. (띄어쓰기 및 형식 준수)
-
-### 규칙
-- 커밋 유형은 **반드시 영문 소문자**로 작성한다.
-- 커밋 메시지는 **기본적으로 한글**로 작성하되, 라이브러리명/기술 용어/에러 메시지는 **영어 사용을 허용**한다.
-- 필요 시 커밋 메시지 가장 앞에 **이슈 번호를 추가**한다.
-- 커밋은 “논리적으로 독립적인 작업” 단위로 작성한다.
-  - 독립적으로 **빌드 및 테스트가 가능**한 단위
-  - 롤백 시 **최소한의 영향을 주는** 단위
-
-### 예시
-- `[#12] feat : 로그인 페이지 UI 구현`
-- `[#8] fix : 회원가입 시 상태 코드 오류 수정`
-- `[#3] chore : ESLint/Prettier 설정 추가`
-
----
-
-## 3. 브랜치 전략 (Branch Strategy)
-
-### main : 배포용 브랜치
-- 실제 서비스에 배포되는 코드만 포함
-- 직접 개발하지 않고 `dev` 또는 `fix` 등의 브랜치를 이용하여 병합하여 사용
-
-### dev : 개발 통합 브랜치
-- `main` 브랜치에서 분기
-- 여러 기능이 개발되고 통합되는 브랜치
-- `feature` 브랜치에서 작업한 기능들을 이 곳으로 병합
-- 충분히 테스트한 후 `main`으로 배포
-
-### feature/#이슈번호-기능명 : 신규 기능 개발 브랜치
-- `dev` 브랜치에서 분기되어 기능 단위로 개발
-- 개발 완료 후 `dev`로 병합
-- 브랜치명은 `kebab-case` 사용  
-  - 예) `feature/#1-get-user`
-
-### fix/#이슈번호-기능명 : 버그 수정용 브랜치
-- `dev` 또는 `main`에서 분기하여 버그 수정
-- `dev`에서 분기 : 개발 중 발견된 버그 수정
-- 기능 구현에 대한 버그 수정 시, 반드시 해당 기능 브랜치가 `dev`와 병합되어 있는지 확인 후 수정 진행
-- 수정 완료 후 `dev`로 병합
-
-예시) 회원가입 시 발생하는 오류의 상태 코드를 변경하고 싶음
-1) `feature/#1-signup` 브랜치가 `dev`와 병합되어 있는지 확인  
-2) `dev`에서 `fix/#2-status-code-error` 생성하여 버그 수정  
-3) 이후 `dev`와 병합
-
-### hotfix/#이슈번호-기능명 : 긴급 수정 브랜치
-- 운영 환경(`main`)에서 발생한 긴급 버그 수정
-- `main`에서 분기하여 수정 후 **`main`과 `dev`에 모두 병합**
-
----
-
-## 4. 브랜치 규칙 (Branching Rule)
-
-- 기능 개발은 반드시 `feature` 브랜치에서 개발한다.
-- 개발 완료 시 `dev` 브랜치로 합병한다.
-- 브랜치명은 `kebab-case`를 사용한다.  
-  - 예) `feature/#1-get-user`
-- 모든 QA 및 버그 수정 완료 시 `main`으로 병합한다.
-- 긴급 수정은 `hotfix` 브랜치에서 진행 후 `main`과 `dev`에 병합한다.
+협업 규칙은 하위 문서에서 확인: [frontend/README.md](./frontend/README.md)
