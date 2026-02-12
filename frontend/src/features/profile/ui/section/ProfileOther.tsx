@@ -6,6 +6,19 @@ import SocialButton from "../../components/SocialButton";
 import { useProfileHistory, useUserProfile } from "../../hooks";
 import type { CheckUserProfileResult } from "../../../../apis/types/user";
 
+const JOURNEY_LEVEL_ICONS = ["SKETCHER", "PAINTER", "ARTIST", "MASTER"] as const;
+type JourneyLevelIcon = (typeof JOURNEY_LEVEL_ICONS)[number];
+
+const resolveJourneyIcon = (value: unknown): IconName => {
+  if (typeof value === "string") {
+    const normalized = value.trim().toUpperCase();
+    if ((JOURNEY_LEVEL_ICONS as readonly string[]).includes(normalized)) {
+      return normalized as JourneyLevelIcon;
+    }
+  }
+  return "SKETCHER";
+};
+
 const MOCK_PROFILE_RESULT: CheckUserProfileResult = {
   user_information: {
     nickname: "닉네임",
@@ -39,7 +52,10 @@ const ProfileOther = ({ userId }: ProfileOtherProps) => {
     fallbackInfo;
   const specialtyTags = info.specialtyTags ?? [];
   const interestTags = info.interestTags ?? [];
-  const usageIcon = info.journeyLevel as IconName;
+  const usageLevel =
+    info.journeyLevel ??
+    (info as { level?: string }).level;
+  const usageIcon = resolveJourneyIcon(usageLevel);
   const targetId = userId ?? 0;
   const followState = info.followState;
   const uploadCountText = history.isLoading ? "..." : history.uploadCount.toLocaleString();

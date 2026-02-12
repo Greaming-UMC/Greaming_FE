@@ -7,6 +7,19 @@ import { useMyProfile, useProfileHistory } from "../../hooks";
 
 import type { CheckMyProfileResult } from "../../../../apis/types/user";
 
+const JOURNEY_LEVEL_ICONS = ["SKETCHER", "PAINTER", "ARTIST", "MASTER"] as const;
+type JourneyLevelIcon = (typeof JOURNEY_LEVEL_ICONS)[number];
+
+const resolveJourneyIcon = (value: unknown): IconName => {
+  if (typeof value === "string") {
+    const normalized = value.trim().toUpperCase();
+    if ((JOURNEY_LEVEL_ICONS as readonly string[]).includes(normalized)) {
+      return normalized as JourneyLevelIcon;
+    }
+  }
+  return "SKETCHER";
+};
+
 const MOCK_PROFILE_RESULT: CheckMyProfileResult = {
   user_information: {
     userId: 0,
@@ -37,7 +50,7 @@ const ProfileSelf = () => {
     fallbackInfo;
   const specialtyTags = info.specialtyTags ?? [];
   const interestTags = info.interestTags ?? [];
-  const usageIcon = info.journeyLevel as IconName;
+  const usageIcon = resolveJourneyIcon(info.journeyLevel ?? info.level);
   const uploadCountText = history.isLoading ? "..." : history.uploadCount.toLocaleString();
   const consecutiveDaysText = history.isLoading
     ? "..."
