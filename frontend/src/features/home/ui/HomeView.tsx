@@ -39,7 +39,7 @@ const HomeView = () => {
 
   return (
     <>
-      <section className="-mt-14 w-full h-200 bg-home">
+      <section className="-mt-14 w-full min-h-200 bg-home">
         <PageContainer>
           <div className="pt-40 pb-10">
             <HeroSection view={view} onJoin={handleJoin} dateTimeIso={dateTimeIso} />

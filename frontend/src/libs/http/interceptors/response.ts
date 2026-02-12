@@ -82,17 +82,18 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
             const authHeader =
               res.headers?.authorization ?? res.headers?.Authorization;
 
-            if (typeof authHeader !== "string") {
-              throw new Error("authorization header missing");
+            if (typeof authHeader === "string") {
+              const match = authHeader.match(/^Bearer\s+(.+)$/i);
+              const nextToken = (match?.[1] ?? authHeader).trim();
+              if (nextToken) {
+                setAccessToken(nextToken);
+              } else {
+                clearAccessToken();
+              }
+            } else {
+              // 쿠키 기반 인증 환경에서는 Authorization 헤더 없이 재발급될 수 있습니다.
+              clearAccessToken();
             }
-
-            const match = authHeader.match(/^Bearer\s+(.+)$/i);
-            const nextToken = (match?.[1] ?? authHeader).trim();
-            if (!nextToken) {
-              throw new Error("access token missing");
-            }
-
-            setAccessToken(nextToken);
             useAuthStore.getState().setAuthenticated();
           } catch {
             clearAccessToken();
@@ -109,19 +110,23 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
         clearAccessToken();
         useAuthStore.getState().setUnauthenticated();
         const isOnLoginPage = isBrowser && window.location.pathname === "/login";
-        if (!isOnLoginPage) {
+        if (
+          !isOnLoginPage &&
+          !isMyProfileRequest(originalRequest?.url) &&
+          !isAuthTestRequest(originalRequest?.url)
+        ) {
           handleSessionExpired();
         }
         return Promise.reject(refreshError);
       }
 
-      const token = getAccessToken();
-      if (!token) {
-        return Promise.reject(error);
-      }
-
       originalRequest.headers = originalRequest.headers ?? {};
-      originalRequest.headers.Authorization = `Bearer ${token}`;
+      const token = getAccessToken();
+      if (token) {
+        originalRequest.headers.Authorization = `Bearer ${token}`;
+      } else if ("Authorization" in originalRequest.headers) {
+        delete originalRequest.headers.Authorization;
+      }
 
       return http(originalRequest);
     }

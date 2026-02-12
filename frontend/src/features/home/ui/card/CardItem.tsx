@@ -35,7 +35,7 @@ const CardItem = ({ card, context = "grid" }: Props) => {
         hoverEffect
         clickable
         className="h-full w-full flex flex-col rounded-2xl overflow-hidden"
-        onClick={() => navigate(`/submissions/${card.submissionId}`)}
+        onClick={() => navigate(`/detail/${card.submissionId}`)}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >

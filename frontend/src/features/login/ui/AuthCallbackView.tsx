@@ -62,7 +62,7 @@ const AuthCallbackView = () => {
 
       if (TRUE_SET.has(normalized)) {
         if (!canceled) {
-          navigate("/onboarding/step1", { replace: true });
+          navigate("/onboarding/step/1", { replace: true });
         }
         return;
       }
@@ -86,7 +86,7 @@ const AuthCallbackView = () => {
 
         if (status === 404) {
           if (!canceled) {
-            navigate("/onboarding/step1", { replace: true });
+            navigate("/onboarding/step/1", { replace: true });
           }
           return;
         }

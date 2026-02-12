@@ -18,25 +18,12 @@
 // setupInterceptors(http);
 
 
-// src/libs/http/client.ts (예시)
 import axios from "axios";
-import { getAccessToken } from "../security/tokenStore";
+import { setupInterceptors } from "./interceptors";
 
 export const http = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true, // 서버가 refresh 쿠키 쓰면 필요할 수 있음
+  withCredentials: true,
 });
 
-http.interceptors.request.use((config) => {
-  const runtimeToken = getAccessToken(); // 로컬스토리지/메모리 토큰
-  const devToken = import.meta.env.VITE_DEV_ACCESS_TOKEN; // env 토큰
-
-  const token = runtimeToken ?? devToken;
-
-  if (token) {
-    config.headers = config.headers ?? {};
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  return config;
-});
+setupInterceptors(http);
