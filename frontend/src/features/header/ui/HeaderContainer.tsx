@@ -1,20 +1,24 @@
 import { useEffect } from "react";
 import axios from "axios";
 import { useUserProfile } from "../../../apis/hooks/useUser";
+import { useLogout } from "../../../apis/hooks/useAuth";
 import type { CheckMyProfileResult } from "../../../apis/types/user";
 import Header from "./Header";
 import type { HeaderVariant } from "../config";
 import { useAuthStore } from "../../../libs/security/authStore";
 import type { UserInfo } from "../config";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderContainerProps {
   variant: HeaderVariant;
 }
 
 const HeaderContainer = ({ variant }: HeaderContainerProps) => {
+  const navigate = useNavigate();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
   const setUnauthenticated = useAuthStore((state) => state.setUnauthenticated);
+  const { mutate: triggerLogout } = useLogout();
 
   const { data, isSuccess, isError, error } = useUserProfile({
     enabled: variant !== "logo" && isLoggedIn,
@@ -29,7 +33,7 @@ const HeaderContainer = ({ variant }: HeaderContainerProps) => {
     ? {
         nickname: profile.nickname,
         profileImgUrl: profile.profileImgUrl,
-        level: profile.level,
+        level: profile.usagePurpose,
       }
     : undefined;
 
@@ -47,8 +51,11 @@ const HeaderContainer = ({ variant }: HeaderContainerProps) => {
   }, [isError, error, setUnauthenticated]);
 
   const handleLogout = () => {
-    console.log('logout');
-    // TODO : 실제 로그아웃 로직 추가 필요 (토큰 삭제 등.....)
+    triggerLogout(undefined, {
+      onSettled: () => {
+        navigate("/login", { replace: true });
+      },
+    });
   };
 
   return (

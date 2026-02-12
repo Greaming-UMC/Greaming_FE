@@ -12,10 +12,26 @@ let accessToken: string | null = getDevAccessToken();
 
 export const setAccessToken = (token: string | null) => {
   accessToken = token;
+  if (typeof window !== "undefined") {
+    if (token) {
+      localStorage.setItem("accessToken", token);
+    } else {
+      localStorage.removeItem("accessToken");
+    }
+  }
 };
 
-export const getAccessToken = () => accessToken;
+// export const getAccessToken = () => accessToken;
+
+export function getAccessToken() {
+  const stored =
+    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  return stored ?? accessToken ?? null;
+}
 
 export const clearAccessToken = () => {
   accessToken = null;
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("accessToken");
+  }
 };

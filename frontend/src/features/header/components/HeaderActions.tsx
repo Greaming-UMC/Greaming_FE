@@ -1,9 +1,10 @@
 import type { UserInfo } from "../config";
 import { Button } from "../../../components/common/input";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../../libs/security/authStore";
 import ProfileDropdown from "./dropdowns/ProfileDropdown";
 import NotificationDropdown from "./dropdowns/NotificationDropdown";
+import UploadDropdown from "./dropdowns/UploadDropdown";
 
 interface HeaderActionsProps {
   userInfo?: UserInfo;
@@ -11,8 +12,12 @@ interface HeaderActionsProps {
 }
 
 export const HeaderActions = ({ userInfo, onLogout }: HeaderActionsProps) => {
+  const location = useLocation();
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const isLoggedIn = isAuthenticated || !!userInfo?.nickname;
+  const circleMatch = location.pathname.match(/^\/profile\/circle\/(\d+)(?:\/|$)/);
+  const circleId = circleMatch?.[1];
+  const isCircleMember = Boolean(circleId);
 
   if (!isLoggedIn) {
     return (
@@ -32,20 +37,28 @@ export const HeaderActions = ({ userInfo, onLogout }: HeaderActionsProps) => {
   }
 
   return (
-    <div className="ml-auto flex items-center gap-3 relative">
+    <div className="ml-auto flex items-center h-full gap-3 relative">
       <ProfileDropdown userInfo={userInfo} onLogout={onLogout} />
 
       <NotificationDropdown />
 
-      <Button
-        variant="surface"
-        size="sm"
-        shape="round"
-        className="font-medium text-on-surface shadow-none ml-1"
-        onClick={() => console.log("그림 업로드")}
-      >
-        그림 업로드
-      </Button>
+      <UploadDropdown
+        isCircleMember={isCircleMember}
+        circleTo={circleId ? `/upload/circle/${circleId}` : "/upload/circle"}
+        dailyTo="/upload/daily"
+        weeklyTo="/upload/weekly"
+        generalTo="/upload/free"
+        trigger={
+          <Button
+            variant="surface"
+            size="sm"
+            shape="round"
+            className="font-medium text-on-surface shadow-none ml-1"
+          >
+            그림 업로드
+          </Button>
+        }
+      />
     </div>
   );
 };
