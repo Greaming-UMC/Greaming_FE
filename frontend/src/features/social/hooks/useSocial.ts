@@ -5,151 +5,108 @@ import {
   followUser, 
   unfollowUser, 
   getCircleMembers, 
-  kickCircleMember,
-  getCircles, // 써클 검색용 추가
-  searchUsers,
-  createCircle
-} from '../apis/socialApi';
-import type { 
-  GetSocialFollowersResponse, 
-  GetSocialFollowingsResponse,
-  GetCircleMembersResponse,
-  GetCirclesResponse,
-  ApiErrorResponse, 
-  CreateCircleRequest
-} from '../types';
+  kickCircleMember, 
+  getCircles, 
+  createCircle, 
+  searchUsersForInvite 
+} from '../api/api';
+import { useInfiniteScroll } from './useInfiniteScroll';
 
-// 1. 🟢 팔로잉 목록 무한 스크롤
-export const useInfiniteFollowings = (userId: number, size: number = 10) => {
-  return useInfiniteQuery<GetSocialFollowingsResponse, ApiErrorResponse>({
-    queryKey: ['followings', userId],
-    queryFn: ({ pageParam = null }) => 
-      getFollowings(userId, { cursorId: pageParam as number | null, size }),
-    initialPageParam: null,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage.data?.hasNext || lastPage.data.nextCursor === null) return undefined;
-      return Number(lastPage.data.nextCursor);
-    },
-  });
-};
+// 원본 도메인 타입 임포트
+import type { newCreatCircleRequest } from '../../../apis/types/circle';
 
-// 2. 🟢 팔로워 목록 무한 스크롤
-export const useInfiniteFollowers = (userId: number, size: number = 10) => {
-  return useInfiniteQuery<GetSocialFollowersResponse, ApiErrorResponse>({
-    queryKey: ['followers', userId],
-    queryFn: ({ pageParam = null }) => 
-      getFollowers(userId, { cursorId: pageParam as number | null, size }),
-    initialPageParam: null,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage.data?.hasNext || lastPage.data.nextCursor === null) return undefined;
-      return Number(lastPage.data.nextCursor);
-    },
-  });
-};
+/**
+ * 1. 팔로우 관련 훅 (Family A - data 기반)
+ */
+export const useInfiniteFollowings = (userId: number, size: number = 10) => 
+  useInfiniteScroll(['followings', userId], (params) => getFollowings(userId, params), size);
 
-// 3. 🟢 팔로우/언팔로우 액션 훅 (무효화 범위 확장)
+export const useInfiniteFollowers = (userId: number, size: number = 10) => 
+  useInfiniteScroll(['followers', userId], (params) => getFollowers(userId, params), size);
+
 export const useFollowAction = () => {
   const queryClient = useQueryClient();
 
-  const followMutation = useMutation({
-    mutationFn: followUser,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['followings'] });
-      queryClient.invalidateQueries({ queryKey: ['followers'] });
-      queryClient.invalidateQueries({ queryKey: ['circleMembers'] }); // 👈 써클 멤버 목록 내 팔로우 상태 동기화
-    },
-  });
+  const invalidateSocialData = () => {
+    queryClient.invalidateQueries({ queryKey: ['followings'] });
+    queryClient.invalidateQueries({ queryKey: ['followers'] });
+    queryClient.invalidateQueries({ queryKey: ['circleMembers'] });
+    queryClient.invalidateQueries({ queryKey: ['searchUsers'] });
+  };
 
-  const unfollowMutation = useMutation({
-    mutationFn: unfollowUser,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['followings'] });
-      queryClient.invalidateQueries({ queryKey: ['followers'] });
-      queryClient.invalidateQueries({ queryKey: ['circleMembers'] });
-    },
-  });
+  const followMutation = useMutation({ mutationFn: followUser, onSuccess: invalidateSocialData });
+  const unfollowMutation = useMutation({ mutationFn: unfollowUser, onSuccess: invalidateSocialData });
 
   return { followMutation, unfollowMutation };
 };
 
-// 4. 🟢 써클 멤버 목록 무한 스크롤 (useQuery -> useInfiniteQuery 수정)
-export const useInfiniteCircleMembers = (circleId: number, size: number = 10) => {
-  return useInfiniteQuery<GetCircleMembersResponse, ApiErrorResponse>({
+/**
+ * 2. 써클 관련 훅 (Family B - result 기반)
+ */
+
+// 🟢 써클 목록 조회 및 검색 (페이지 번호 기반 무한 스크롤)
+export const useInfiniteCircles = (keyword: string = '', size: number = 10) => {
+  return useInfiniteQuery({
+    queryKey: ['circles', keyword],
+    queryFn: ({ pageParam = 1 }) => getCircles({ keyword, page: pageParam as number, size }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const result = lastPage.result;
+      if (!result) return undefined;
+
+      const nextPage = allPages.length + 1;
+      // 백엔드 명세의 totalPage와 현재 페이지 수 비교
+      return nextPage <= result.totalPage ? nextPage : undefined;
+    },
+  });
+};
+
+// ⭕ 써클 멤버 목록 조회 (단발성 조회)
+export const useCircleMembers = (circleId: number) => {
+  return useInfiniteQuery({
     queryKey: ['circleMembers', circleId],
-    queryFn: ({ pageParam = null }) => 
-      getCircleMembers(circleId, { cursorId: pageParam as number | null, size }),
-    initialPageParam: null,
-    getNextPageParam: (lastPage) => {
-      // Family A 구조: data.hasNext가 true일 때만 nextCursor 반환
-      if (!lastPage.data?.hasNext || lastPage.data.nextCursor === null) return undefined;
-      return Number(lastPage.data.nextCursor);
-    },
+    queryFn: () => getCircleMembers(circleId),
     enabled: !!circleId,
+    initialPageParam: null,
+    getNextPageParam: () => undefined, 
   });
 };
 
-// 5. 🟢 써클 검색/조회 무한 스크롤
-export const useInfiniteCircles = (searchTerm: string, size: number = 10) => {
-  return useInfiniteQuery<GetCirclesResponse, ApiErrorResponse>({
-    queryKey: ['circles', searchTerm],
-    queryFn: ({ pageParam = null }) => 
-      getCircles({ searchTerm, cursorId: pageParam as number | null, size }),
-    initialPageParam: null,
-    getNextPageParam: (lastPage) => {
-      // API 명세상 Circle 응답도 동일한 페이징 구조를 가진다고 가정
-      if (!lastPage.data || lastPage.data.length < size) return undefined; 
-      // 만약 써클 목록도 커서가 있다면 위 팔로잉 로직과 동일하게 작성
-      return undefined; // 우선 단발성 조회로 설정 (필요시 커서 로직 추가)
+// 🟢 써클 생성 훅
+export const useCreateCircle = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: newCreatCircleRequest) => createCircle(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['circles'] });
     },
   });
 };
 
-// 6. 🟢 써클 멤버 강퇴 훅
+// ❌ 써클 멤버 강퇴 훅
 export const useKickMember = (circleId: number) => {
   const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: (targetUserId: number) => kickCircleMember(circleId, targetUserId),
+    mutationFn: (memberId: number) => kickCircleMember(circleId, memberId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['circleMembers', circleId] });
     },
   });
 };
 
-// 7. 초대하기 유저 검색 무한 스크롤 훅
-export const useSearchUsers = (nickname: string, size: number = 10) => {
-  return useInfiniteQuery<GetSocialFollowersResponse, ApiErrorResponse>({
-    queryKey: ['searchUsers', nickname],
-    queryFn: async ({ pageParam }) => {
-      const response = await searchUsers({ 
-        nickname, 
-        cursorId: pageParam as number | null, 
-        size 
-      });
-      // searchUsers가 null을 반환할 수 있다면 기본 객체 구조를 반환하여 에러 방지
-      return response ?? { isSuccess: true, code: "200", message: "", data: { data: [], hasNext: false, nextCursor: null } };
-    },
+/**
+ * 3. 검색 관련 훅
+ */
+
+// 🔎 초대 유저 검색 (ExploreUsersRequest 객체 구조 반영)
+export const useSearchUsers = (circleId: number, keyword: string) => {
+  return useInfiniteQuery({
+    queryKey: ['searchUsers', circleId, keyword],
+    // keyword를 객체로 감싸서 전달하여 타입 에러 해결
+    queryFn: () => searchUsersForInvite(circleId, { keyword }), 
+    enabled: keyword.trim().length > 0,
     initialPageParam: null,
-    getNextPageParam: (lastPage) => {
-      // API 응답의 data 필드가 CheckFollowersData 구조인지 확인 필요
-      if (!lastPage.data?.hasNext || lastPage.data.nextCursor === null) return undefined;
-      return Number(lastPage.data.nextCursor);
-    },
-    enabled: nickname.trim().length > 0, // 공백 제외 한 글자라도 있을 때만
-    // 💡 검색어가 바뀔 때 이전 데이터를 유지하지 않고 새로고침
+    getNextPageParam: () => undefined,
     gcTime: 0, 
-  });
-};
-
-// 8. 🟢 써클 생성 훅
-export const useCreateCircle = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: CreateCircleRequest) => createCircle(data),
-    onSuccess: () => {
-      // 써클 목록 무한 스크롤 데이터 무효화 (목록 새로고침)
-      queryClient.invalidateQueries({ queryKey: ['circles'] });
-    },
   });
 };

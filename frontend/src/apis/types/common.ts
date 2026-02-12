@@ -15,7 +15,7 @@ export interface ApiResultResponse<T> extends BaseLogicResponse {
 export interface ApiDataSuccessResponse<T> extends BaseLogicResponse {
   data: T | null;
 };
-
+  
 // [Family B] status, message 가 있음 (code는 있을 수도 없을 수도)
 interface BaseStatusResponse {
   status: number;
@@ -67,22 +67,60 @@ export type ArtStyle =
   | 'COLOR' | 'BLACK_AND_WHITE' | 'CUTE'
   | 'HORROR' | 'DETAILED' | 'SIMPLE';
 
+// 예술 분야 한글 매핑
+export const ART_FIELD_LABEL: Record<ArtField, string> = {
+  ILLUSTRATION: '일러스트',
+  CHARACTER: '캐릭터',
+  LANDSCAPE: '풍경',
+  PORTRAIT: '인물화',
+  DAILY: '일상',
+  INSTATOON: '인스타툰',
+  FANTASY: '판타지',
+  ABSTRACT: '추상화',
+  ANIMATION: '애니메이션',
+  WATERCOLOR: '수채화',
+  ARCHITECTURE: '건축',
+  PENCIL: '연필',
+  ANIMAL: '동물',
+  TRADITIONAL: '동양화',
+  FAN_ART: '팬아트',
+  FLOWER: '꽃',
+  FOOD: '음식',
+  CROQUIS: '크로키',
+};
+
+// 예술 스타일 한글 매핑
+export const ART_STYLE_LABEL: Record<ArtStyle, string> = {
+  COLOR: '컬러',
+  BLACK_AND_WHITE: '흑백',
+  CUTE: '귀여운',
+  HORROR: '공포',
+  DETAILED: '디테일',
+  SIMPLE: '심플',
+};
+
 // ====================================================
 // Account & Profile
 // ====================================================
 // visibility 타입
 export type VisibilityType = 'PUBLIC' | 'PRIVATE' | 'PROTECTED';
 
-// userInfo
 export type UserInformations = {
   nickname: string;
   profileImgUrl: string;
-  level: UsagePurpose;
-  introduction: string;
+  intro: string;            
+  usagePurpose: UsagePurpose; 
+  weeklyGoalScore: number;    // 명세서에 있는 주간 목표 점수 추가
+  specialties: {
+    fields: ArtField[]; // 여러 개 선택 가능한 분야
+    style: string;      // 하나만 선택하는 스타일
+  };
+  interests: {
+    fields: ArtField[]; 
+    style: string;      
+  };
   followerCount: number;
   followingCount: number;
-  specialtyTags: string[];
-  interestTags: string[];
   followState?: FollowState;
   visibility?: VisibilityType;
 };
