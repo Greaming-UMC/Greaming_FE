@@ -91,7 +91,7 @@ const ChallengeCarousel = ({ variant, cards }: Props) => {
           <Icon name="arrow_right_circle" size={32} />
         </button>
 
-        <div className="mx-auto overflow-hidden py-2" style={{ width: `${viewportWidth}px` }}>
+        <div className="mx-auto overflow-hidden py-2 min-h-40 " style={{ width: `${viewportWidth}px` }}>
           <div className="flex transition-transform duration-500 ease-in-out" style={{ gap: `${gap}px` }}>
             {visibleCards.map((card) => {
               return (

@@ -3,12 +3,7 @@ import mainBackground from "../../../assets/background/main_background.svg";
 const ProfileBanner = () => {
 
     return (
-        <div className="h-[376px] w-full">
-            <img
-                src={mainBackground}
-                alt="profile banner"
-                className="h-full w-full object-cover"
-            />
+        <div className="-mt-20 w-full h-120 bg-profile-banner">
         </div>
     )
 

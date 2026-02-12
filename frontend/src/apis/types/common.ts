@@ -138,7 +138,23 @@ export type ProfileInterceptor = {
 // ====================================================
 // 작품 종류
 export type CheckSubmissionType = 'ALL' | 'PERSONAL';
-export type SortBy = 'LATEST' | 'POPULAR' | 'RECOMMEND';
+
+// 정렬 기준 (sortBy):
+// latest: 최신순 (기본값)
+// popular: 인기순 (좋아요 많은 순)
+// bookmarks: 북마크 많은 순
+// recommend: 추천순 (좋아요2 + 댓글3 + 북마크*5)
+export type SortBy = 'latest' | 'popular' | 'bookmarks' | 'recommend';
+
+// 페이지 사이즈:
+// 기본값: 50
+// 최소: 1
+// 최대: 50
+export type PageSize = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+  | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20
+  | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30
+  | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40
+  | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 50;
 
 // 작품 삽입/삭제/갱신 요청 타입
 export type ActionSubmissionInterceptor = {
@@ -171,7 +187,7 @@ export type SubmissionMetadata = {
 
 // 메타데이터에 없어서 추가한 홈 카드 타입
 export interface HomeCardType extends SubmissionMetadata {
-  title: string;
+  title?: string;
   nickname: string;
   profileImgUrl: string;
 }
@@ -182,6 +198,27 @@ export interface CheckSubmissionInterceptor {
   type?: CheckMySubmissionType | null;
   page?: number | null;
   size?: number | null;
+};
+
+// 스웨거 list 카드(홈 그리드/챌린지 목록 공통)
+export type SubmissionListItemDto = {
+  submissionId: number;
+  thumbnailUrl: string;
+  userId: number;
+  nickname: string;
+  profileImageUrl: string | null;
+  likesCount: number;
+  commentCount: number;
+  bookmarkCount: number;
+};
+
+export type PageInfo = {
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+  totalElements: number;
+  isLast: boolean;
+  isFirst: boolean;
 };
 
 // ====================================================

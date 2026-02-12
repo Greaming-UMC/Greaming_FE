@@ -37,7 +37,7 @@ export const HeaderActions = ({ userInfo, onLogout }: HeaderActionsProps) => {
   }
 
   return (
-    <div className="ml-auto flex items-center gap-3 relative">
+    <div className="ml-auto flex items-center h-full gap-3 relative">
       <ProfileDropdown userInfo={userInfo} onLogout={onLogout} />
 
       <NotificationDropdown />
