@@ -2,11 +2,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProfileSettings, updateProfileSettings, checkNickname } from '../api/api';
 import { useToast } from '../../../../components/common/feedback/Toast/ToastProvider';
 import type { UserInformations } from '../../../../apis/types/common';
+import type { EditProfileSettingsParams } from '../../../../apis/types/profileSettings';
 import { PROFILE_SETTING_KEYS } from './profileSettingKeys';
+import { useHeaderProfileStore } from '../../../../stores/useHeaderProfileStore';
 
 export const useProfileSetting = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
+  const setHeaderProfile = useHeaderProfileStore((state) => state.setProfile);
 
   // 1. 초기 데이터 조회 (GET)
   const { data: profileData, isLoading } = useQuery({
@@ -20,13 +23,30 @@ export const useProfileSetting = () => {
 
   // 2. 프로필 정보 수정 저장 (PATCH)
   const { mutate: updateProfile, isPending: isUpdating } = useMutation({
-    mutationFn: (formData: any) => updateProfileSettings(formData),
+    mutationFn: (formData: EditProfileSettingsParams) => updateProfileSettings(formData),
     onSuccess: (res) => {
       if (res.isSuccess) {
-        showToast("프로필이 성공적으로 변경되었습니다.", "success");
-        // 저장 성공 시 캐시를 무효화하여 최신 데이터를 다시 불러옵니다.
+        const updated =
+          (res.result as { user_information?: UserInformations; userInformation?: UserInformations } | null)
+            ?.user_information ??
+          (res.result as { user_information?: UserInformations; userInformation?: UserInformations } | null)
+            ?.userInformation;
 
-        queryClient.invalidateQueries({ queryKey: PROFILE_SETTING_KEYS.all }); 
+        if (updated) {
+          setHeaderProfile({
+            nickname: updated.nickname,
+            profileImgUrl: updated.profileImgUrl,
+            level:
+              (updated as UserInformations & { usagePurpose?: string }).journeyLevel ??
+              (updated as UserInformations & { usagePurpose?: string }).usagePurpose,
+          });
+        }
+
+        showToast("프로필이 성공적으로 변경되었습니다.", "success");
+        // 설정 화면/헤더 프로필 관련 캐시 동기화
+        queryClient.invalidateQueries({ queryKey: PROFILE_SETTING_KEYS.all });
+        queryClient.invalidateQueries({ queryKey: ["me"] });
+        queryClient.invalidateQueries({ queryKey: ["profile", "my"] });
       } else {
         showToast(res.message || "저장에 실패했습니다.", "error");
       }
