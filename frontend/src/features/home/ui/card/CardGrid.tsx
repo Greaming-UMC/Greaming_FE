@@ -1,18 +1,44 @@
 import { EmptyState } from "../../../../components/common";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll";
-import { useMockInfiniteHomeCards } from "../../hooks/useMockInfiniteHomeCards";
 import CardItem from "./CardItem";
 import CardSkeleton from "./CardSkeleton";
+import { useInfiniteHomeCards } from "../../hooks/useInfiniteHomeCards";
+import type { CheckSubmissionType, SortBy } from "../../../../apis/types/common";
+import type { HomeView } from "../../components/type";
 
-const CardGrid = () => {
-  const { cards, hasNextPage, loadMore, isLoading } = useMockInfiniteHomeCards();
+interface Props {
+  view: HomeView;
+  type: CheckSubmissionType;
+  sort: SortBy;
+  dateTimeIso: string;
+}
 
-  const observerRef = useInfiniteScroll(loadMore, {
-    hasNextPage,
-    isLoading,
+const SKELETON_COUNT = 10;
+
+const CardGrid = ({ view, type, sort, dateTimeIso }: Props) => {
+  const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage, isFetched } =
+    useInfiniteHomeCards({ view, type, sort, dateTimeIso });
+
+  const items = data?.pages.flatMap((p) => p.items) ?? [];
+
+  const observerRef = useInfiniteScroll(() => fetchNextPage(), {
+    hasNextPage: Boolean(hasNextPage),
+    isLoading: isFetchingNextPage,
   });
 
-  if (cards.length === 0) {
+  if (isLoading) {
+    return (
+      <section className="w-full py-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 justify-items-center">
+          {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+            <CardSkeleton key={`init-skeleton-${i}`} />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (isFetched && items.length === 0) {
     return (
       <section className="w-full py-16">
         <EmptyState
@@ -27,12 +53,14 @@ const CardGrid = () => {
   return (
     <section className="w-full py-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 justify-items-center">
-        {cards.map((card) => (
+        {items.map((card) => (
           <CardItem key={card.submissionId} card={card} />
         ))}
 
-        {hasNextPage &&
-          Array.from({ length: 5 }).map((_, i) => <CardSkeleton key={`skeleton-${i}`} />)}
+        {isFetchingNextPage &&
+          Array.from({ length: 5 }).map((_, i) => (
+            <CardSkeleton key={`next-skeleton-${i}`} />
+          ))}
       </div>
 
       <div ref={observerRef} />

@@ -10,23 +10,36 @@ interface Props {
   title: string;
   participantText?: string;
   timeLeftText?: string;
-  topic?: string;
   onJoin?: (type: "DAILY" | "WEEKLY") => void;
   isActive?: boolean;
 }
+
+const PRE_TITLE: Record<Props["type"], string> = {
+  DAILY: "Daily Challenge",
+  WEEKLY: "Weekly Challenge",
+};
 
 const HeroChallengeCard = ({
   type,
   title,
   participantText,
   timeLeftText,
-  topic,
   onJoin,
   isActive = false,
 }: Props) => {
   const isDaily = type === "DAILY";
   const Blob = isDaily ? DailyBlob : WeeklyBlob;
   const hoverLogoName = isDaily ? "mono-white" : "secondary";
+
+  const safeParticipantText = participantText?.trim();
+  const safeTimeLeftText = timeLeftText?.trim();
+
+  const safeTopic = title.trim();
+
+  const metaText =
+    safeParticipantText && safeTimeLeftText
+      ? `${safeParticipantText} | ${safeTimeLeftText}`
+      : safeParticipantText ?? safeTimeLeftText;
 
   return (
     <Card.Root
@@ -35,7 +48,8 @@ const HeroChallengeCard = ({
     >
       <Blob className="absolute inset-0 w-full h-full pointer-events-none" />
 
-      <div className="absolute inset-0 z-10 flex flex-col justify-center px-8">
+      <div className="absolute inset-0 z-10 flex flex-col px-12">
+        {/* 기본 (호버 x) */}
         <div
           className={`
             absolute inset-0 flex items-center justify-center gap-3 transition-opacity duration-300 pointer-events-none
@@ -43,21 +57,37 @@ const HeroChallengeCard = ({
           `}
         >
           <Logo name="primary" size={81} />
-          <span className="font-[Knewave] text-[52px] text-on-surface pt-2 leading-none">
-            {title}
+          <span className="font-[Knewave] text-5xl text-on-surface pt-2 leading-none">
+            {PRE_TITLE[type]}
           </span>
         </div>
 
+        {/* 상세 (호버) */}
         <div
           className={`
-            flex flex-col w-full h-full justify-center transition-opacity duration-300 pointer-events-none
-            ${isActive ? "opacity-100 pointer-events-auto" : "opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto"}
+            flex flex-col justify-center w-full h-full transition-opacity duration-300 pointer-events-none gap-8
+            ${
+              isActive
+                ? "opacity-100 pointer-events-auto"
+                : "opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto"
+            }
           `}
         >
-          <div className="flex items-center justify-center gap-8 px-2">
+          <div className="flex items-center justify-center w-full gap-10">
             <div className="flex items-center gap-3">
               <Logo name={hoverLogoName} width={64} height={75} />
-              <span className="font-[Knewave] text-4xl text-on-surface pt-1">{title}</span>
+
+              <div className="flex flex-col items-start">
+                <span className="font-[Knewave] text-4xl text-on-surface leading-none">
+                  {PRE_TITLE[type]}
+                </span>
+
+                {metaText && (
+                  <p className="mt-2 text-sm font-semibold text-on-surface">
+                    {metaText}
+                  </p>
+                )}
+              </div>
             </div>
 
             <button
@@ -73,17 +103,13 @@ const HeroChallengeCard = ({
             </button>
           </div>
 
-          <div className="flex flex-col items-center gap-3 mt-1">
-            {(participantText || timeLeftText) && (
-              <p className="text-sm font-semibold text-on-surface">
-                {participantText} {timeLeftText}
-              </p>
-            )}
-
-            {topic && (
+          <div className="flex items-center justify-center">
+            {safeTopic && (
               <div className="relative flex items-center justify-center">
                 <Icon name="topic" className="text-primary" width={320} height={47} />
-                <span className="absolute text-sm font-bold text-secondary pb-1">‘{topic}’</span>
+                <span className="absolute text-secondary font-medium pb-1">
+                  ‘{safeTopic}’
+                </span>
               </div>
             )}
           </div>

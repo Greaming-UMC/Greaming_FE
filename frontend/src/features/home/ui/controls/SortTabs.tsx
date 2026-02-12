@@ -1,21 +1,25 @@
 import { Button } from "../../../../components/common";
+import type { SortBy } from "../../../../apis/types/common";
 
 interface Props {
-  value: "LATEST" | "POPULAR" | "RECOMMEND";
-  onChange: (value: "LATEST" | "POPULAR" | "RECOMMEND") => void;
+  value: SortBy;
+  onChange: (value: SortBy) => void;
 }
 
-const SORT_LABEL: Record<Props["value"], string> = {
-  LATEST: "최신",
-  POPULAR: "인기",
-  RECOMMEND: "추천",
+const SORT_LABEL: Record<SortBy, string> = {
+  latest: "최신",
+  popular: "인기",
+  bookmarks: "북마크",
+  recommend: "추천",
 };
+
+const OPTIONS: Array<SortBy> = ["latest", "popular", "recommend"];
 
 const SortTabs = ({ value, onChange }: Props) => {
   return (
-    <div className="flex items-center gap-2">
-      {(Object.keys(SORT_LABEL) as Props["value"][]).map((key) => {
-        const isSelected = value === key;
+    <div className="flex items-center gap-3">
+      {OPTIONS.map((key) => {
+        const selected = value === key;
 
         return (
           <Button
@@ -23,9 +27,10 @@ const SortTabs = ({ value, onChange }: Props) => {
             type="button"
             size="sm"
             shape="round"
-            variant={isSelected ? "primary" : "outlined"}
+            variant={selected ? "primary" : "outlined"}
             onClick={() => onChange(key)}
-            className={`font-medium px-4 ${isSelected ? "font-bold" : "outline-on-surface text-on-surface"}`}
+            className={selected ? "" : "bg-surface border-1"}
+            textClassName="text-md font-semibold"
           >
             {SORT_LABEL[key]}
           </Button>

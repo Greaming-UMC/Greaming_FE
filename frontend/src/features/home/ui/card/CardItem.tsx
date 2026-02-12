@@ -1,6 +1,10 @@
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import type { HomeCardType } from "../../../../apis/types/common";
 import { Avatar, Card } from "../../../../components/common";
 import Icon from "../../../../components/common/Icon";
+import { getSubmissionPreview } from "../../../../apis/types/submission/getSubmissionPreview";
 
 type CardItemContext = "carousel" | "grid";
 
@@ -10,24 +14,56 @@ interface Props {
 }
 
 const CardItem = ({ card, context = "grid" }: Props) => {
+  const navigate = useNavigate();
+  const [hovered, setHovered] = useState(false);
+
   const textClass =
     context === "carousel" ? "text-on-surface-variant-bright" : "text-on-surface";
 
+  const previewQuery = useQuery({
+    queryKey: ["submissionPreview", card.submissionId],
+    queryFn: () => getSubmissionPreview(card.submissionId),
+    enabled: hovered,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const tags = useMemo(() => previewQuery.data?.tags ?? [], [previewQuery.data?.tags]);
+
   return (
     <div className="w-[250px] h-[285px] rounded-2xl overflow-hidden">
-      <Card.Root hoverEffect clickable className="h-full w-full flex flex-col rounded-2xl overflow-hidden">
+      <Card.Root
+        hoverEffect
+        clickable
+        className="h-full w-full flex flex-col rounded-2xl overflow-hidden"
+        onClick={() => navigate(`/submissions/${card.submissionId}`)}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
         <Card.Media
           src={card.thumbnailUrl}
-          alt={card.title}
+          alt={card.title ?? ""}
           aspectRatio="aspect-auto"
           hoverEffect
           className="h-[237px] w-full rounded-b-2xl"
-        />
+        >
+          {tags.length > 0 && (
+            <Card.Overlay className="p-3">
+              <div className="relative w-full overflow-hidden">
+                <div className="flex items-center gap-2 whitespace-nowrap">
+                  {tags.map((t) => (
+                    <span key={t} className="text-sm font-semibold text-white">
+                      #{t}
+                    </span>
+                  ))}
+                </div>
+                <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-[#121315] to-transparent" />
+              </div>
+            </Card.Overlay>
+          )}
+        </Card.Media>
 
-        {/* 하단 정보 영역 */}
         <Card.Body className="h-[48px] w-full shrink-0 bg-transparent">
           <div className={`flex h-full w-full items-center justify-between ${textClass}`}>
-            {/* 좌 : 프로필, 닉네임 */}
             <div className="flex items-center gap-2 min-w-0">
               <Avatar src={card.profileImgUrl} size="xs" />
               <span className="text-xs font-medium truncate max-w-[90px]">
@@ -35,7 +71,6 @@ const CardItem = ({ card, context = "grid" }: Props) => {
               </span>
             </div>
 
-            {/* 우 : 아이콘 카운터 */}
             <div className="flex items-center gap-2 text-sm shrink-0">
               <span className="flex items-center gap-0.5">
                 <Icon name="like" size={19} />

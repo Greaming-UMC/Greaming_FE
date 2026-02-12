@@ -74,6 +74,7 @@ const CalendarDays = ({ completedDates = [] }: CalendarDaysProps) => {
         }}
         inline={isInline}
         calendarClassName="custom-calendar-height"
+        dateFormat="yyyy년 M월 d일"
         dayClassName={(date: Date) => {
           const dateStr = format(date, 'yyyy-MM-dd');
           const status = statusByDate[dateStr];
