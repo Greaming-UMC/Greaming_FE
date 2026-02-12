@@ -19,3 +19,13 @@ export interface UploadSubmissionRequest {
 
 // Response
 // ./common.ts의 ApiDataResponse, ApiErrorResponese 사용
+export interface UploadSubmissionRsult {
+    title : string;
+    caption : string;
+    visibility : VisibilityType;
+    commentEnabled : boolean;
+    challengeId : number;
+    circleId? : number | null;
+    hashtags : string[];
+    imageUrls : string[];
+};
