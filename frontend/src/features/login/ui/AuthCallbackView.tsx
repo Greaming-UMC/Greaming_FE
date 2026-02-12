@@ -10,7 +10,7 @@ const TRUE_SET = new Set(["true", "1", "yes", "y"]);
 const FALSE_SET = new Set(["false", "0", "no", "n"]);
 const DEFAULT_REDIRECT_PATH = "/home";
 
-const isSafeInternalPath = (value: string | null) => {
+const isSafeInternalPath = (value: string | null): value is string => {
   if (!value) return false;
   if (!value.startsWith("/") || value.startsWith("//")) return false;
   if (value.startsWith("/auth/callback")) return false;

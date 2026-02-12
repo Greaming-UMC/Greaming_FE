@@ -31,10 +31,11 @@ const ProfileSelf = () => {
   //if (query.error) return <div className="text-[14px]">에러가 발생했어요.</div>;
 
   const result = query.data?.result ?? MOCK_PROFILE_RESULT;
+  const fallbackInfo = MOCK_PROFILE_RESULT.user_information!;
   const info =
     result.user_information ??
     result.userInformation ??
-    MOCK_PROFILE_RESULT.user_information;
+    fallbackInfo;
   const specialtyTags = info.specialtyTags ?? [];
   const interestTags = info.interestTags ?? [];
   const usageIcon = info.level as IconName;
