@@ -124,6 +124,9 @@ const ProfileSubmissions = ({
 
   return (
     <div className="flex flex-col gap-[24px]">
+      <div className="main-title-small-emphasized text-on-surface">
+        모든 그림
+      </div>
       <Submissions
         items={withMock(items)}
         emptyMessage="포스팅한 그림이 없어요"

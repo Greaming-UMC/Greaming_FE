@@ -42,7 +42,7 @@ const ProfileView = ( { context, userId, circleId }: ProfileViewProps) => {
             <ProfileBanner/>
             
             {/* Body */}
-            <div className="mx-auto w-full flex gap-10 px-50">
+            <div className="mx-auto w-full flex gap-16 px-50">
 
                 <div className="relative flex flex-col w-fit gap-8 -mt-50">
                     <ProfileDashboard context={context} userId={userId} circleId={circleId} />
