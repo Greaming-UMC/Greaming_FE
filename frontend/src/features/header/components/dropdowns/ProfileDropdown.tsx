@@ -15,16 +15,16 @@ const ProfileDropdown = ({ userInfo, onLogout }: ProfileDropdownProps) => {
       trigger={
         <button
           type="button"
-          className="block rounded-full statelayers primary-container-opacity-16"
+          className="flex items-center justify-center ounded-full state-layer primary-container-opacity-16"
         >
           <Avatar
-            src={userInfo?.profileImgUrl}
+            src={userInfo?.profileImgUrl ?? "char_default.svg"}
             alt={userInfo?.nickname ?? "User"}
             size="sm"
           />
         </button>
       }
-
+      menuClassName="mt-3"
     >
       <ProfilePopup userInfo={userInfo} onLogout={onLogout} />
     </Dropdown>
