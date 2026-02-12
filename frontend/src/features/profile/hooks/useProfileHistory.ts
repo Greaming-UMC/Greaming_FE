@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { useMyProfile } from "./useMyProfile";
+import { useMySubmissions } from "./useMySubmissions";
 import { useUserProfile } from "./useUserProfile";
 import { useUserSubmissions } from "./useUserSubmissions";
 
@@ -59,21 +60,24 @@ export const useProfileHistory = (params: UseProfileHistoryParams): ProfileHisto
 
   const myProfileQuery = useMyProfile({ enabled: isSelf });
   const userProfileQuery = useUserProfile(!isSelf ? params.userId : undefined);
-
-  const result = isSelf ? myProfileQuery.data?.result : userProfileQuery.data?.result;
-  const myUserId =
-    myProfileQuery.data?.result?.user_information?.userId ??
-    myProfileQuery.data?.result?.userInformation?.userId;
-
-  const targetUserId = isSelf ? myUserId : params.userId;
-  const shouldFetchSubmissions = typeof targetUserId === "number";
-
-  const submissionsQuery = useUserSubmissions(
-    shouldFetchSubmissions ? targetUserId : undefined,
-    { page: 1, size: 1 },
+  const mySubmissionsQuery = useMySubmissions(
+    { type: "ALL", page: 1, size: 1 },
+    { enabled: isSelf },
+  );
+  const userSubmissionsQuery = useUserSubmissions(
+    !isSelf ? params.userId : undefined,
+    { type: "ALL", page: 1, size: 1 },
   );
 
-  const challengeCalendar = result?.challenge_calender ?? result?.challengeCalendar;
+  const profileResult = isSelf
+    ? myProfileQuery.data?.result
+    : userProfileQuery.data?.result;
+  const submissionsResult = isSelf
+    ? mySubmissionsQuery.data?.result
+    : userSubmissionsQuery.data?.result;
+
+  const challengeCalendar =
+    profileResult?.challenge_calender ?? profileResult?.challengeCalendar;
   const challengeDates = [
     ...(challengeCalendar?.dailyChallenge ?? []),
     ...(challengeCalendar?.weeklyChallenge ?? []),
@@ -85,14 +89,14 @@ export const useProfileHistory = (params: UseProfileHistoryParams): ProfileHisto
   );
 
   const uploadCount =
-    submissionsQuery.data?.result?.pageInfo?.totalElements ??
-    submissionsQuery.data?.result?.submissions?.length ??
-    submissionsQuery.data?.result?.submission_list?.length ??
+    submissionsResult?.pageInfo?.totalElements ??
+    submissionsResult?.submissions?.length ??
+    submissionsResult?.submission_list?.length ??
     0;
 
-  const isLoading =
-    (isSelf ? myProfileQuery.isLoading : userProfileQuery.isLoading) ||
-    submissionsQuery.isLoading;
+  const isLoading = isSelf
+    ? myProfileQuery.isLoading || mySubmissionsQuery.isLoading
+    : userProfileQuery.isLoading || userSubmissionsQuery.isLoading;
 
   return {
     uploadCount,

@@ -4,3 +4,4 @@ export * from './useUserProfile';
 export * from './useUserSubmissions';
 export * from './useCircleProfile';
 export * from './useCircleSubmissions';
+export * from './useProfileHistory';

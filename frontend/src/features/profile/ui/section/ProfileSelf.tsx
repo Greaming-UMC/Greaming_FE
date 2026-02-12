@@ -3,7 +3,7 @@ import Icon from "../../../../components/common/Icon";
 import type { IconName } from "../../../../components/common/Icon";
 import SpeechBubble from "../../../../components/common/SpeechBubble";
 
-import { useMyProfile } from "../../hooks";
+import { useMyProfile, useProfileHistory } from "../../hooks";
 
 import type { CheckMyProfileResult } from "../../../../apis/types/user";
 
@@ -26,6 +26,7 @@ const MOCK_PROFILE_RESULT: CheckMyProfileResult = {
 
 const ProfileSelf = () => {
   const query = useMyProfile();
+  const history = useProfileHistory({ mode: "self" });
 
   const result = query.data?.result ?? MOCK_PROFILE_RESULT;
   const fallbackInfo = MOCK_PROFILE_RESULT.user_information!;
@@ -36,6 +37,10 @@ const ProfileSelf = () => {
   const specialtyTags = info.specialtyTags ?? [];
   const interestTags = info.interestTags ?? [];
   const usageIcon = info.journeyLevel as IconName;
+  const uploadCountText = history.isLoading ? "..." : history.uploadCount.toLocaleString();
+  const consecutiveDaysText = history.isLoading
+    ? "..."
+    : history.maxConsecutiveChallengeDays.toLocaleString();
 
   return (
     <section className="flex flex-col">
@@ -91,11 +96,11 @@ const ProfileSelf = () => {
       <div className="mt-[8px] flex flex-col gap-[8px]">
         <div className="flex items-center gap-[16px]">
           <Icon name="char_profile_green" size={"24px"} />
-          <SpeechBubble label="총 N개의 그림을 업로드했어요" />
+          <SpeechBubble label={`총 ${uploadCountText}개의 그림을 업로드했어요`} />
         </div>
         <div className="flex items-center gap-[16px]">
           <Icon name="char_profile_red" size={"24px"} />
-          <SpeechBubble label="N개의 그림을 연속으로 업로드했어요" />
+          <SpeechBubble label={`${consecutiveDaysText}일 연속으로 미션을 수행했어요`} />
         </div>
       </div>
     </section>
