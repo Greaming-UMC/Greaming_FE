@@ -24,7 +24,7 @@ const ProfileDropdown = ({ userInfo, onLogout }: ProfileDropdownProps) => {
           />
         </button>
       }
-      menuClassName="mt-3"
+
     >
       <ProfilePopup userInfo={userInfo} onLogout={onLogout} />
     </Dropdown>

@@ -32,7 +32,7 @@ const HeaderMain = ({ userInfo, onLogout }: HeaderMainProps) => {
   return (
     <>
       <header className={headerClass}>
-        <div className="relative mx-auto h-full px-20">
+        <div className="relative mx-auto h-full px-16">
           <div className="grid h-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-6">
 
             <NavLink to="/home" aria-label="홈으로 이동" className="inline-flex">

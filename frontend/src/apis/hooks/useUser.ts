@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { getMyProfileHeader, type CheckMyProfileResponse } from '../types/user';
+import type { CheckMyProfileResponse } from '../types/user';
+import { getMyProfileHeader } from '../user';
 
 type UseUserProfileOptions = {
   enabled?: boolean;

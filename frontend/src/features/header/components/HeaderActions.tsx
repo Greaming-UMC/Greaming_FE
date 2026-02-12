@@ -1,6 +1,6 @@
 import type { UserInfo } from "../config";
 import { Button } from "../../../components/common/input";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useAuthStore } from "../../../libs/security/authStore";
 import ProfileDropdown from "./dropdowns/ProfileDropdown";
 import NotificationDropdown from "./dropdowns/NotificationDropdown";
@@ -12,8 +12,12 @@ interface HeaderActionsProps {
 }
 
 export const HeaderActions = ({ userInfo, onLogout }: HeaderActionsProps) => {
+  const location = useLocation();
   const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   const isLoggedIn = isAuthenticated || !!userInfo?.nickname;
+  const circleMatch = location.pathname.match(/^\/profile\/circle\/(\d+)(?:\/|$)/);
+  const circleId = circleMatch?.[1];
+  const isCircleMember = Boolean(circleId);
 
   if (!isLoggedIn) {
     return (
@@ -39,9 +43,11 @@ export const HeaderActions = ({ userInfo, onLogout }: HeaderActionsProps) => {
       <NotificationDropdown />
 
       <UploadDropdown
-        onUploadDaily={() => console.log("데일리챌린지 업로드")}
-        onUploadWeekly={() => console.log("위클리챌린지 업로드")}
-        onUploadGeneral={() => console.log("그림 업로드")}
+        isCircleMember={isCircleMember}
+        circleTo={circleId ? `/upload/circle/${circleId}` : "/upload/circle"}
+        dailyTo="/upload/daily"
+        weeklyTo="/upload/weekly"
+        generalTo="/upload/free"
         trigger={
           <Button
             variant="surface"

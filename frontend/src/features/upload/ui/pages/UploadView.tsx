@@ -1,9 +1,8 @@
-// src/features/upload/ui/views/UploadView.tsx
 import type React from "react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { AnimatedLogoDraw } from "../../../onboarding/ui/AnimatedLogoDraw";
+import { LoadingSpinner } from "../../../../components/common";
 import { useUploadForm } from "../../config/useUploadForm";
 
 import { UploadImagesSection } from "../sections/UploadImagesSection";
@@ -16,7 +15,7 @@ export type UploadHeaderRender = (ctx: {
 }) => React.ReactNode;
 
 // circle 제외
-export type UploadMode = "free" | "daily" | "weekly";
+export type UploadMode = "free" | "daily" | "weekly" | "circle";
 
 export type UploadViewProps = {
   mode?: UploadMode;
@@ -80,10 +79,8 @@ export function UploadView({ mode = "free", header }: UploadViewProps) {
   );
 
   return (
-    <div className="flex w-full flex-col items-center">
-      <div className="h-[120px]" />
-
-      <div className="w-[1372px] max-w-[92vw] flex flex-col">
+    <div className="flex w-full flex-col items-center duration-600 ease-in-out">
+      <div className="mt-10 max-w-[92vw] flex flex-col w-340">
         {header ? (
           <div className="mb-[12px]">
             {typeof header === "function"
@@ -108,7 +105,7 @@ export function UploadView({ mode = "free", header }: UploadViewProps) {
         <div className="fixed inset-0 z-[999] flex items-center justify-center">
           <div className="absolute inset-0 bg-primary opacity-60" />
           <div className="relative text-white">
-            <AnimatedLogoDraw
+            <LoadingSpinner
               size={120}
               durationMs={1400}
               iterations={1}

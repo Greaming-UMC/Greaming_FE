@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../../../libs/security/authStore";
 import axios from "axios";
 import { checkAuthTest } from "../../../apis/types/auth";
-import { getMyProfileHeader } from "../../../apis/types/user";
+import { getMyProfileHeader } from "../../../apis/user";
 
 const TRUE_SET = new Set(["true", "1", "yes", "y"]);
 const FALSE_SET = new Set(["false", "0", "no", "n"]);

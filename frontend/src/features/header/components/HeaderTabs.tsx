@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { Divider } from "../../../components/common/display";
 import { Button } from "../../../components/common/input";
 import { type IconName } from "../../../components/common/Icon";
@@ -10,7 +10,7 @@ type NavPopoverItem = { type: "popover"; id: string; label: string; iconName: Ic
 type NavItemType = NavLinkItem | NavPopoverItem;
 
 const NAV_ITEMS: NavItemType[] = [
-  { type: "link", path: "/profile", label: "My Room", iconName: "nav_myroom" },
+  { type: "link", path: "/profile/self", label: "My Room", iconName: "nav_myroom" },
   { type: "link", path: "/journey", label: "Journey", iconName: "nav_journy" },
   { type: "popover", id: "circle", label: "Circle", iconName: "nav_circle" },
 ];
@@ -22,7 +22,9 @@ interface HeaderTabsProps {
 const TAB_STYLE_DELAY_MS = 200;
 
 const HeaderTabs = ({ isScrolled }: HeaderTabsProps) => {
+  const { pathname } = useLocation();
   const [isTabsScrolled, setIsTabsScrolled] = useState(isScrolled);
+  const isCircleActive = pathname.startsWith("/profile/circle");
 
   useEffect(() => {
     if (isScrolled === isTabsScrolled) return;
@@ -86,7 +88,7 @@ const HeaderTabs = ({ isScrolled }: HeaderTabsProps) => {
                 </NavLink>
               ) : (
                 <CircleDropdown
-                  trigger={renderTabContent(item, false)}
+                  trigger={renderTabContent(item, isCircleActive)}
                   onAddCircle={() => console.log("Circle 추가하기 클릭")}
                 />
               )}

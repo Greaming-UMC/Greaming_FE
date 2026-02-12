@@ -31,8 +31,9 @@ export const ENDPOINTS = {
 
     // 도메인: USER_SUBMISSIONS (제출물 관련은 여기서 통합 관리)
     USER_SUBMISSIONS : {
+        // TODO: 점진 제거 예정 (userId 기반 단일 API 사용)
         GET_MY_SUBMISSIONS: "/api/users/me/submissions",
-        GET_USER_SUBMISSIONS: (userId: number | string) => `/api/users/${userId}/submissions`,
+        GET_USER_SUBMISSIONS: (userId: number | string) => `/api/submissions/user/${userId}`,
     },
 
     // 도메인: SUBMISSION

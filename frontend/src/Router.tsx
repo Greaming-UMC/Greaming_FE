@@ -12,6 +12,10 @@ import AuthCallbackPage from './pages/AuthCallbackPage';
 import ExamplePage from './pages/ExamplePage';
 import OnboardingWelcomePage from './pages/OnboardingWelcomePage';
 import OnboardingPage from './pages/OnboardingPage';
+import UploadPage from './pages/UploadPage';
+import DailyUploadPage from './features/upload/ui/pages/DailyUploadPage';
+import WeeklyChallengeUploadPage from './features/upload/ui/pages/WeeklyChallengeUploadPage';
+import CircleUploadPage from './features/upload/ui/pages/CircleUploadPage';
 import { useAuthStore } from './libs/security/authStore';
 import { getAccessToken } from './libs/security/tokenStore';
 
@@ -89,6 +93,32 @@ const router = createBrowserRouter([
       {
         path: 'journey',
         element: <JourneyPage />,
+      },
+      {
+        path: 'upload',
+        element: <RequireAuth />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to="free" replace />,
+          },
+          {
+            path: 'free',
+            element: <UploadPage />,
+          },
+          {
+            path: 'daily',
+            element: <DailyUploadPage />,
+          },
+          {
+            path: 'weekly',
+            element: <WeeklyChallengeUploadPage />,
+          },
+          {
+            path: 'circle/:circleId',
+            element: <CircleUploadPage />,
+          },
+        ],
       },
       {
         path: 'setting',
