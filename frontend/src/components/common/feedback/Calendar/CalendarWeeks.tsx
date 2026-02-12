@@ -152,7 +152,7 @@ const CalendarWeeks = ({ completedDates = [] }: CalendarWeeksProps) => {
                   }}
                   className={`
                     flex items-center justify-center h-[44px] rounded-3xl cursor-pointer transition-colors
-                    ${isSelected ? 'bg-primary text-on-primary border-primary' : 'bg-surface text-on-surface border-3 border-surface-variant-low state-layer primary-opacity-8'}
+                    ${isSelected ? 'bg-secondary text-on-surface border-surface-variant-low state-layer primary-opacity-8' : 'bg-surface text-on-surface border-3 border-surface-variant-low state-layer primary-opacity-8'}
                   `}
                 >
                   <span className="label-large-emphasized">{index + 1}주차</span>
