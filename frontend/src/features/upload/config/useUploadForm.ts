@@ -43,7 +43,7 @@ export function useUploadForm() {
 
   const canUpload = useMemo(() => {
     const hasImage = images.length > 0;
-    const hasTitle = title.trim().length > 0; // ✅ title required
+    const hasTitle = title.trim().length > 0; 
     const hasBody = body.trim().length > 0;
     const hasTags = hashtags.length > 0;
     return hasImage && hasTitle && hasBody && hasTags;
@@ -127,7 +127,7 @@ export function useUploadForm() {
 
       for (const img of images) {
         const presigned = await getPresignedUrl({
-          prefix: "submission", // ✅ 네가 성공 찍힌 값 유지
+          prefix: "submissions", 
           fileName: img.file.name,
         });
 
@@ -140,7 +140,7 @@ export function useUploadForm() {
       const payload: CreateSubmissionRequest = {
         title: title.trim(),
         caption: body,
-        visibility: "PUBLIC", // ✅ 서클 제외 고정
+        visibility: "PUBLIC", 
         field,
         commentEnabled: allowComments,
         tags: hashtags,
