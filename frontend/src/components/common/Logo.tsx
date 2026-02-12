@@ -60,11 +60,19 @@ export const LOGO_NAMES = Array.from(logoNames).sort()
 // LogoName은 name에 들어갈 수 있는 문자열 타입입니다(별칭 포함).
 export type LogoName = keyof typeof logoMap
 
+// 자주 쓰는 로고 크기 프리셋.
+export type LogoSizePreset = 'md' | 'lg'
+
+const LOGO_SIZE_PRESET_CLASS_MAP: Record<LogoSizePreset, string> = {
+  md: 'w-24 h-6',
+  lg: 'w-32 h-8',
+}
+
 // SVGProps<SVGSVGElement>: <svg>에 들어갈 수 있는 표준 속성 타입.
 // Omit<..., 'name'>: name은 우리가 따로 받으니 중복 제거합니다.
 export type LogoProps = Omit<SVGProps<SVGSVGElement>, 'name'> & {
   name: LogoName
-  size?: number | string
+  size?: number | LogoSizePreset
   title?: string
 }
 
@@ -86,13 +94,19 @@ const Logo = ({ name, size, className, ...rest }: LogoProps) => {
   const ariaLabel = rest['aria-label']
   const isDecorative = !ariaLabel && !rest.title
 
-  // 4) size가 있으면 width/height에 동시에 적용
-  //    (워드마크처럼 가로가 긴 로고는 width/height를 직접 넘기는 걸 권장)
-  const sizeProps = size ? { width: size, height: size } : {}
+  // 4) size 처리:
+  // - number: 정사각형 크기(width/height)
+  // - preset: Tailwind 클래스
+  // - width/height를 직접 넘기면 preset class는 적용하지 않습니다.
+  const hasExplicitSize = rest.width != null || rest.height != null
+  const sizeProps = typeof size === 'number' ? { width: size, height: size } : {}
+  const presetSizeClass =
+    typeof size === 'string' && !hasExplicitSize ? LOGO_SIZE_PRESET_CLASS_MAP[size] : ''
+  const mergedClassName = [presetSizeClass, className].filter(Boolean).join(' ')
 
   return (
     <Component
-      className={className}
+      className={mergedClassName || undefined}
       role={isDecorative ? 'presentation' : 'img'}
       aria-hidden={isDecorative}
       focusable="false"

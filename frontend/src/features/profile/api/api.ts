@@ -1,7 +1,8 @@
 import { http } from "../../../libs/http/client";
+import { ENDPOINTS } from "../../../libs/http/endpoints/endpoints";
 
 import type { ApiResultResponse } from "../../../apis/types/common";
-import type { CheckMyProfileResult, CheckUserProfileResult } from "../../../apis/types/user";
+import type { CheckUserProfileResult } from "../../../apis/types/user";
 import type { 
     CheckMySubmissionsRequest, CheckMySubmissionsResult, 
     CheckUserSubmissionsRequest, CheckUserSubmissionsResult 
@@ -13,19 +14,16 @@ import type {
 import type { FollowRequestResult } from "../../../apis/types/follow";
 
 
-export const getMyProfile = async () => {
-    const { data } = await http.get<ApiResultResponse<CheckMyProfileResult>>("/users/me");
-    return data;
-};
-
 export const getUserProfile = async (userId: number) => {
-    const { data } = await http.get<ApiResultResponse<CheckUserProfileResult>>(`/user/${userId}/info`);
+    const { data } = await http.get<ApiResultResponse<CheckUserProfileResult>>(
+        ENDPOINTS.USER.GET_USER_PROFILE_HEADER(userId),
+    );
     return data;
   };
   
 export const getMySubmissions = async (params: CheckMySubmissionsRequest) => {
     const { data } = await http.get<ApiResultResponse<CheckMySubmissionsResult>>(
-        "/users/me/submissions",
+        ENDPOINTS.USER_SUBMISSIONS.GET_MY_SUBMISSIONS,
         { params },
     );
     return data;
@@ -36,7 +34,7 @@ export const getUserSubmissions = async (
     params: CheckUserSubmissionsRequest,
     ) => {
     const { data } = await http.get<ApiResultResponse<CheckUserSubmissionsResult>>(
-        `/users/${userId}/submissions`,
+        ENDPOINTS.USER_SUBMISSIONS.GET_USER_SUBMISSIONS(userId),
         { params },
     );
     return data;
@@ -44,14 +42,15 @@ export const getUserSubmissions = async (
 
 
 export const getCircleProfile = async (circleId: number) => {
-    const { data } = await http.get<ApiResultResponse<CheckCircleProfileResult>>(`/circles/${circleId}`);
+    const { data } = await http.get<ApiResultResponse<CheckCircleProfileResult>>(
+        ENDPOINTS.CIRCLE.GET_CIRCLE_PROFILE(circleId),
+    );
     return data;
 };
 
 export const getCircleSubmissions = async (circleId: number, params: CheckCircleSubmissionsRequest) => {
-    circleId;
     const { data } = await http.get<ApiResultResponse<CheckCircleSubmissionsResult>>(
-        `/circles/${circleId}/submissions`,
+        ENDPOINTS.CIRCLE.GET_CIRCLE_SUBMISSIONS(circleId),
         { params },
     );
     return data;
@@ -59,6 +58,8 @@ export const getCircleSubmissions = async (circleId: number, params: CheckCircle
 
 
 export const postFollowRequest = async (targetId: number) => {
-    const { data } = await http.post<ApiResultResponse<FollowRequestResult>>(`/users/${targetId}/follows`);
+    const { data } = await http.post<ApiResultResponse<FollowRequestResult>>(
+        ENDPOINTS.FOLLOW.FOLLOW(targetId),
+    );
     return data;
 };

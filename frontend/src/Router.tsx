@@ -4,7 +4,7 @@ import HomePage from './pages/HomePage';
 import SettingPage from './pages/SettingPage';
 import DetailPage from './pages/DetailPage';
 import ModalPracticePage from './pages/ModalPracticePage';
-import { Navigate, createBrowserRouter } from 'react-router-dom';
+import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router-dom';
 import ErrorPage from './pages/ErrorPage';
 import ProfilePage from './pages/ProfilePage';
 import LoginPage from './pages/LoginPage';
@@ -12,10 +12,24 @@ import AuthCallbackPage from './pages/AuthCallbackPage';
 import ExamplePage from './pages/ExamplePage';
 import OnboardingWelcomePage from './pages/OnboardingWelcomePage';
 import OnboardingPage from './pages/OnboardingPage';
+import { useAuthStore } from './libs/security/authStore';
+import { getAccessToken } from './libs/security/tokenStore';
 
 /* TODO
 라우터 설정은 추후 변경해야 합니다. 또한, 나중에 API 연동할 때 로그인 여부 등.. 다시 리팩토링해야합니당
 지금은 정말 기초적인 라우팅만 설정해둔 상태이고, 각 상세 페이지 구현 여부 확인할 때 라우팅 추가하셔서 사용하시면 될 것 같습니다. */
+
+const RequireAuth = () => {
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const location = useLocation();
+  const hasToken = Boolean(getAccessToken());
+
+  if (!isLoggedIn && !hasToken) {
+    return <Navigate to="/login" replace state={{ from: location }} />;
+  }
+
+  return <Outlet />;
+};
 
 const router = createBrowserRouter([
   {
@@ -54,16 +68,21 @@ const router = createBrowserRouter([
             element: <Navigate to="self" replace />,
           },
           {
-            path: 'self',
-            element: <ProfilePage mode="self" />,
+            element: <RequireAuth />,
+            children: [
+              {
+                path: 'self',
+                element: <ProfilePage mode="self" />,
+              },
+              {
+                path: 'circle/:circleId',
+                element: <ProfilePage mode="circle" />,
+              },
+            ],
           },
           {
             path: 'user/:userId',
             element: <ProfilePage mode="user" />,
-          },
-          {
-            path: 'circle/:circleId',
-            element: <ProfilePage mode="circle" />,
           },
         ],
       },

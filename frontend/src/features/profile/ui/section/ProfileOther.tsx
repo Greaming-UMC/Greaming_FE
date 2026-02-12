@@ -38,12 +38,14 @@ type ProfileOtherProps = {
 const ProfileOther = ({ userId }: ProfileOtherProps) => {
   const query = useUserProfile(userId);
   const result = query.data?.result ?? MOCK_PROFILE_RESULT;
-  const info = result.user_information;
-
-
-  const specialtyFields = info.specialties?.fields ?? [];
-  const interestFields = info.interests?.fields ?? [];
-  const usageIcon = info.usagePurpose as IconName; 
+  const fallbackInfo = MOCK_PROFILE_RESULT.user_information!;
+  const info =
+    result.user_information ??
+    result.userInformation ??
+    fallbackInfo;
+  const specialtyTags = info.specialtyTags ?? [];
+  const interestTags = info.interestTags ?? [];
+  const usageIcon = info.level as IconName;
   const targetId = userId ?? 0;
   const followState = info.followState;
 
