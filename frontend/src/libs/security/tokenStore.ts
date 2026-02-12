@@ -30,7 +30,7 @@ const getJwtExpSeconds = (token: string): number | null => {
 
 const isTokenExpiredOrExpiringSoon = (
   token: string,
-  bufferSeconds = 30,
+  bufferSeconds = 0,
 ): boolean => {
   const exp = getJwtExpSeconds(token);
   if (!exp) return false;
