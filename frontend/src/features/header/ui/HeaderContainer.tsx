@@ -14,6 +14,20 @@ interface HeaderContainerProps {
   variant: HeaderVariant;
 }
 
+const resolveJourneyLevel = (value: unknown): string | undefined => {
+  if (typeof value !== "string") return undefined;
+  const normalized = value.trim().toUpperCase();
+  if (
+    normalized === "SKETCHER" ||
+    normalized === "PAINTER" ||
+    normalized === "ARTIST" ||
+    normalized === "MASTER"
+  ) {
+    return normalized;
+  }
+  return undefined;
+};
+
 const HeaderContainer = ({ variant }: HeaderContainerProps) => {
   const navigate = useNavigate();
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -39,9 +53,11 @@ const HeaderContainer = ({ variant }: HeaderContainerProps) => {
     return {
       nickname: resolved.nickname,
       profileImgUrl: resolved.profileImgUrl,
-      level:
-        resolved.journeyLevel ??
-        (resolved as { usagePurpose?: string }).usagePurpose,
+      level: resolveJourneyLevel(
+        (resolved as { journeyLevel?: string; level?: string; usagePurpose?: string }).journeyLevel ??
+          (resolved as { journeyLevel?: string; level?: string; usagePurpose?: string }).level ??
+          (resolved as { journeyLevel?: string; level?: string; usagePurpose?: string }).usagePurpose,
+      ),
     };
   }, [result]);
 

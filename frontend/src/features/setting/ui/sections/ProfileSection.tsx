@@ -12,6 +12,20 @@ import { getPresignedUrl, putToS3 } from "../api/s3";
 const FIELD_KEYS = Object.keys(ART_FIELD_LABEL) as ArtField[];
 const STYLE_KEYS = Object.keys(ART_STYLE_LABEL) as ArtStyle[];
 
+const normalizeJourneyLevel = (value: unknown): UsagePurpose | undefined => {
+  if (typeof value !== "string") return undefined;
+  const normalized = value.trim().toUpperCase();
+  if (
+    normalized === "SKETCHER" ||
+    normalized === "PAINTER" ||
+    normalized === "ARTIST" ||
+    normalized === "MASTER"
+  ) {
+    return normalized;
+  }
+  return undefined;
+};
+
 interface ProfileSectionProps {
   isChanged: boolean;
   setIsChanged: (val: boolean) => void;
@@ -82,7 +96,7 @@ const ProfileSection = ({ isChanged, setIsChanged }: ProfileSectionProps) => {
       setInterestFields(iTags.filter((t: any) => t in ART_FIELD_LABEL) as ArtField[]);
       setInterestStyle(iTags.find((t: any) => t in ART_STYLE_LABEL) as ArtStyle || null);
 
-      const serverJourney = profileData.journeyLevel;
+      const serverJourney = normalizeJourneyLevel(profileData.journeyLevel);
       if (serverJourney) {
         const foundIdx = journeyList.findIndex(j => j.icon.toUpperCase() === String(serverJourney).toUpperCase());
         if (foundIdx !== -1) setSelectedJourney(foundIdx);
@@ -93,11 +107,12 @@ const ProfileSection = ({ isChanged, setIsChanged }: ProfileSectionProps) => {
   // 🟢 3. 변경 감지 로직 (부모의 setIsChanged 호출)
   useEffect(() => {
     if (!profileData) return;
+    const serverJourney = normalizeJourneyLevel(profileData.journeyLevel);
 
     const isBasicDiff = 
       nickname !== (profileData.nickname || "") || 
       bio !== (profileData.introduction || "") || 
-      journeyList[selectedJourney].icon !== (profileData.journeyLevel || "") || 
+      journeyList[selectedJourney].icon !== (serverJourney || "SKETCHER") || 
       previewUrl !== profileData.profileImgUrl || 
       weeklyGoal !== (profileData.weeklyGoalScore ?? 5);
 

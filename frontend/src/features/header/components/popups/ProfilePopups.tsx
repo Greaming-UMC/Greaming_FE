@@ -1,5 +1,6 @@
 import { ListBase } from "../../../../components/common/input";
 import Icon, { type IconName } from "../../../../components/common/Icon";
+import { Avatar } from "../../../../components/common/display";
 import { NavLink } from "react-router-dom";
 import type { UserInfo } from "../../config";
 
@@ -14,34 +15,48 @@ const MENU_ITEMS = [
   { title: "개인정보", to: "/setting?tab=privacy" },
 ];
 
+const resolveJourneyIcon = (value: unknown): IconName | undefined => {
+  if (typeof value !== "string") return undefined;
+  const normalized = value.trim().toUpperCase();
+  if (
+    normalized === "SKETCHER" ||
+    normalized === "PAINTER" ||
+    normalized === "ARTIST" ||
+    normalized === "MASTER"
+  ) {
+    return normalized as IconName;
+  }
+  return undefined;
+};
+
 const ProfilePopup = ({ userInfo, onLogout }: ProfilePopupProps) => {
   const nickname = userInfo?.nickname ?? "임시 사용자";
-  const usagePurposeIcon = userInfo?.level as IconName | undefined;
+  const usagePurposeIcon = resolveJourneyIcon(userInfo?.level);
 
   return (
     <div className="w-[360px] bg-surface rounded-lg shadow-xl">
       <div className="border-b border-surface-variant-low px-4 py-2">
-        <NavLink to="/profile/self" className="block">
-          <ListBase
-            size="lg"
-            title={nickname}
-            avatar={{
-              src: userInfo?.profileImgUrl,
-              alt: nickname,
-              size: 48,
-            }}
-            trailing={
-              usagePurposeIcon ? (
+        <NavLink to="/profile/self" className="block rounded-medium">
+          <div className="flex items-center gap-4 rounded-medium px-2 py-1 state-layer primary-container-opacity-8">
+            <Avatar
+              src={userInfo?.profileImgUrl}
+              alt={nickname}
+              size={48}
+            />
+            <div className="flex min-w-0 items-center gap-2">
+              <span className="main-title-small-emphasized text-on-surface truncate">
+                {nickname}
+              </span>
+              {usagePurposeIcon ? (
                 <Icon
                   name={usagePurposeIcon}
                   size={24}
-                  className="text-on-surface"
+                  className="text-on-surface shrink-0"
                   aria-label="사용 목적"
                 />
-              ) : null
-            }
-            titleClassName="main-title-small-emphasized text-on-surface"
-          />
+              ) : null}
+            </div>
+          </div>
         </NavLink>
       </div>
       <div className="px-4 py-2">

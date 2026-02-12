@@ -6,6 +6,27 @@ import type { EditProfileSettingsParams } from '../../../../apis/types/profileSe
 import { PROFILE_SETTING_KEYS } from './profileSettingKeys';
 import { useHeaderProfileStore } from '../../../../stores/useHeaderProfileStore';
 
+type UserInformationsCompat = UserInformations & {
+  level?: string;
+  usagePurpose?: string;
+};
+
+const resolveJourneyLevel = (
+  value: string | undefined,
+): UserInformations["journeyLevel"] | undefined => {
+  if (!value) return undefined;
+  const normalized = value.trim().toUpperCase();
+  if (
+    normalized === "SKETCHER" ||
+    normalized === "PAINTER" ||
+    normalized === "ARTIST" ||
+    normalized === "MASTER"
+  ) {
+    return normalized;
+  }
+  return undefined;
+};
+
 export const useProfileSetting = () => {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
@@ -17,7 +38,30 @@ export const useProfileSetting = () => {
     queryFn: getProfileSettings,
     select: (res) => {
       if (!res || !res.result) return undefined;
-      return res.result as unknown as UserInformations;
+      const result = res.result as unknown;
+      if (!result || typeof result !== "object") return undefined;
+
+      const direct = result as UserInformationsCompat;
+      const nested = result as {
+        user_information?: UserInformationsCompat;
+        userInformation?: UserInformationsCompat;
+      };
+
+      const resolved =
+        ("nickname" in direct ? direct : undefined) ??
+        nested.user_information ??
+        nested.userInformation;
+
+      if (!resolved) return undefined;
+
+      const journeyLevel = resolveJourneyLevel(
+        resolved.journeyLevel ?? resolved.level ?? resolved.usagePurpose,
+      );
+
+      return {
+        ...resolved,
+        journeyLevel: journeyLevel ?? "SKETCHER",
+      } as UserInformationsCompat;
     },
   });
 
@@ -33,12 +77,15 @@ export const useProfileSetting = () => {
             ?.userInformation;
 
         if (updated) {
+          const journeyLevel = resolveJourneyLevel(
+            (updated as UserInformationsCompat).journeyLevel ??
+              (updated as UserInformationsCompat).level ??
+              (updated as UserInformationsCompat).usagePurpose,
+          );
           setHeaderProfile({
             nickname: updated.nickname,
             profileImgUrl: updated.profileImgUrl,
-            level:
-              (updated as UserInformations & { usagePurpose?: string }).journeyLevel ??
-              (updated as UserInformations & { usagePurpose?: string }).usagePurpose,
+            level: journeyLevel,
           });
         }
 
