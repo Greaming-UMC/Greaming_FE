@@ -1,6 +1,7 @@
 import { http } from "../../../libs/http/client";
 import { ENDPOINTS } from "../../../libs/http/endpoints/endpoints";
 import type { ApiResultResponse, UserInformations } from "../../../apis/types/common";
+import type { RegisterInfoRequest } from "../../../apis/types/auth";
 
 export const registerOnboardingInfo = async (params: UserInformations) => {
     const { 
@@ -14,11 +15,9 @@ export const registerOnboardingInfo = async (params: UserInformations) => {
     } = params;
 
 
-    const payload = {
-        ...rest,
+    const payload: RegisterInfoRequest = {
         nickname: rest.nickname,
         intro: rest.intro || "",
-
         specialtyTags: [...specialties.fields, specialties.style].filter(Boolean),
         interestTags: [...interests.fields, interests.style].filter(Boolean),
         usagePurpose: rest.usagePurpose,
