@@ -1,45 +1,102 @@
-import { useMemo, useState } from "react";
-import type { Hashtag, OnboardingDraft, Purpose, Step } from "./types";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { ART_FIELD_LABEL, ART_STYLE_LABEL, type ArtField, type ArtStyle, type UsagePurpose, type UserInformations } from "../../../apis/types/common";
 
-const DEFAULT: OnboardingDraft = {
+export type Step = 1 | 2 | 3 | 4;
+
+const DEFAULT: UserInformations = {
   nickname: "",
-  tags: [],
-  purpose: null,
-  weeklyGoal: null,
+  profileImgUrl: "",
+  introduction: "",
+  journeyLevel: "SKETCHER",
+  weeklyGoalScore: 0,
+  specialtyTags: [], 
+  interestTags: [],
+  followerCount: 0,
+  followingCount: 0,
 };
 
 export function useOnboardingSteps() {
-  const [step, setStep] = useState<Step>(1);
-  const [draft, setDraft] = useState<OnboardingDraft>(DEFAULT);
+  const { step: stepParam } = useParams<{ step?: string }>();
+  const navigate = useNavigate();
 
-  const next = () => setStep((s) => (s < 4 ? ((s + 1) as Step) : s));
-  const prev = () => setStep((s) => (s > 1 ? ((s - 1) as Step) : s));
+  const step = useMemo<Step>(() => {
+    const parsed = Number(stepParam);
+    if (parsed >= 1 && parsed <= 4) {
+      return parsed as Step;
+    }
+    return 1;
+  }, [stepParam]);
+
+  useEffect(() => {
+    if (!stepParam || Number(stepParam) !== step) {
+      navigate(`/onboarding/step/${step}`, { replace: true });
+    }
+  }, [navigate, step, stepParam]);
+
+  const setStep = (target: Step) => {
+    navigate(`/onboarding/step/${target}`);
+  };
+  const [draft, setDraft] = useState<UserInformations>(DEFAULT);
+
+  const next = () => {
+    const target = (step < 4 ? step + 1 : step) as Step;
+    setStep(target);
+  };
+  const prev = () => {
+    const target = (step > 1 ? step - 1 : step) as Step;
+    setStep(target);
+  };
 
   const setNickname = (nickname: string) =>
     setDraft((d) => ({ ...d, nickname }));
 
-  const toggleTag = (tag: Hashtag, max = 4) =>
-    setDraft((d) => {
-      const exists = d.tags.includes(tag);
-      if (exists) return { ...d, tags: d.tags.filter((t) => t !== tag) };
-      if (d.tags.length >= max) return d;
-      return { ...d, tags: [...d.tags, tag] };
-    });
+  // 🟢 1. 에러 해결을 위한 setIntro 추가
+  const setIntro = (introduction: string) =>
+    setDraft((d) => ({ ...d, introduction }));
 
-  const setPurpose = (purpose: Purpose) =>
-    setDraft((d) => ({ ...d, purpose }));
+  const toggleTag = (type: 'specialtyTags' | 'interestTags', tag: ArtField | ArtStyle, maxFields = 4) =>
+  setDraft((d) => {
+    const tags = d[type] || [];
+    
+    // 🟢 1. 스타일 태그인지 확인 (ART_STYLE_LABEL의 키 중 하나인지)
+    const isStyleTag = tag in ART_STYLE_LABEL;
 
-  const setWeeklyGoal = (weeklyGoal: number) =>
-    setDraft((d) => ({ ...d, weeklyGoal }));
+    if (isStyleTag) {
+      if (tags.includes(tag)) return d;
+      const otherTags = tags.filter((t) => !(t in ART_STYLE_LABEL));
+      return { ...d, [type]: [...otherTags, tag] };
+    }
+
+    // 🟢 2. 분야 태그 로직: 기존 토글 방식 유지하되 최대 개수 제한
+    const exists = tags.includes(tag);
+    const fieldCount = tags.filter((t) => t in ART_FIELD_LABEL).length;
+
+    if (!exists && fieldCount >= maxFields) {
+      return d; // 최대 개수 도달 시 변화 없음
+    }
+
+    const newTags = exists 
+      ? tags.filter((t) => t !== tag) 
+      : [...tags, tag];
+
+    return { ...d, [type]: newTags };
+  });
+
+  const setPurpose = (journeyLevel: UsagePurpose) => setDraft((d) => ({ ...d, journeyLevel }));
+
+  const setWeeklyGoal = (weeklyGoalScore: number) =>
+    setDraft((d) => ({ ...d, weeklyGoalScore }));
 
   const canNext = useMemo(() => {
     if (step === 1) return true;
-    if (step === 2) return draft.nickname.trim().length >= 2;
-    if (step === 3) return draft.tags.length >= 1;
-    if (step === 4) return !!draft.purpose && !!draft.weeklyGoal;
+    if (step === 2) return draft.nickname.trim().length >= 2 && draft.specialtyTags.length >= 1;
+    if (step === 3) return draft.interestTags.length >= 1;
+    if (step === 4) return !!draft.journeyLevel && (draft.weeklyGoalScore ?? 0) > 0;
     return true;
   }, [step, draft]);
 
+ 
   return {
     step,
     draft,
@@ -48,7 +105,8 @@ export function useOnboardingSteps() {
     setStep,
     canNext,
     setNickname,
-    toggleTag,
+    setIntro,      
+    toggleTag,   
     setPurpose,
     setWeeklyGoal,
   };

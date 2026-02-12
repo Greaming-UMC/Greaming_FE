@@ -9,7 +9,7 @@ export function WelcomeScreen() {
   const navigate = useNavigate();
 
   const onStart = () => {
-    navigate("/onboarding/step1");
+    navigate("/onboarding/step/1");
   };
 
   return (

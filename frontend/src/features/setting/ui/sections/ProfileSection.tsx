@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button, TextAreaField } from "../../../../components/common";
 import { useProfileSetting } from "../hooks/useProfileSetting";
 
+
 import type { UsagePurpose, ArtField, ArtStyle } from "../../../../apis/types/common";
 import { ART_FIELD_LABEL, ART_STYLE_LABEL } from "../../../../apis/types/common";
 
@@ -14,6 +15,7 @@ const ProfileSection = () => {
   const { profileData, updateProfile, validateNickname, isLoading, isUpdating } = useProfileSetting();
 
   // --- 상태 관리 ---
+
   const [nickname, setNickname] = useState("");
   const [nicknameStatus, setNicknameStatus] = useState<"unchecked" | "valid" | "invalid" | undefined>(undefined);
   const [isChecking, setIsChecking] = useState(false);
@@ -107,11 +109,13 @@ const ProfileSection = () => {
   if (isLoading) return <div className="w-full py-20 text-center">데이터 로딩 중...</div>;
   if (!profileData) return <div className="w-full py-20 text-center text-error">정보를 불러올 수 없습니다.</div>;
 
+
   return (
     <section className="flex flex-col gap-10 w-full">
       <div className="flex justify-between items-center pb-2">
         <h2 className="main-title-small-emphasized text-on-surface">프로필 설정</h2>
         <Button variant={isChanged ? "primary" : "surfaceVariant"} shape="round" widthMode="fixed" width="8.875rem" disabled={!isChanged || isUpdating} onClick={handleSave}>
+
           {isUpdating ? "저장 중..." : "저장"}
         </Button>
       </div>
@@ -129,6 +133,7 @@ const ProfileSection = () => {
           setNicknameStatus(isValid ? "valid" : "invalid");
           setIsChecking(false);
         }} 
+
       />
 
       <TextAreaField value={bio} onChange={setBio} headline="소개글" height="154px" maxLength={350} showCounter />

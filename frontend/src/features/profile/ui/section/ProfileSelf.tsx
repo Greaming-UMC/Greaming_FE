@@ -15,8 +15,8 @@ const MOCK_PROFILE_RESULT: CheckMyProfileResult = {
     introduction: "소개글 내용",
     followerCount: 10,
     followingCount: 10,
-    specialtyTags: ["태그", "태그", "태그"],
-    interestTags: ["태그"],
+    specialtyTags: ["ILLUSTRATION", "DAILY"],
+    interestTags:["ILLUSTRATION", "ARCHITECTURE","FAN_ART"],
   },
   challenge_calender: {
     dailyChallenge: [],
@@ -26,9 +26,6 @@ const MOCK_PROFILE_RESULT: CheckMyProfileResult = {
 
 const ProfileSelf = () => {
   const query = useMyProfile();
-
-  //if (query.isPending) return <div className="text-[14px]">Loading...</div>;
-  //if (query.error) return <div className="text-[14px]">에러가 발생했어요.</div>;
 
   const result = query.data?.result ?? MOCK_PROFILE_RESULT;
   const fallbackInfo = MOCK_PROFILE_RESULT.user_information!;
@@ -86,6 +83,7 @@ const ProfileSelf = () => {
 
       {/* Introduction */}
       <div className="mt-[36px] label-xlarge-emphasized text-on-surface"> 소개글 </div>
+      {/* introduction -> intro 로 수정 */}
       <div className="mt-[8px] label-xlarge text-on-surface"> {info.introduction} </div>
 
       {/* History */}

@@ -25,6 +25,7 @@ export const useProfileSetting = () => {
       if (res.isSuccess) {
         showToast("프로필이 성공적으로 변경되었습니다.", "success");
         // 저장 성공 시 캐시를 무효화하여 최신 데이터를 다시 불러옵니다.
+
         queryClient.invalidateQueries({ queryKey: PROFILE_SETTING_KEYS.all }); 
       } else {
         showToast(res.message || "저장에 실패했습니다.", "error");

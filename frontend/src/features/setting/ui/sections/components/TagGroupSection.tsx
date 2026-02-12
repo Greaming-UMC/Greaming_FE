@@ -6,6 +6,7 @@ interface Props {
   options: string[]; 
   labelMap: Record<string, string>; 
   selected: string[]; 
+
   onChange: (tags: string[]) => void;
   max?: number;
 }
