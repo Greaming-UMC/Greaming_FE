@@ -16,6 +16,7 @@ export interface CheckChallengeDateSubmissionsRequest {
   challengeType: ChallengeType;
   dateTime: string;
   sortBy?: ChallengeSortBy;
+  tags?: string[];
   page?: number;
   size?: number;
 }

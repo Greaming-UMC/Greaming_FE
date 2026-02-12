@@ -10,14 +10,15 @@ interface Props {
   view: HomeView;
   type: CheckSubmissionType;
   sort: SortBy;
+  tags: string[];
   dateTimeIso: string;
 }
 
 const SKELETON_COUNT = 10;
 
-const CardGrid = ({ view, type, sort, dateTimeIso }: Props) => {
+const CardGrid = ({ view, type, sort, tags, dateTimeIso }: Props) => {
   const { data, fetchNextPage, hasNextPage, isLoading, isFetchingNextPage, isFetched } =
-    useInfiniteHomeCards({ view, type, sort, dateTimeIso });
+    useInfiniteHomeCards({ view, type, sort, tags, dateTimeIso });
 
   const items = data?.pages.flatMap((p) => p.items) ?? [];
 

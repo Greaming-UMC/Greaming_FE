@@ -8,6 +8,7 @@ import type { CheckSubmissionType, SortBy, SubmissionListItemDto, PageInfo } fro
 export interface CheckSubmissionsRequest {
   type?: CheckSubmissionType;
   sortBy?: SortBy | null;
+  tags?: string[] | null;
   page?: number | null;
   size?: number | null;
 }

@@ -5,7 +5,6 @@ import CardGrid from "./card/CardGrid";
 import HeroSection from "../components/HeroSection";
 import CardControls from "../components/CardControls";
 import type { ChallengeType, HomeView as HomeViewType } from "../components/type";
-import HomeBg from "../../../assets/background/home_bg.svg";
 import type { CheckSubmissionType, SortBy } from "../../../apis/types/common";
 
 const toHomeView = (raw?: string): HomeViewType => {
@@ -67,6 +66,7 @@ const HomeView = () => {
               view={view}
               type={gridType}
               sort={gridSort}
+              tags={gridTags}
               dateTimeIso={dateTimeIso}
             />
           </div>

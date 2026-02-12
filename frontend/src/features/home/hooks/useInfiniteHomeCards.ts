@@ -9,13 +9,24 @@ interface Params {
   view: HomeView;
   type: CheckSubmissionType;
   sort: SortBy;
+  tags: string[];
   dateTimeIso: string;
   size?: number;
 }
 
-export const useInfiniteHomeCards = ({ view, type, sort, dateTimeIso, size = 50 }: Params) => {
+export const useInfiniteHomeCards = ({ view, type, sort, tags, dateTimeIso, size = 50 }: Params) => {
+  const normalizedTags = tags.map((tag) => tag.trim()).filter(Boolean);
+
   return useInfiniteQuery({
-    queryKey: ["homeGrid", view, view === "HOME" ? type : "ALL", sort, dateTimeIso, size],
+    queryKey: [
+      "homeGrid",
+      view,
+      view === "HOME" ? type : "ALL",
+      sort,
+      normalizedTags.join(","),
+      dateTimeIso,
+      size,
+    ],
     initialPageParam: 1,
 
     queryFn: async ({ pageParam }) => {
@@ -23,6 +34,7 @@ export const useInfiniteHomeCards = ({ view, type, sort, dateTimeIso, size = 50 
         const res = await getSubmissions({
           type,
           sortBy: sort,
+          tags: normalizedTags.length > 0 ? normalizedTags : undefined,
           page: pageParam,
           size,
         });
@@ -39,6 +51,7 @@ export const useInfiniteHomeCards = ({ view, type, sort, dateTimeIso, size = 50 
         challengeType: view, // "DAILY" | "WEEKLY"
         dateTime: dateTimeIso,
         sortBy: effectiveSort,
+        tags: normalizedTags.length > 0 ? normalizedTags : undefined,
         page: pageParam,
         size,
       });
