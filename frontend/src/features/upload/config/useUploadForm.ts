@@ -1,4 +1,3 @@
-// src/features/upload/config/useUploadForm.ts
 import { useMemo, useRef, useState } from "react";
 import { getPresignedUrl, putToS3, postSubmission } from "../apis";
 
@@ -10,7 +9,7 @@ export type UploadImageItem = {
 };
 
 type UploadField = "FREE" | "DAILY" | "WEEKLY";
-type UploadVisibility = "PUBLIC" | "CIRCLE";
+type UploadVisibility = "PUBLIC"; // 서클 제외 
 
 type CreateSubmissionRequest = {
   title: string;
@@ -29,32 +28,26 @@ const fileSignature = (f: File) => `${f.name}_${f.size}_${f.lastModified}`;
 const MAX_BODY_LEN = 350;
 
 export function useUploadForm() {
-  // 이미지
   const [images, setImages] = useState<UploadImageItem[]>([]);
-
-  // 활성 이미지
   const [activeId, setActiveId] = useState<string | null>(null);
   const setActiveById = (id: string) => setActiveId(id);
 
-  // 옵션
-  const [isPrivate, setIsPrivate] = useState(false); // true면 visibility=CIRCLE
   const [allowComments, setAllowComments] = useState(false);
 
-  // 내용
   const [body, setBody] = useState("");
   const [title, setTitle] = useState("");
   const [hashtags, setHashtags] = useState<string[]>([]);
   const [hashtagInput, setHashtagInput] = useState("");
 
-  // submit 중복 방지
   const submitLockRef = useRef(false);
 
   const canUpload = useMemo(() => {
     const hasImage = images.length > 0;
+    const hasTitle = title.trim().length > 0; 
     const hasBody = body.trim().length > 0;
     const hasTags = hashtags.length > 0;
-    return hasImage && hasBody && hasTags;
-  }, [images.length, body, hashtags.length]);
+    return hasImage && hasTitle && hasBody && hasTags;
+  }, [images.length, title, body, hashtags.length]);
 
   const addFiles = (files: FileList | File[]) => {
     const arr = Array.from(files).filter((f) => f.type.startsWith("image/"));
@@ -76,7 +69,6 @@ export function useUploadForm() {
         prevSig.add(sig);
       }
 
-      // 첫 이미지 추가 시 활성 지정
       if (prev.length === 0 && nextItems.length > 0) {
         setActiveId(nextItems[0].id);
       }
@@ -91,17 +83,12 @@ export function useUploadForm() {
       if (target) URL.revokeObjectURL(target.previewUrl);
 
       const next = prev.filter((p) => p.id !== id);
-
-      // active가 제거된 경우 next[0]로 이동
       if (activeId === id) setActiveId(next[0]?.id ?? null);
-
       return next;
     });
   };
 
-  const setBodyWithLimit = (next: string) => {
-    setBody(next.slice(0, MAX_BODY_LEN));
-  };
+  const setBodyWithLimit = (next: string) => setBody(next.slice(0, MAX_BODY_LEN));
 
   const commitHashtags = () => {
     const raw = hashtagInput.trim();
@@ -112,7 +99,6 @@ export function useUploadForm() {
       .map((t) => t.trim())
       .filter(Boolean)
       .map((t) => (t.startsWith("#") ? t.slice(1) : t))
-      .map((t) => t.replace(/[^\p{L}\p{N}_-]/gu, "")) // 한글/영문/숫자/_/-
       .filter(Boolean);
 
     if (tokens.length === 0) return;
@@ -131,19 +117,17 @@ export function useUploadForm() {
     setHashtags((prev) => prev.filter((t) => t !== normalized));
   };
 
-  
   const submit = async (field: UploadField) => {
     if (!canUpload) return;
     if (submitLockRef.current) return;
     submitLockRef.current = true;
 
     try {
-      // 1) presigned 발급 + S3 PUT
       const uploadedKeys: string[] = [];
 
       for (const img of images) {
         const presigned = await getPresignedUrl({
-          prefix: "submissions",
+          prefix: "submissions", 
           fileName: img.file.name,
         });
 
@@ -153,11 +137,10 @@ export function useUploadForm() {
 
       if (uploadedKeys.length === 0) return;
 
-      // 2) submissions payload (Swagger 스펙)
       const payload: CreateSubmissionRequest = {
-        title: title.trim() || " ",
+        title: title.trim(),
         caption: body,
-        visibility: isPrivate ? "CIRCLE" : "PUBLIC",
+        visibility: "PUBLIC", 
         field,
         commentEnabled: allowComments,
         tags: hashtags,
@@ -166,34 +149,25 @@ export function useUploadForm() {
       };
 
       const res = await postSubmission(payload);
-      console.log("UPLOAD SUCCESS", res);
       return res;
-    } catch (e) {
-      console.error("UPLOAD FAILED", e);
-      throw e;
     } finally {
       submitLockRef.current = false;
     }
   };
 
   return {
-    // data
     images,
     activeId,
-    isPrivate,
     allowComments,
     body,
     title,
     hashtags,
     hashtagInput,
 
-    // derived
     canUpload,
     maxBodyLen: MAX_BODY_LEN,
 
-    // setters/actions
     setActiveById,
-    setIsPrivate,
     setAllowComments,
     setBody: setBodyWithLimit,
     setTitle,

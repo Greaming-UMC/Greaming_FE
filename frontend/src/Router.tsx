@@ -12,6 +12,8 @@ import ExamplePage from './pages/ExamplePage';
 import OnboardingWelcomePage from './pages/OnboardingWelcomePage';
 import OnboardingPage from './pages/OnboardingPage';
 import { UploadView } from './features/upload';
+import WeeklyChallengeUploadPage from './features/upload/ui/pages/WeeklyChallengeUploadPage';
+import DailyUploadPage from './features/upload/ui/pages/DailyUploadPage';
 
 /* TODO
 라우터 설정은 추후 변경해야 합니다. 또한, 나중에 API 연동할 때 로그인 여부 등.. 다시 리팩토링해야합니당
@@ -105,6 +107,14 @@ const router = createBrowserRouter([
   {
     path:'upload',
     element:<UploadView/>
+  },
+  {
+    path:'upload/weekly',
+    element:<WeeklyChallengeUploadPage/>
+  },
+  {
+    path:'upload/daily',
+    element:<DailyUploadPage/>
   }
 ]);
 

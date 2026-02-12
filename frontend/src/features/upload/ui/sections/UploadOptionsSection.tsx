@@ -10,9 +10,7 @@ type Props = {
 export function UploadOptionsSection({ form }: Props) {
   return (
     <div className="flex w-full items-center mt-[16px] gap-[11px]">
-      <Checkbox checked={form.isPrivate} onChange={form.setIsPrivate}>
-        비공개
-      </Checkbox>
+      {/*  CIRCLE 미지원 → 비공개 제거 */}
 
       <Checkbox checked={form.allowComments} onChange={form.setAllowComments}>
         댓글 허용
