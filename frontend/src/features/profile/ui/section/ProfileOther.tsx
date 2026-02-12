@@ -13,7 +13,7 @@ const MOCK_PROFILE_RESULT: CheckUserProfileResult = {
   user_information: {
     nickname: "닉네임",
     profileImgUrl: "",
-    level: "PAINTER",
+    journeyLevel: "PAINTER",
     introduction: "소개글 내용",
     followerCount: 10,
     followingCount: 10,
@@ -44,7 +44,7 @@ const ProfileOther = ({ userId }: ProfileOtherProps) => {
     fallbackInfo;
   const specialtyTags = info.specialtyTags ?? [];
   const interestTags = info.interestTags ?? [];
-  const usageIcon = info.level as IconName;
+  const usageIcon = info.journeyLevel as IconName;
   const targetId = userId ?? 0;
   const followState = info.followState;
 

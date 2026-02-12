@@ -11,7 +11,7 @@ const MOCK_PROFILE_RESULT: CheckMyProfileResult = {
   user_information: {
     nickname: "닉네임",
     profileImgUrl: "",
-    level: "SKETCHER",
+    journeyLevel: "SKETCHER",
     introduction: "소개글 내용",
     followerCount: 10,
     followingCount: 10,
@@ -38,7 +38,7 @@ const ProfileSelf = () => {
     fallbackInfo;
   const specialtyTags = info.specialtyTags ?? [];
   const interestTags = info.interestTags ?? [];
-  const usageIcon = info.level as IconName;
+  const usageIcon = info.journeyLevel as IconName;
 
   return (
     <section className="flex flex-col">
