@@ -1,46 +1,31 @@
-import type { ApiResultResponse } from "../common";
+import type { VisibilityType } from '../common';
 
 /**
- * 게시글 생성 (POST /api/submissions)
- * URI: /api/submissions
+ * 일간/주간 챌린지, 서클 게시물 업로드 (POST /api/users/upload)
+ * URI: /api/users/upload
  */
-
-export type UploadSubmissionVisibility = "PUBLIC" | "CIRCLE";
-export type UploadSubmissionField = "FREE" | "DAILY" | "WEEKLY";
 
 // Request
 export interface UploadSubmissionRequest {
-  title: string;
-  caption: string;
-  visibility: UploadSubmissionVisibility;
-  field: UploadSubmissionField;
-  thumbnailKey: string;
-  commentEnabled: boolean;
-  tags: string[];
-  imageList: string[];
-}
-
-export interface UploadSubmissionTag {
-  tagId: number;
-  tagName: string;
-}
-
-// Swagger 예시 기반
-export interface UploadSubmissionResult {
-  submissionId: number;
-  userId: number;
-  nickname?: string;
-  profileImgUrl?: string;
-  level?: string;
-  imageList?: string[];
-  likesCount?: number;
-  commentCount?: number;
-  bookmarkCount?: number;
-  title?: string;
-  caption?: string;
-  tags?: UploadSubmissionTag[];
-  liked?: boolean;
-}
+    title : string;
+    caption : string;
+    visibility : VisibilityType;
+    commentEnabled : boolean;
+    challengeId : number;
+    circleId? : number | null;
+    hashtags : string[];
+    imageUrls : string[];
+};
 
 // Response
-export type UploadSubmissionResponse = ApiResultResponse<UploadSubmissionResult>;
+// ./common.ts의 ApiDataResponse, ApiErrorResponese 사용
+export interface UploadSubmissionRsult {
+    title : string;
+    caption : string;
+    visibility : VisibilityType;
+    commentEnabled : boolean;
+    challengeId : number;
+    circleId? : number | null;
+    hashtags : string[];
+    imageUrls : string[];
+};

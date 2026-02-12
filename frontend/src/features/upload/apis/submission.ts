@@ -1,17 +1,23 @@
 import { http } from "../../../libs/http/client";
-import { ENDPOINTS } from "../../../libs/http/endpoints/endpoints";
-import type { UploadSubmissionResponse } from "../../../apis/types/upload";
 import type { UploadSubmissionPayload } from "../config/types";
 
-export async function postSubmission(payload: UploadSubmissionPayload) {
-  const res = await http.post<UploadSubmissionResponse>(
-    ENDPOINTS.SUBMISSION.CREATE,
-    payload
-  );
+type ApiResponse<T> = {
+  status: number;
+  message: string;
+  data: T | null;
+};
 
-  if (!res.data?.isSuccess || !res.data?.result) {
+type SubmissionCreateSuccess = {
+  submission_id: number;
+  created_at: string;
+};
+
+export async function postSubmission(payload: UploadSubmissionPayload) {
+  const res = await http.post<ApiResponse<SubmissionCreateSuccess>>("/api/submissions", payload);
+
+  if (!res.data?.data) {
     throw new Error(res.data?.message ?? "게시물 생성 실패");
   }
 
-  return res.data.result;
+  return res.data.data;
 }

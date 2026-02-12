@@ -41,20 +41,10 @@ export const ENDPOINTS = {
         GET_WORK_PREVIEW: (workId: number | string) => `/api/works/${workId}/preview`,
         GET_WORKS: "/api/works",
         GET_CHALLENGE_WORKS: (challengeId: number | string) => `/api/challenges/${challengeId}/works`,
-        UPLOAD_WORK: "/api/submissions",
+        UPLOAD_WORK: "/api/users/upload",
         
         // 💡 (선택) 홈 화면은 성격이 좀 달라서 따로 빼도 좋음 (일단 여기 둠)
         GET_HOME_TOP: "/api/home",
-    },
-
-    // 도메인: SUBMISSION
-    SUBMISSION: {
-        CREATE: "/api/submissions",
-    },
-
-    // 도메인: S3
-    S3: {
-        GET_PRESIGNED_URL: "/api/v1/s3/presigned-url",
     },
 
     // 도메인: FOLLOW
