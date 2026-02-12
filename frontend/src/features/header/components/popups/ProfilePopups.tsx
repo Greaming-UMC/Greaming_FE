@@ -1,5 +1,5 @@
-import { ListBase } from "../../input";
-import type { UserInfo } from "../types";
+import { ListBase } from "../../../../components/common/input";
+import type { UserInfo } from "../../config";
 
 interface ProfilePopupProps {
   userInfo?: UserInfo;
@@ -17,7 +17,7 @@ const ProfilePopup = ({ userInfo, onLogout }: ProfilePopupProps) => {
   const levelText = userInfo?.level ? `Lv.${userInfo.level}` : undefined;
 
   return (
-    <div className="w-[240px] bg-surface rounded-lg shadow-xl py-2 animate-in fade-in zoom-in-95 duration-200">
+    <div className="w-[360px] bg-surface rounded-lg shadow-xl py-2 animate-in fade-in zoom-in-95 duration-200">
       <div className="px-4 pb-2 border-b border-surface-variant-low">
         <ListBase
           size="lg"
@@ -46,7 +46,7 @@ const ProfilePopup = ({ userInfo, onLogout }: ProfilePopupProps) => {
         <ListBase
           size="md"
           title="로그아웃"
-          className="text-on-surface cursor-pointer hover:bg-surface-variant-low"
+          className="text-error cursor-pointer"
           onClick={onLogout}
         />
       </div>

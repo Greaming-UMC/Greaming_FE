@@ -1,11 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import { getUserProfile, type UserProfileResponse } from '../types/user';
+import { getMyProfileHeader, type CheckMyProfileResponse } from '../types/user';
 
-export const useUserProfile = () => {
-  return useQuery<UserProfileResponse>({
-    queryKey: ['me'], // 데이터를 캐싱
-    queryFn: getUserProfile,
+type UseUserProfileOptions = {
+  enabled?: boolean;
+};
+
+export const useUserProfile = (options?: UseUserProfileOptions) => {
+  return useQuery<CheckMyProfileResponse>({
+    queryKey: ['me'],
+    queryFn: getMyProfileHeader,
+    enabled: options?.enabled ?? true,
     staleTime: 1000 * 60 * 5,
-    retry: 1,
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 };

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import Logo from "../Logo";
-import { HEADER_HEIGHT, Z_INDEX } from "../layouts/layout";
+import Logo from "../../../components/common/Logo";
+import { HEADER_HEIGHT, Z_INDEX } from "../../../components/common/layouts/layout";
 
 const HeaderLogo = () => {
   return (

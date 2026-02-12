@@ -121,8 +121,13 @@ export type UserInformations = {
 
 // 프로필 헤더 정보 타입
 export type ProfileInterceptor = {
-  user_information: UserInformations;
-  challenge_calender: {
+  user_information?: UserInformations;
+  userInformation?: UserInformations;
+  challenge_calender?: {
+    dailyChallenge: string[];
+    weeklyChallenge: string[];
+  };
+  challengeCalendar?: {
     dailyChallenge: string[];
     weeklyChallenge: string[];
   };

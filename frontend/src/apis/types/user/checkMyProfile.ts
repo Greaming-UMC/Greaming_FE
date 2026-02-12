@@ -1,15 +1,14 @@
-import type { ProfileInterceptor } from '../common';
-import axios from 'axios';
+import { http } from "../../../libs/http/client";
+import { ENDPOINTS } from "../../../libs/http/endpoints/endpoints";
+import type { ApiResultResponse, ProfileInterceptor } from "../common";
 
 /**
  * 내 프로필 정보 (GET /api/users/me)
  * URI: /api/users/me
  */
-
-
-// Response
-// ApiResultSuccessResponse<CheckMyProfileResult>
 export type CheckMyProfileResult = ProfileInterceptor;
+export type CheckMyProfileResponse = ApiResultResponse<CheckMyProfileResult>;
+
 
 export type UserInformation = {
   nickname: string;
@@ -22,24 +21,17 @@ export type UserInformation = {
   interestTags: string[];    
 };
 
-export interface ChallengeCalendar {
-  dailyChallenge: string[];
-  weeklyChallenge: string[];
-}
+// 호환성 유지용 alias
+export type UserProfileResponse = CheckMyProfileResponse;
 
-// 전체 응답 구조
-export interface UserProfileResponse {
-  isSuccess: boolean;
-  code: string;
-  message: string;
-  result: {
-    userInformation: UserInformation;
-    challengeCalendar: ChallengeCalendar;
-  };
-}
 
-// API 프로필 조회 요청 함수
-export const getUserProfile = async (): Promise<UserProfileResponse> => {
-  const response = await axios.get('/api/users/me'); 
-  return response.data;
+// 공용 API 함수: 헤더/공통 영역에서 내 프로필 요약 조회
+export const getMyProfileHeader = async (): Promise<CheckMyProfileResponse> => {
+  const { data } = await http.get<CheckMyProfileResponse>(
+    ENDPOINTS.USER.GET_MY_PROFILE_HEADER,
+  );
+  return data;
 };
+
+// 기존 호출부 호환성 유지
+export const getUserProfile = getMyProfileHeader;

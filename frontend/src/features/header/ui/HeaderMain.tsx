@@ -1,9 +1,8 @@
-import HeaderTabs from "./HeaderTabs";
-import { HeaderActions } from "./HeaderActions";
-import Logo from "../Logo";
-import type { UserInfo } from "./types";
-import { useHeaderScroll } from "./hooks/useHeaderScroll";
-import { useLocation, useNavigate } from "react-router-dom";
+import { HeaderActions, HeaderTabs } from "../components";
+import Logo from "../../../components/common/Logo";
+import type { UserInfo } from "../config";
+import { useHeaderScroll } from "../hooks";
+import { NavLink, useLocation } from "react-router-dom";
 
 interface HeaderMainProps {
   userInfo?: UserInfo;
@@ -12,7 +11,6 @@ interface HeaderMainProps {
 
 const HeaderMain = ({ userInfo, onLogout }: HeaderMainProps) => {
   const location = useLocation();
-  const navigate = useNavigate();
   const { isScrolled: isHomeScrolled } = useHeaderScroll(920);
   const isHome = location.pathname === "/home";
   const isScrolled = isHome ? isHomeScrolled : true;
@@ -31,28 +29,15 @@ const HeaderMain = ({ userInfo, onLogout }: HeaderMainProps) => {
     isScrolled ? "left-0 translate-x-0 ease-out" : "left-1/2 -translate-x-1/2 ease-in-out"
   }`;
 
-  const handleLogin = () => {
-    navigate("/login");
-  };
-
-  const handleGoHome = () => {
-    navigate("/home");
-  };
-
   return (
     <>
       <header className={headerClass}>
         <div className="relative mx-auto h-full px-20">
           <div className="grid h-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-6">
 
-            <button
-              type="button"
-              onClick={handleGoHome}
-              className="inline-flex cursor-pointer"
-              aria-label="홈으로 이동"
-            >
+            <NavLink to="/home" aria-label="홈으로 이동" className="inline-flex">
               <Logo name="mono_white_wordmark" size={logoSize} className={logoWrapperClass} />
-            </button>
+            </NavLink>
 
             <div className={tabsAreaClass}>
               <div className={tabsTrackClass}>
@@ -60,7 +45,7 @@ const HeaderMain = ({ userInfo, onLogout }: HeaderMainProps) => {
               </div>
             </div>
             
-            <HeaderActions userInfo={userInfo} onLogout={onLogout} onLogin={handleLogin} />
+            <HeaderActions userInfo={userInfo} onLogout={onLogout} />
           </div>
         </div>
       </header>

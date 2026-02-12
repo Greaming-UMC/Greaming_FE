@@ -4,6 +4,7 @@ export const ENDPOINTS = {
     AUTH : {
         REGISTER_INFO: "/api/user/registinfo",
         SOCIAL_LOGIN: (provider: string) => `/oauth2/authorization/${provider}`,
+        TEST: "/api/auth/test",
         LOGOUT: "/api/auth/logout",
         REISSUE_TOKEN: "/api/auth/reissue",
     },
@@ -24,25 +25,26 @@ export const ENDPOINTS = {
 
     // 도메인: USER
     USER : {
-        GET_USER_PROFILE_HEADER: (userId: number | string) => `/api/user/${userId}/info`,
+        GET_USER_PROFILE_HEADER: (userId: number | string) => `/api/users/${userId}/info`,
         GET_MY_PROFILE_HEADER: "/api/users/me",
+        UPDATE_INFO: "/api/users/info",
     },
 
-    // 도메인: USER_WORKS (작품 관련은 여기서 통합 관리)
-    USER_WORKS : {
-        GET_MY_WORKS: "/api/users/me/works",
-        GET_USER_WORKS: (userId: number | string) => `/api/users/${userId}/works`,
+    // 도메인: USER_SUBMISSIONS (제출물 관련은 여기서 통합 관리)
+    USER_SUBMISSIONS : {
+        GET_MY_SUBMISSIONS: "/api/users/me/submissions",
+        GET_USER_SUBMISSIONS: (userId: number | string) => `/api/users/${userId}/submissions`,
     },
 
-    // 도메인: WORK
-    WORK : {
-        UPDATE_WORK: (workId: number | string) => `/api/works/${workId}`,
-        DELETE_WORK: (workId: number | string) => `/api/works/${workId}`,
-        GET_WORK_DETAIL: (workId: number | string) => `/api/works/${workId}`,
-        GET_WORK_PREVIEW: (workId: number | string) => `/api/works/${workId}/preview`,
-        GET_WORKS: "/api/works",
-        GET_CHALLENGE_WORKS: (challengeId: number | string) => `/api/challenges/${challengeId}/works`,
-        UPLOAD_WORK: "/api/users/upload",
+    // 도메인: SUBMISSION
+    SUBMISSION : {
+        UPDATE_SUBMISSION: (submissionId: number | string) => `/api/submissions/${submissionId}`,
+        DELETE_SUBMISSION: (submissionId: number | string) => `/api/submissions/${submissionId}`,
+        GET_SUBMISSION_DETAIL: (submissionId: number | string) => `/api/submissions/${submissionId}`,
+        GET_SUBMISSION_PREVIEW: (submissionId: number | string) => `/api/submissions/${submissionId}/preview`,
+        GET_SUBMISSIONS: "/api/submissions",
+        GET_CHALLENGE_SUBMISSIONS: (challengeId: number | string) => `/api/challenges/${challengeId}/submissions`,
+        UPLOAD_SUBMISSION: "/api/users/upload",
         
         // 💡 (선택) 홈 화면은 성격이 좀 달라서 따로 빼도 좋음 (일단 여기 둠)
         GET_HOME_TOP: "/api/home",
@@ -74,7 +76,7 @@ export const ENDPOINTS = {
         KICK_MEMBER: (circleId: number | string, memberId: number | string) => 
             `/api/circles/${circleId}/members/${memberId}`,
         INVITE_USER: (targetId: number | string) => `/api/users/${targetId}/invites`,
-        GET_CIRCLE_WORKS: (circleId: number | string) => `/api/circles/${circleId}/works`,
+        GET_CIRCLE_SUBMISSIONS: (circleId: number | string) => `/api/circles/${circleId}/submissions`,
         GET_CIRCLE_PROFILE: (circleId: number | string) => `/api/circles/${circleId}`,
     },
 
