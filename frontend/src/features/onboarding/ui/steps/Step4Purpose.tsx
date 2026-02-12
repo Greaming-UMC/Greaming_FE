@@ -33,10 +33,10 @@ export function Step4Purpose({ onPrev, draft, setPurpose, setWeeklyGoal }: Props
   const { submitOnboarding, isSubmitting } = useOnboarding();
 
   const selectedIdx = useMemo(() => {
-    return Object.values(PURPOSE_MAP).indexOf(draft.usagePurpose);
-  }, [draft.usagePurpose]);
+    return Object.values(PURPOSE_MAP).indexOf(draft.journeyLevel);
+  }, [draft.journeyLevel]);
 
-  const canNext = selectedIdx !== -1 && draft.weeklyGoalScore > 0;
+  const canNext = selectedIdx !== -1 && (draft.weeklyGoalScore ?? 0) > 0;
 
   const handleFinish = () => {
     // 🟢 이제 부모가 모아온 닉네임, 태그가 담긴 draft를 그대로 쏩니다.
@@ -63,7 +63,7 @@ export function Step4Purpose({ onPrev, draft, setPurpose, setWeeklyGoal }: Props
         />
 
         <GoalSection
-          goal={draft.weeklyGoalScore}
+          goal={draft.weeklyGoalScore ?? 0}
           onSelect={setWeeklyGoal}
         />
       </div>

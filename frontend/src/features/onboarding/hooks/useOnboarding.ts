@@ -1,22 +1,20 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { registerOnboardingInfo } from '../api/api';
+import { checkNickname, registerOnboardingInfo,  } from '../api/api'; 
 import { useToast } from '../../../components/common/feedback/Toast/ToastProvider';
 import type { UserInformations } from '../../../apis/types/common';
-
 
 export const useOnboarding = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { showToast } = useToast();
 
+  // 1. 온보딩 정보 최종 등록 (기존 로직)
   const { mutate: submitOnboarding, isPending: isSubmitting } = useMutation({
     mutationFn: (formData: UserInformations) => registerOnboardingInfo(formData),
     onSuccess: (res) => {
       if (res.isSuccess) {
         showToast("그리밍에 오신 걸 환영합니다!", "success");
-        
-        // 성공 시 전체 쿼리 무효화 후 메인으로 이동
         queryClient.invalidateQueries();
         navigate("/home", { replace: true });
       } else {
@@ -28,8 +26,30 @@ export const useOnboarding = () => {
     }
   });
 
+  const validateNickname = async (nickname: string) => {
+  // 🟢 앞뒤 공백 제거 (매우 중요!)
+  const cleanNickname = nickname.trim(); 
+  
+  console.log("🛠 [검증 시작] 공백 제거된 입력값:", `|${cleanNickname}|`); 
+
+  try {
+    // 🟢 cleanNickname을 사용하여 API 호출
+    const res = await checkNickname(cleanNickname); 
+
+    console.log("📡 [서버 응답 데이터]:", res);
+    
+    if (res && res.result) {
+      return res.result.isAvailable;
+    }
+    return false;
+  } catch (error) {
+    console.error("❌ [API 호출 에러]:", error);
+    return false;
+  }
+};
   return {
     submitOnboarding,
-    isSubmitting
+    isSubmitting,
+    validateNickname // 🟢 컴포넌트에서 사용할 수 있게 반환
   };
 };

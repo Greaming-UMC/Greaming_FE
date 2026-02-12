@@ -1,40 +1,16 @@
-import type { SubmissionMetadata } from "../common";
+import type { CheckSubmissionInterceptor, SubmissionMetadata } from '../common';
 
 /**
- * 특정 유저 게시물 목록 조회 (GET /api/submissions/user/{userId})
- * URI: /api/submissions/user/{userId}
+ * 유저 다음 페이지 제출물 조회 (GET /api/users/{userId}/submissions)
+ * URI: /api/users/{userId}/submissions
  */
 
 // Request
-export type CheckUserSubmissionsRequest = {
-  page?: number | null;
-  size?: number | null;
-};
+export type CheckUserSubmissionsRequest = CheckSubmissionInterceptor;
 
-export type UserSubmissionItem = {
-  submissionId: number;
-  thumbnailUrl: string;
-  userId: number;
-  nickname: string;
-  profileImageUrl: string | null;
-  likesCount: number;
-  commentCount: number;
-  bookmarkCount: number;
-};
-
-export type UserSubmissionPageInfo = {
-  currentPage: number;
-  pageSize: number;
-  totalPages: number;
-  totalElements: number;
-  isLast: boolean;
-  isFirst: boolean;
-};
 
 // Response
-// `submission_list`는 기존 프론트 호환 필드(점진 이관용)
+// ./common.ts 에서 ApiResultSuccessResponse<T> 사용
 export type CheckUserSubmissionsResult = {
-  submissions?: UserSubmissionItem[];
-  pageInfo?: UserSubmissionPageInfo;
-  submission_list?: SubmissionMetadata[];
+    submission_list: SubmissionMetadata[];
 };

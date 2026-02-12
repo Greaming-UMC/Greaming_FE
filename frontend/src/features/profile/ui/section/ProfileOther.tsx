@@ -3,26 +3,19 @@ import Icon from "../../../../components/common/Icon";
 import type { IconName } from "../../../../components/common/Icon";
 import SpeechBubble from "../../../../components/common/SpeechBubble";
 import SocialButton from "../../components/SocialButton";
-import { useProfileHistory, useUserProfile } from "../../hooks";
+import { useUserProfile } from "../../hooks";
 import type { CheckUserProfileResult } from "../../../../apis/types/user";
 
 const MOCK_PROFILE_RESULT: CheckUserProfileResult = {
   user_information: {
     nickname: "닉네임",
     profileImgUrl: "",
-    usagePurpose: "PAINTER",    
-    intro: "소개글 내용",          
-    weeklyGoalScore: 0,       
+    journeyLevel: "PAINTER",
+    introduction: "소개글 내용",
     followerCount: 10,
     followingCount: 10,
-    specialties: {             
-      fields: ["ILLUSTRATION", "DAILY"],
-      style: "디지털"
-    },
-    interests: {               
-      fields: ["ILLUSTRATION", "ARCHITECTURE","FAN_ART"],
-      style: "컬러"
-    },
+    specialtyTags: ["ILLUSTRATION", "DAILY"],
+    interestTags:["ILLUSTRATION", "ARCHITECTURE","FAN_ART"],
     followState: "COMPLETED"
   },
   challenge_calender: {
@@ -37,19 +30,15 @@ type ProfileOtherProps = {
 
 const ProfileOther = ({ userId }: ProfileOtherProps) => {
   const query = useUserProfile(userId);
-  const { uploadCount, maxConsecutiveChallengeDays } = useProfileHistory({
-    mode: "other",
-    userId,
-  });
   const result = query.data?.result ?? MOCK_PROFILE_RESULT;
   const fallbackInfo = MOCK_PROFILE_RESULT.user_information!;
   const info =
     result.user_information ??
     result.userInformation ??
     fallbackInfo;
-  const specialtyFields = info.specialties?.fields ?? [];
-  const interestFields = info.interests?.fields ?? [];
-  const usageIcon = info.usagePurpose as IconName;
+  const specialtyTags = info.specialtyTags ?? [];
+  const interestTags = info.interestTags ?? [];
+  const usageIcon = info.journeyLevel as IconName;
   const targetId = userId ?? 0;
   const followState = info.followState;
 
@@ -83,7 +72,7 @@ const ProfileOther = ({ userId }: ProfileOtherProps) => {
         <div className="flex items-start gap-[16px]"> 내 특기
             <div className="flex flex-wrap gap-[8px]">
 
-              {specialtyFields.map((tag) => (
+              {specialtyTags.map((tag) => (
                 <Chip key={tag} label={`#${tag}`} />
               ))}
             </div>
@@ -91,7 +80,7 @@ const ProfileOther = ({ userId }: ProfileOtherProps) => {
         <div className="flex items-start gap-[16px]"> 내 취향
             <div className="flex flex-wrap gap-[8px]">
 
-              {interestFields.map((tag) => (
+              {interestTags.map((tag) => (
                 <Chip key={tag} label={`#${tag}`} />
               ))}
             </div>
@@ -100,17 +89,17 @@ const ProfileOther = ({ userId }: ProfileOtherProps) => {
 
       <div className="mt-[36px] label-xlarge-emphasized text-on-surface"> 소개글 </div>
 
-      <div className="mt-[8px] label-xlarge text-on-surface"> {info.intro} </div>
+      <div className="mt-[8px] label-xlarge text-on-surface"> {info.introduction} </div>
 
       <div className="mt-[36px] label-xlarge-emphasized text-on-surface"> 활동 정보 </div>
       <div className="mt-[8px] flex flex-col gap-[8px]">
         <div className="flex items-center gap-[16px]">
           <Icon name="char_profile_green" size={"24px"} />
-          <SpeechBubble label={`총 ${uploadCount}개의 그림을 업로드했어요`} />
+          <SpeechBubble label="총 N개의 그림을 업로드했어요" />
         </div>
         <div className="flex items-center gap-[16px]">
           <Icon name="char_profile_red" size={"24px"} />
-          <SpeechBubble label={`${maxConsecutiveChallengeDays}일 연속으로 챌린지를 수행했어요`} />
+          <SpeechBubble label="N개의 그림을 연속으로 업로드했어요" />
         </div>
       </div>
     </section>

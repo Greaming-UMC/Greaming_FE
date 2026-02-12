@@ -4,7 +4,7 @@ import Icon from "../../../../../components/common/Icon";
 
 interface Props {
   previewUrl: string | null;
-  onUpload: (url: string) => void;
+  onUpload: (url: string, file: File) => void;
 }
 
 export const ProfileImageSection = ({ previewUrl, onUpload }: Props) => {
@@ -13,9 +13,9 @@ export const ProfileImageSection = ({ previewUrl, onUpload }: Props) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => onUpload(reader.result as string);
-      reader.readAsDataURL(file);
+      const objectUrl = URL.createObjectURL(file);
+      onUpload(objectUrl, file);
+
     }
   };
 

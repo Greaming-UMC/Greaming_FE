@@ -108,19 +108,13 @@ export type VisibilityType = 'PUBLIC' | 'PRIVATE' | 'PROTECTED';
 export type UserInformations = {
   nickname: string;
   profileImgUrl: string;
-  intro: string;            
-  usagePurpose: UsagePurpose; 
-  weeklyGoalScore: number;    // 명세서에 있는 주간 목표 점수 추가
-  specialties: {
-    fields: ArtField[]; // 여러 개 선택 가능한 분야
-    style: string;      // 하나만 선택하는 스타일
-  };
-  interests: {
-    fields: ArtField[]; 
-    style: string;      
-  };
+  journeyLevel: UsagePurpose;    
+  introduction: string;      
   followerCount: number;
   followingCount: number;
+  specialtyTags: string[];   
+  interestTags: string[];    
+  weeklyGoalScore?: number; 
   followState?: FollowState;
   visibility?: VisibilityType;
 };
