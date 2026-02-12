@@ -1,20 +1,20 @@
-import type { ReactNode } from "react";
+import { memo, type ReactNode } from "react";
 import { Avatar, Badge } from "../../../../components/common/display";
-import Icon from "../../../../components/common/Icon";
-import type { SubmissionDetails } from "../../../../apis/types/submission/checkSubmissionDetails";
-
 export interface CardHeaderSectionProps {
-  submission: SubmissionDetails["work"];
+  nickname: string;
+  profileImageUrl: string;
+  level: string;
   rightNode?: ReactNode;
   className?: string;
 }
 
 const CardHeader = ({
-  submission,
+  nickname,
+  profileImageUrl,
+  level,
   rightNode,
   className = "",
 }: CardHeaderSectionProps) => {
-  const { nickname, profileImageUrl, level } = submission;
   return (
     <div
       className={`flex items-center justify-between self-stretch ${className}`}
@@ -38,13 +38,11 @@ const CardHeader = ({
       </div>
 
       <div className="flex items-center gap-2">
-        {rightNode ?? (<>
-          <Icon name="dots_vertical" size={20}/>
-        </> 
-        )}
+        {rightNode}
       </div>
     </div>
   );
 };
 
-export default CardHeader;
+// 최적화: React.memo를 사용하여 props가 변경되지 않으면 리렌더링을 방지합니다.
+export default memo(CardHeader);

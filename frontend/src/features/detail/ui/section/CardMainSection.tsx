@@ -1,19 +1,15 @@
+import { memo } from "react";
 import { Card } from "../../../../components/common/display";
-import type { SubmissionDetails } from "../../../../apis/types/submission/checkSubmissionDetails";
 import Icon from "../../../../components/common/Icon";
-import { useCarousel } from "../section/useCarousel"
+import { useCarousel } from "../section/useCarousel";
 
 export interface CardMainProps {
-  submissions?: SubmissionDetails["work"][];
+  image_list: string[];
+  title: string;
   className?: string;
 }
 
-const CardItem = ({
-  submission,
-}: {
-  submission: SubmissionDetails["work"];
-}) => {
-  const { image_list, title } = submission;
+const CardMain = ({ image_list, title, className = "" }: CardMainProps) => {
   const images =
     Array.isArray(image_list) && image_list.length > 0
       ? image_list
@@ -25,7 +21,7 @@ const CardItem = ({
 
   return (
     // 1️⃣ 너비를 최대 840px로 제한하고 중앙 정렬
-    <div className="w-full max-w-[51.25rem] mx-auto">
+    <div className={`w-full max-w-[51.25rem] mx-auto ${className}`}>
       <Card.Root className="w-full">
         {/* 2️⃣ 높이를 720px로 고정 (부모 상자 크기 확정) */}
         <div className="relative w-full h-[51.25rem] bg-on-surface-variant-low rounded-lg overflow-hidden">
@@ -33,8 +29,8 @@ const CardItem = ({
             src={images[index] ?? "/sample.jpg"}
             alt={title ?? "image"}
             // 3️⃣ aspect-square 제거 (정사각형 아님)
-            // aspectRatio="aspect-square" 
-            
+            // aspectRatio="aspect-square"
+
             // 4️⃣ w-full h-full로 840x720 영역을 가득 채움 + 이미지는 object-contain
             className="w-full h-full bg-surface-variant [&>img]:w-full [&>img]:h-full [&>img]:object-contain [&>img]:object-center"
           />
@@ -47,7 +43,7 @@ const CardItem = ({
                   <Icon
                     name="arrow_left"
                     onClick={prev}
-                    size={32} 
+                    size={32}
                     className="fill-current cursor-pointer drop-shadow-md transition-transform"
                   />
                 </div>
@@ -88,16 +84,5 @@ const CardItem = ({
   );
 };
 
-const CardMain = ({ submissions, className = "" }: CardMainProps) => {
-  const list = submissions ?? [];
-
-  return (
-    <div className={`flex flex-col gap-6 w-full h-full ${className}`}>
-      {list.map((s, i) => (
-        <CardItem key={i} submission={s} />
-      ))}
-    </div>
-  );
-};
-
-export default CardMain;
+// 최적화: React.memo를 사용하여 props가 변경되지 않으면 리렌더링을 방지합니다.
+export default memo(CardMain);
