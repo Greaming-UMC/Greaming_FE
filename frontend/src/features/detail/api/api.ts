@@ -191,3 +191,14 @@ export const getUserWorks = async (
   );
   return data;
 };
+
+/**
+ * 게시물 삭제
+ * @param submissionId - 삭제할 게시물 ID
+ */
+export const deleteSubmission = async (submissionId: number) => {
+  const { data } = await http.delete<ApiResultResponse<void>>(
+    ENDPOINTS.SUBMISSION.DELETE_SUBMISSION(submissionId),
+  );
+  return data;
+};
