@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { Chip } from "../../../../components/common/display";
+import { useDateFormatter } from "../../hooks/useDateFormatter";
 
 export interface CardFooterProps {
   title: string;
@@ -16,6 +17,8 @@ const CardFooter = ({
   upload_at,
   className = "",
 }: CardFooterProps) => {
+  const { formatKoreanDate } = useDateFormatter();
+
   return (
     <div
       className={`flex flex-col gap-2 items-start self-stretch ${className}`}
@@ -40,7 +43,9 @@ const CardFooter = ({
           : null}
       </div>
 
-      <div className="text-label-large font-medium text-on-surface-variant-lowest">{upload_at}</div>
+      <div className="text-label-large font-medium text-on-surface-variant-lowest">
+        {formatKoreanDate(upload_at)}
+      </div>
     </div>
   );
 };
