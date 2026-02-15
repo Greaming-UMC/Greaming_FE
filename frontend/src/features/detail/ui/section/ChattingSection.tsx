@@ -1,9 +1,10 @@
 import { useState, useMemo, type KeyboardEvent } from "react";
 import { Chatting } from "../../../../components/chatting";
 import type { CommentDetail } from "../../../../apis/types/submission/checkSubmissionDetails";
-import { createComment, getCommentReplies, createReply } from "../../api/api";
+import { getCommentReplies } from "../../api/api";
 import type { CreateCommentResult } from "../../../../apis/types/submission/createComment";
 import type { ReplyDetail } from "../../../../apis/types/submission/getCommentReplies";
+import { useCommentMutations } from "../../hooks/useCommentMutations";
 
 type Reply = {
   id: number;
@@ -53,6 +54,14 @@ const ChattingSection = ({
   const [replyCounts, setReplyCounts] = useState<Record<number, number>>({});
   // 답글 대상(댓글 객체)을 저장하는 상태
   const [replyingTo, setReplyingTo] = useState<Comment | null>(null);
+
+  // TanStack Query를 사용한 댓글/답글 mutation
+  const {
+    createCommentAsync,
+    isCreatingComment,
+    createReplyAsync,
+    isCreatingReply,
+  } = useCommentMutations();
 
   // 최적화: comment_list prop이 변경될 때만 댓글 목록을 새로 계산합니다.
   const comments: Comment[] = useMemo(() => {
@@ -111,46 +120,51 @@ const ChattingSection = ({
   const handleSubmit = async () => {
     if (!text.trim()) return;
 
+    // 중복 요청 방지: 이미 요청 중이면 무시
+    if (isCreatingComment || isCreatingReply) {
+      console.log("이미 요청 중입니다. 중복 요청을 무시합니다.");
+      return;
+    }
+
     // 1. 답글 모드일 경우
     if (replyingTo) {
       try {
-        const response = await createReply(replyingTo.id, { content: text });
-        if (response.isSuccess && response.result) {
-          const newApiReply = response.result;
-          // API 응답 형식을 UI에서 사용하는 ReplyDetail 형식으로 변환
-          const newReply: ReplyDetail = {
-            replyId: newApiReply.replyId,
-            userId: 0, // createReply 응답에 userId가 없으므로 임시값 사용
-            writer_nickname: newApiReply.writer_nickname,
-            writer_profileImgUrl: newApiReply.writer_profileImgUrl,
-            content: newApiReply.content,
-            createdAt: newApiReply.createdAt,
-            isWriter: true, // 방금 작성했으므로 isWriter는 true
-            isLike: newApiReply.isLike,
-            likeCount: newApiReply.likeCount,
-          };
+        const newApiReply = await createReplyAsync({
+          commentId: replyingTo.id,
+          content: text,
+        });
 
-          // 답글 상태 업데이트
-          setReplies((prev) => ({
-            ...prev,
-            [replyingTo.id]: [...(prev[replyingTo.id] || []), newReply],
-          }));
+        // API 응답 형식을 UI에서 사용하는 ReplyDetail 형식으로 변환
+        const newReply: ReplyDetail = {
+          replyId: newApiReply.replyId,
+          userId: 0, // createReply 응답에 userId가 없으므로 임시값 사용
+          writer_nickname: newApiReply.writer_nickname,
+          writer_profileImgUrl: newApiReply.writer_profileImgUrl,
+          content: newApiReply.content,
+          createdAt: newApiReply.createdAt,
+          isWriter: true, // 방금 작성했으므로 isWriter는 true
+          isLike: newApiReply.isLike,
+          likeCount: newApiReply.likeCount,
+        };
 
-          // 답글 개수 상태 업데이트
-          setReplyCounts((prev) => {
-            const currentCount = prev[replyingTo.id] ?? replyingTo.replyCount ?? 0;
-            return { ...prev, [replyingTo.id]: currentCount + 1 };
-          });
+        // 답글 상태 업데이트
+        setReplies((prev) => ({
+          ...prev,
+          [replyingTo.id]: [...(prev[replyingTo.id] || []), newReply],
+        }));
 
-          // 답글 목록이 닫혀 있었다면 열어줌
-          if (!openReplyIds[replyingTo.id]) {
-            setOpenReplyIds((prev) => ({ ...prev, [replyingTo.id]: true }));
-          }
-          setText(""); // 입력창 비우기
-          handleCancelReply(); // 답글 모드 종료
-        } else {
-          alert(`답글 작성 실패: ${response.message}`);
+        // 답글 개수 상태 업데이트
+        setReplyCounts((prev) => {
+          const currentCount = prev[replyingTo.id] ?? replyingTo.replyCount ?? 0;
+          return { ...prev, [replyingTo.id]: currentCount + 1 };
+        });
+
+        // 답글 목록이 닫혀 있었다면 열어줌
+        if (!openReplyIds[replyingTo.id]) {
+          setOpenReplyIds((prev) => ({ ...prev, [replyingTo.id]: true }));
         }
+        setText(""); // 입력창 비우기
+        handleCancelReply(); // 답글 모드 종료
       } catch (error) {
         console.error("답글 작성 중 오류 발생:", error);
         alert("답글을 작성하는 동안 오류가 발생했습니다.");
@@ -158,16 +172,12 @@ const ChattingSection = ({
     } else {
       // 2. 일반 댓글 모드일 경우
       try {
-        const response = await createComment({
+        const result = await createCommentAsync({
           submissionId: submissionId,
           content: text,
         });
-        if (response.isSuccess && response.result) {
-          onCommentCreated(response.result);
-          setText("");
-        } else {
-          alert(`댓글 작성 실패: ${response.message}`);
-        }
+        onCommentCreated(result);
+        setText("");
       } catch (error) {
         console.error("댓글 작성 중 오류 발생:", error);
         alert("댓글을 작성하는 동안 오류가 발생했습니다.");
@@ -272,6 +282,8 @@ const ChattingSection = ({
           userAvatarSrc={userAvatarSrc ?? undefined}
           // 답글 모드에 따라 placeholder 변경
           placeholder={replyingTo ? "답글을 입력하세요..." : "댓글 달기..."}
+          // 요청 중일 때 입력 비활성화
+          disabled={isCreatingComment || isCreatingReply}
         />
       </Chatting.Root>
     </div>
