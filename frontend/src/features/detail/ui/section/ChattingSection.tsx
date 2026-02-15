@@ -49,7 +49,7 @@ const ChattingSection = ({
   });
 
   return (
-    <div className="h-[51.25rem] w-[21.5rem] items-end gap-10px justify-flex bg-on-primary">
+    <div className="h-[51.25rem] w-[21.5rem] items-end gap-10px justify-flex ">
       <Chatting.Root>
         {/* 최적화: CommentList는 comments가 변경될 때만 리렌더 */}
         <CommentList

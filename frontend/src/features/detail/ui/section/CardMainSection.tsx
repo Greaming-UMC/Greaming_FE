@@ -24,7 +24,7 @@ const CardMain = ({ image_list, title, className = "" }: CardMainProps) => {
     <div className={`w-full max-w-[51.25rem] mx-auto ${className}`}>
       <Card.Root className="w-full">
         {/* 2️⃣ 높이를 720px로 고정 (부모 상자 크기 확정) */}
-        <div className="relative w-full h-[51.25rem] bg-on-surface-variant-low rounded-lg overflow-hidden">
+        <div className="relative w-full h-[51.25rem] bg-surface rounded-lg overflow-hidden">
           <Card.Media
             src={images[index] ?? "/sample.jpg"}
             alt={title ?? "image"}

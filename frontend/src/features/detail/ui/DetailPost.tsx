@@ -114,32 +114,34 @@ const DetailPost = ({
   });
 
   return (
-    <div className=" w-full mx-auto ">
-      <div className="items-start flex">
-        {/* Left column: CardHeader + CardMain + CardFooter */}
-        <div className="flex flex-col flex-1 min-w-0">
-          {/* CardHeader - CardMain과 같은 너비 */}
+    <div className="w-full mx-auto">
+      <div className="w-full max-w-[820px]">
+        {/* CardHeader - CardMain 너비와 동일하게 제한 */}
+        <div className="mb-4">
           {postContent.header}
-          
-          {/* CardMain and CardFooter */}
-          <div className="mt-4">
-            {postContent.mainContent}
-          </div>
         </div>
         
-        <div className="w-[20px]"></div>
-        
-        {/* Right: ChattingSection - CardMain과 같은 높이에서 시작 */}
-        <aside className="w-full lg:w-[360px] shrink-0 mt-[55px]">
-          <div className="bg-surface border border-surface-variant-high rounded-md shadow-sm overflow-hidden h-fit  top-4">
-            <ChattingSection
-              comment_list={comment_list}
-              submissionId={submissionId}
-              onCommentCreated={onCommentCreated}
-              userAvatarSrc={currentUserProfileImg}
-            />
+        {/* CardMain + ChattingSection을 같은 행에 배치 */}
+        <div className="flex items-start">
+          {/* CardMain + CardFooter */}
+          <div className="flex-shrink-0">
+            {postContent.mainContent}
           </div>
-        </aside>
+          
+          <div className="w-[20px] shrink-0"></div>
+          
+          {/* ChattingSection - CardMain과 같은 높이에서 시작 */}
+          <aside className="w-[360px] flex-shrink-0">
+            <div className="bg-surface border border-surface-variant-high rounded-md shadow-sm overflow-hidden h-fit">
+              <ChattingSection
+                comment_list={comment_list}
+                submissionId={submissionId}
+                onCommentCreated={onCommentCreated}
+                userAvatarSrc={currentUserProfileImg}
+              />
+            </div>
+          </aside>
+        </div>
       </div>
     </div>
   );

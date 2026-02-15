@@ -64,7 +64,7 @@ const CommentList = ({
               {replyState.isOpen && (
                 <div className="flex flex-col">
                   {replyState.isLoading && (
-                    <div className="pl-14 text-sm text-gray-500 py-2">
+                    <div className="pl-14 text-sm text-on-surface-variant py-2">
                       답글 로딩 중...
                     </div>
                   )}
