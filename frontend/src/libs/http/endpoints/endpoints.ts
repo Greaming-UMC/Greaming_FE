@@ -22,6 +22,7 @@ export const ENDPOINTS = {
     GET_USER_PROFILE_HEADER: (userId: number | string) => `/api/users/${userId}/info`,
     GET_MY_PROFILE_HEADER: "/api/users/me",
     UPDATE_INFO: "/api/users/info",
+    CHECK_IS_ME: (userId: number | string) => `/api/users/${userId}/is-me`,
   },
 
   USER_SUBMISSIONS: {
@@ -45,6 +46,7 @@ export const ENDPOINTS = {
       `/api/submissions/${submissionId}/preview`,
     GET_SUBMISSION_COMMENTS: (submissionId: number | string) =>
       `/api/submissions/${submissionId}/comments`,
+    TOGGLE_LIKE: (submissionId: number | string) => `/api/submissions/${submissionId}/like`,
 
     UPDATE_SUBMISSION: (submissionId: number | string) => `/api/submissions/${submissionId}`,
     DELETE_SUBMISSION: (submissionId: number | string) => `/api/submissions/${submissionId}`,
@@ -87,6 +89,12 @@ export const ENDPOINTS = {
   CALENDAR: {
     GET_MY_CALENDAR: "/api/users/me/calendar",
     GET_USER_CALENDAR: (userId: number | string) => `/api/users/${userId}/calendar`,
+  },
+
+  COMMENT: {
+    CREATE_COMMENT: "/api/comments",
+    GET_COMMENT_REPLIES: (commentId: number | string) => `/api/comments/${commentId}/replies`,
+    CREATE_REPLY: (commentId: number | string) => `/api/comments/${commentId}/replies`,
   },
 
   PRIVACY: {

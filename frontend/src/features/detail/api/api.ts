@@ -1,4 +1,5 @@
 import { http } from "../../../libs/http/client";
+import { ENDPOINTS } from "../../../libs/http/endpoints/endpoints";
 
 import type { ApiResultResponse } from "../../../apis/types/common";
 import type { SubmissionDetails } from "../../../apis/types/submission/checkSubmissionDetails";
@@ -49,7 +50,7 @@ import type {
  */
 export const getMyProfile = async () => {
   const { data } = await http.get<ApiResultResponse<GetMyProfileResult>>(
-    `/api/users/me`,
+    ENDPOINTS.USER.GET_MY_PROFILE_HEADER,
   );
   return data;
 };
@@ -60,7 +61,7 @@ export const getMyProfile = async () => {
  */
 export const getSubmissionDetails = async (workId: number) => {
   const { data } = await http.get<ApiResultResponse<SubmissionDetails>>(
-    `/api/submissions/${workId}`,
+    ENDPOINTS.SUBMISSION.GET_SUBMISSION_DETAIL(workId),
   );
   return data;
 };
@@ -74,7 +75,7 @@ export const getRecommendedSubmissions = async (
 ) => {
   const { data } = await http.get<
     ApiResultResponse<GetRecommendedSubmissionsResult>
-  >(`/api/submissions`, { params });
+  >(ENDPOINTS.SUBMISSION.GET_SUBMISSIONS, { params });
   return data;
 };
 
@@ -89,7 +90,7 @@ export const getUserSubmissions = async (
 ) => {
   const { data } = await http.get<
     ApiResultResponse<GetUserSubmissionsResult>
-  >(`/api/submissions/user/${userId}`, { params });
+  >(ENDPOINTS.SUBMISSION.GET_USER_SUBMISSIONS(userId), { params });
   return data;
 };
 
@@ -99,7 +100,7 @@ export const getUserSubmissions = async (
  */
 export const checkIsMe = async (targetUserId: number) => {
   const { data } = await http.get<ApiResultResponse<CheckIsMeResult>>(
-    `/api/users/${targetUserId}/is-me`,
+    ENDPOINTS.USER.CHECK_IS_ME(targetUserId),
   );
   return data;
 };
@@ -110,7 +111,7 @@ export const checkIsMe = async (targetUserId: number) => {
  */
 export const toggleSubmissionLike = async (submissionId: number) => {
   const { data } = await http.post<ApiResultResponse<ToggleLikeResult>>(
-    `/api/submissions/${submissionId}/like`,
+    ENDPOINTS.SUBMISSION.TOGGLE_LIKE(submissionId),
     {}, // POST 요청이지만 body는 비어있습니다.
   );
   return data;
@@ -126,7 +127,7 @@ export const getCommentReplies = async (
   params: GetCommentRepliesRequest,
 ) => {
   const { data } = await http.get<ApiResultResponse<GetCommentRepliesResult>>(
-    `/api/comments/${commentId}/replies`,
+    ENDPOINTS.COMMENT.GET_COMMENT_REPLIES(commentId),
     { params },
   );
   return data;
@@ -142,7 +143,7 @@ export const createReply = async (
   body: CreateReplyRequest,
 ) => {
   const { data } = await http.post<ApiResultResponse<CreateReplyResult>>(
-    `/api/comments/${commentId}/replies`,
+    ENDPOINTS.COMMENT.CREATE_REPLY(commentId),
     body,
   );
   return data;
@@ -154,7 +155,7 @@ export const createReply = async (
  */
 export const createComment = async (body: CreateCommentRequest) => {
   const { data } = await http.post<ApiResultResponse<CreateCommentResult>>(
-    `/api/comments`,
+    ENDPOINTS.COMMENT.CREATE_COMMENT,
     body,
   );
   return data;
@@ -171,7 +172,7 @@ export const getSubmissionComments = async (
 ) => {
   const { data } = await http.get<
     ApiResultResponse<GetSubmissionCommentsResult>
-  >(`/api/submissions/${submissionId}/comments`, { params });
+  >(ENDPOINTS.SUBMISSION.GET_SUBMISSION_COMMENTS(submissionId), { params });
   return data;
 };
 
