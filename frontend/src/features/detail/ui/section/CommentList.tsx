@@ -7,10 +7,10 @@ export interface CommentListProps {
     nickname: string;
     content: string;
     date?: string;
-    avatarSrc?: string;
+    avatarSrc?: string | null;
     isLike?: boolean;
     likeCount?: number;
-    replyCount: number;
+    replyCount?: number;
   }>;
   onReply: (comment: any) => void;
   toggleReply: (commentId: number) => void;
@@ -32,7 +32,7 @@ const CommentList = ({
       <Chatting.Header />
       <Chatting.List>
         {comments.map((comment) => {
-          const replyState = getReplyState(comment.id, comment.replyCount);
+          const replyState = getReplyState(comment.id, comment.replyCount || 0);
           const hasReplies = replyState.replyCount > 0;
 
           return (

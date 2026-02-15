@@ -194,7 +194,7 @@ const DetailView = () => {
         <DetailPost
           submission={submission}
           comment_list={comments}
-          submissionId={submissionId}
+          submissionId={submissionId!}
           onCommentCreated={handleCommentCreated}
           isMe={isMe}
           currentUserProfileImg={currentUserProfileImg}

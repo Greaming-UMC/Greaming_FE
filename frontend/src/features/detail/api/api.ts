@@ -3,10 +3,7 @@ import { ENDPOINTS } from "../../../libs/http/endpoints/endpoints";
 
 import type { ApiResultResponse } from "../../../apis/types/common";
 import type { SubmissionDetails } from "../../../apis/types/submission/checkSubmissionDetails";
-import type {
-  GetRecommendedArtsRequest,
-  GetRecommendedArtsResult,
-} from "../../../apis/types/art";
+
 import type {
   GetUserWorksRequest,
   GetUserWorksResult,
