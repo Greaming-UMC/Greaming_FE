@@ -1,7 +1,7 @@
 import { memo, useState, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import ChattingSection from "./section/ChattingSection";
-import PostContent from "./section/PostContent";
+import { usePostContent } from "./section/PostContent";
 import { Dropdown } from "../../../components/common/feedback";
 import { Button, ListBase } from "../../../components/common/input";
 import type {
@@ -30,7 +30,6 @@ const DetailPost = ({
 }: DetailPostProps) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const handleDelete = useCallback(async () => {
     if (!confirm("정말로 이 게시물을 삭제하시겠습니까?")) {
       return;
@@ -50,7 +49,7 @@ const DetailPost = ({
     }
   }, [submissionId, navigate]);
 
-  // 드롭다운 메뉴를 useMemo로 감싸되, isMe만 dependency로
+  // 드롭다운 메뉴 - isMenuOpen 변경 시 리렌더 필요
   const headerRightNode = useMemo(() => {
     if (!isMe) return null;
     
@@ -99,36 +98,48 @@ const DetailPost = ({
         />
       </Dropdown>
     );
-  }, [isMe]); // isMenuOpen과 handleDelete 제거 - 어차피 클로저로 최신 값 참조
+  }, [isMe, isMenuOpen, handleDelete]);
+
+  // PostContent hook 사용 - header와 mainContent 분리
+  const postContent = usePostContent({
+    nickname: submission.nickname,
+    profileImageUrl: submission.profileImageUrl,
+    level: submission.level,
+    image_list: submission.image_list,
+    title: submission.title,
+    caption: submission.caption,
+    tags: submission.tags,
+    upload_at: submission.upload_at,
+    headerRightNode,
+  });
 
   return (
     <div className=" w-full mx-auto ">
       <div className="items-start flex">
-        <div className="flex flex-wrap lg:flex-nowrap gap-y-8 w-full">
-          {/* Left: Post content - 분리된 컴포넌트로 댓글 변경 시 리렌더 방지 */}
-          <PostContent
-            nickname={submission.nickname}
-            profileImageUrl={submission.profileImageUrl}
-            level={submission.level}
-            image_list={submission.image_list}
-            title={submission.title}
-            caption={submission.caption}
-            tags={submission.tags}
-            upload_at={submission.upload_at}
-            headerRightNode={headerRightNode}
-          />
-          <div className="w-[20px]"></div>
-          <aside className="w-full lg:w-[360px] shrink-0 mt-10">
-            <div className="bg-surface border border-surface-variant-high rounded-md shadow-sm overflow-hidden h-fit  top-4">
-              <ChattingSection
-                comment_list={comment_list}
-                submissionId={submissionId}
-                onCommentCreated={onCommentCreated}
-                userAvatarSrc={currentUserProfileImg}
-              />
-            </div>
-          </aside>
+        {/* Left column: CardHeader + CardMain + CardFooter */}
+        <div className="flex flex-col flex-1 min-w-0">
+          {/* CardHeader - CardMain과 같은 너비 */}
+          {postContent.header}
+          
+          {/* CardMain and CardFooter */}
+          <div className="mt-4">
+            {postContent.mainContent}
+          </div>
         </div>
+        
+        <div className="w-[20px]"></div>
+        
+        {/* Right: ChattingSection - CardMain과 같은 높이에서 시작 */}
+        <aside className="w-full lg:w-[360px] shrink-0 mt-[55px]">
+          <div className="bg-surface border border-surface-variant-high rounded-md shadow-sm overflow-hidden h-fit  top-4">
+            <ChattingSection
+              comment_list={comment_list}
+              submissionId={submissionId}
+              onCommentCreated={onCommentCreated}
+              userAvatarSrc={currentUserProfileImg}
+            />
+          </div>
+        </aside>
       </div>
     </div>
   );

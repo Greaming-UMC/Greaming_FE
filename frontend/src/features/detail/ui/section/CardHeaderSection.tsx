@@ -32,8 +32,6 @@ const CardHeader = ({
               icon={`badge_${String(level).toLowerCase()}`}
             />
           </div>
-
-        
         </div>
       </div>
 
@@ -44,14 +42,6 @@ const CardHeader = ({
   );
 };
 
-// 최적화: React.memo를 사용하여 props가 변경되지 않으면 리렌더링을 방지합니다.
-// rightNode는 드롭다운 메뉴 상태 변경 시 재생성되지만, 실제 표시되는 내용은 같으므로
-// nickname, profileImageUrl, level만 비교하도록 커스텀 비교 함수 사용
-export default memo(CardHeader, (prevProps, nextProps) => {
-  return (
-    prevProps.nickname === nextProps.nickname &&
-    prevProps.profileImageUrl === nextProps.profileImageUrl &&
-    prevProps.level === nextProps.level
-    // rightNode는 의도적으로 비교에서 제외 - 드롭다운 상태 변경으로 인한 리렌더 방지
-  );
-});
+// 최적화: React.memo를 사용하되, 커스텀 비교 함수 제거
+// rightNode의 변경 (isMenuOpen 변경 포함)을 정확히 추적하도록 기본 비교 사용
+export default memo(CardHeader);
