@@ -45,4 +45,13 @@ const CardHeader = ({
 };
 
 // 최적화: React.memo를 사용하여 props가 변경되지 않으면 리렌더링을 방지합니다.
-export default memo(CardHeader);
+// rightNode는 드롭다운 메뉴 상태 변경 시 재생성되지만, 실제 표시되는 내용은 같으므로
+// nickname, profileImageUrl, level만 비교하도록 커스텀 비교 함수 사용
+export default memo(CardHeader, (prevProps, nextProps) => {
+  return (
+    prevProps.nickname === nextProps.nickname &&
+    prevProps.profileImageUrl === nextProps.profileImageUrl &&
+    prevProps.level === nextProps.level
+    // rightNode는 의도적으로 비교에서 제외 - 드롭다운 상태 변경으로 인한 리렌더 방지
+  );
+});

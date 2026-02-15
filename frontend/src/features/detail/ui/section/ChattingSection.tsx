@@ -1,9 +1,11 @@
+import { memo } from "react";
 import { Chatting } from "../../../../components/chatting";
 import type { CommentDetail } from "../../../../apis/types/submission/checkSubmissionDetails";
 import type { CreateCommentResult } from "../../../../apis/types/submission/createComment";
 import { useCommentTransform } from "../../hooks/useCommentTransform";
 import { useReplies } from "../../hooks/useReplies";
 import { useCommentInput } from "../../hooks/useCommentInput";
+import CommentList from "./CommentList";
 
 export interface ChattingSectionProps {
   comment_list?: (CommentDetail & {
@@ -49,66 +51,13 @@ const ChattingSection = ({
   return (
     <div className="h-[51.25rem] w-[21.5rem] items-end gap-10px justify-flex bg-on-primary">
       <Chatting.Root>
-        <Chatting.Header />
-        <Chatting.List>
-          {comments.map((comment) => {
-            const replyState = getReplyState(comment.id, comment.replyCount);
-            const hasReplies = replyState.replyCount > 0;
-
-            return (
-              <div key={comment.id} className="flex flex-col">
-                <Chatting.Item
-                  avatarSrc={
-                    comment.avatarSrc ??
-                    `https://i.pravatar.cc/150?u=${comment.id}`
-                  }
-                  nickname={comment.nickname}
-                  content={comment.content}
-                  date={comment.date}
-                  onReply={() => startReply(comment)}
-                  isLiked={comment.isLike}
-                  likeCount={comment.likeCount}
-                  onLike={() => {
-                    /* 댓글 좋아요 처리 로직 추가 예정 */
-                  }}
-                />
-
-                {hasReplies && (
-                  <Chatting.ReplySeparator
-                    isOpen={replyState.isOpen}
-                    replyCount={replyState.replyCount}
-                    onClick={() => toggleReply(comment.id)}
-                  />
-                )}
-
-                {replyState.isOpen && (
-                  <div className="flex flex-col">
-                    {replyState.isLoading && (
-                      <div className="pl-14 text-sm text-gray-500 py-2">
-                        답글 로딩 중...
-                      </div>
-                    )}
-                    {replyState.replies.map((reply) => (
-                      <Chatting.Item
-                        key={reply.replyId}
-                        isReply
-                        avatarSrc={reply.writer_profileImgUrl}
-                        nickname={reply.writer_nickname}
-                        content={reply.content}
-                        date={reply.createdAt}
-                        isLiked={reply.isLike}
-                        likeCount={reply.likeCount}
-                        onLike={() => {
-                          /* 답글 좋아요 처리 로직 추가 예정 */
-                        }}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </Chatting.List>
+        {/* 최적화: CommentList는 comments가 변경될 때만 리렌더 */}
+        <CommentList
+          comments={comments}
+          onReply={startReply}
+          toggleReply={toggleReply}
+          getReplyState={getReplyState}
+        />
 
         {/* 답글 모드 표시 */}
         {replyingTo && (
@@ -123,6 +72,7 @@ const ChattingSection = ({
           </div>
         )}
 
+        {/* 최적화: Input은 text 변경 시에만 리렌더 - 이 부분만 격리됨 */}
         <Chatting.Input
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -137,4 +87,5 @@ const ChattingSection = ({
   );
 };
 
-export default ChattingSection;
+// 최적화: React.memo를 사용하여 props가 변경되지 않으면 리렌더링을 방지합니다.
+export default memo(ChattingSection);
