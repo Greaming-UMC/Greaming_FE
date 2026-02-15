@@ -29,18 +29,15 @@ const CardFooter = ({
           <p className="text-body-xlarge text-on-surface-variant mt-1">{caption}</p>
         ) : null}
       </div>
-
       <div className="flex gap-2 flex-wrap py-4">
-        {Array.isArray(tags) && tags.length > 0
-          ? tags.map((t) => (
-              <Chip
-                key={t}
-                label={`#${t}`}
-                variant="filled"
-                className="pointer-events-none !bg-on-surface-variant-lowest"
-              />
-            ))
-          : null}
+        {tags.map((tag) => (
+          <Chip
+            key={tag}
+            label={`#${tag}`}
+            variant="filled"
+            className="pointer-events-none !bg-on-surface-variant-lowest text-label-large !font-medium"
+          />
+        ))}
       </div>
 
       <div className="text-label-large font-medium text-on-surface-variant-lowest">
