@@ -61,7 +61,7 @@ const ChattingSection = ({
 
         {/* 답글 모드 표시 */}
         {replyingTo && (
-          <div className="px-4 py-2 text-xs text-gray-500 flex justify-between items-center bg-gray-50 border-t border-gray-100">
+          <div className="px-4 py-2 text-xs text-gray-500 flex justify-between items-center bg-surface border-t border-gray-100">
             <span>@{replyingTo.nickname}님에게 답글 남기는 중...</span>
             <button
               onClick={cancelReply}

@@ -9,7 +9,7 @@ import { Avatar, Divider } from '../common/display';
 
 // 전체를 감싸는 컨테이너
 export const ChattingRoot = ({ children, className = '', ...props }: HTMLAttributes<HTMLDivElement>) => (
-  <section className={`flex flex-col w-full h-full bg-[#F7F7F7] ${className}`} {...props}>
+  <section className={`flex flex-col w-full h-full bg-surface ${className}`} {...props}>
     {children}
   </section>
 );

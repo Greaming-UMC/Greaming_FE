@@ -132,7 +132,7 @@ const DetailPost = ({
           
           {/* ChattingSection - CardMain과 같은 높이에서 시작 */}
           <aside className="w-[360px] flex-shrink-0">
-            <div className="bg-surface border border-surface-variant-high rounded-md shadow-sm overflow-hidden h-fit">
+            <div className="bg-surface rounded-md shadow-sm overflow-hidden h-fit w-fit">
               <ChattingSection
                 comment_list={comment_list}
                 submissionId={submissionId}
