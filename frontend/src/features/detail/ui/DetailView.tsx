@@ -15,6 +15,7 @@ import {
   checkIsMe,
   getRecommendedSubmissions,
   getUserSubmissions,
+  getMyProfile,
 } from "../api/api";
 import type { RecommendedSubmission } from "../../../apis/types/submission/getRecommendedSubmissions";
 import type { UserSubmission } from "../../../apis/types/submission/getUserSubmissions";
@@ -44,6 +45,7 @@ const DetailView = () => {
   const [userSubmissions, setUserSubmissions] = useState<
     UserSubmission[]
   >([]);
+  const [currentUserProfileImg, setCurrentUserProfileImg] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,6 +68,19 @@ const DetailView = () => {
         setSubmissionId(parsedId);
 
         const response = await getSubmissionDetails(parsedId);
+
+        // 현재 로그인한 유저의 프로필 정보 조회
+        try {
+          const myProfileResponse = await getMyProfile();
+          if (myProfileResponse.isSuccess && myProfileResponse.result) {
+            const userInfo = myProfileResponse.result.userInformation || myProfileResponse.result.user_information;
+            if (userInfo?.profileImgUrl) {
+              setCurrentUserProfileImg(userInfo.profileImgUrl);
+            }
+          }
+        } catch (profileError) {
+          console.error('현재 유저 프로필을 불러오는 데 실패했습니다.', profileError);
+        }
 
         if (response.isSuccess && response.result) {
           const { submission: apiSubmission, commentPage } = response.result;
@@ -228,6 +243,7 @@ const DetailView = () => {
           submissionId={submissionId}
           onCommentCreated={handleCommentCreated}
           isMe={isMe}
+          currentUserProfileImg={currentUserProfileImg}
         />
       </div>
       <div className="shrink-0  w-full">

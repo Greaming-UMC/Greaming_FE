@@ -40,6 +40,19 @@ import type {
   GetUserSubmissionsRequest,
   GetUserSubmissionsResult,
 } from "../../../apis/types/submission/getUserSubmissions";
+import type {
+  GetMyProfileResult,
+} from "../../../apis/types/user/getMyProfile";
+
+/**
+ * 현재 로그인한 유저의 프로필 정보 조회
+ */
+export const getMyProfile = async () => {
+  const { data } = await http.get<ApiResultResponse<GetMyProfileResult>>(
+    `/api/users/me`,
+  );
+  return data;
+};
 
 /**
  * 작품 상세 정보 조회
@@ -174,23 +187,6 @@ export const getUserWorks = async (
   const { data } = await http.post<ApiResultResponse<GetUserWorksResult>>(
     `/api/users/${memberId}/submissions`,
     body,
-  );
-  return data;
-};
-
-/**
- * 연관 추천 작품 목록 조회 (무한 스크롤)
- * @param artId - 추천의 기준이 될 작품의 ID
- * @param params - 페이지네이션 파라미터 (page, size)
- * 백엔드 구현이 될지 
- */
-export const getRecommendedArts = async (
-  artId: number,
-  params: GetRecommendedArtsRequest,
-) => {
-  const { data } = await http.get<ApiResultResponse<GetRecommendedArtsResult>>(
-    `/api/arts/${artId}/recommendations`, 
-    { params },
   );
   return data;
 };

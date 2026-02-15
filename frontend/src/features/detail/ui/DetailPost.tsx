@@ -16,6 +16,7 @@ export interface DetailPostProps {
   submissionId: number;
   onCommentCreated: (newComment: CreateCommentResult) => void;
   isMe: boolean;
+  currentUserProfileImg: string | null;
 }
 
 const DetailPost = ({
@@ -24,11 +25,9 @@ const DetailPost = ({
   submissionId,
   onCommentCreated,
   isMe,
+  currentUserProfileImg,
 }: DetailPostProps) => {
-  // 최적화: submission 객체를 분해하여 하위 컴포넌트에 필요한 props만 전달합니다.
-  // 이렇게 하면 submission 객체의 다른 부분이 변경되어도(예: comment_count)
-  // 관련 없는 컴포넌트(CardHeader, CardMain, CardFooter)가 리렌더링되는 것을 방지할 수 있습니다.
-  const {
+ const {
     nickname,
     profileImageUrl,
     level,
@@ -74,7 +73,7 @@ const DetailPost = ({
                 comment_list={comment_list}
                 submissionId={submissionId}
                 onCommentCreated={onCommentCreated}
-                userAvatarSrc={profileImageUrl}
+                userAvatarSrc={currentUserProfileImg}
               />
             </div>
           </aside>
