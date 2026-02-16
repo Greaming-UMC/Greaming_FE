@@ -44,8 +44,11 @@ import { BaseField } from "../../../../components/common";
             label: isChecking ? "확인 중" : "중복확인", 
             onClick: onCheck,
             disabled: isChecking || !value.trim(),
-            className: "!bg-surface-variant-lowest !text-white !w-[80px] !h-[32px] !rounded-full label-medium-emphasized"
-          }} 
+            className:
+           "!bg-surface-variant !w-[80px] !h-[32px] !rounded-[28px] !px-0 !py-0 text-on-surface-variant-bright !font-normal !tracking-[0.2px] antialiased"
+          }}
+
+
           className="label-large" 
         />
       </div>

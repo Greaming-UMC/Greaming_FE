@@ -64,14 +64,16 @@ export function Step2Profile({
       return hasNickname && nicknameOk && hasField && hasStyle;
     }, [nickname, nicknameStatus, fieldTags, styleTag]);
 
-  return (
-    <div className="w-full flex flex-col items-center gap-[48px]">
-      <h2 className="main-title-medium-emphasized text-on-surface text-center m-0">
+      return (
+  <div className="w-full flex flex-col items-center">
+    {/* 컨텐츠 컬럼 */}
+    <div className="w-[666px] pt-[14px] pb-[72px]">
+      <h2 className="main-title-medium-emphasized text-on-surface text-center m-0 mb-[48px]">
         당신을 소개해주세요.
       </h2>
 
-      {/* 닉네임 섹션 */}
-      <div className="w-[666px]">
+      {/* 닉네임 */}
+      <div className="mb-[48px]">
         <NicknameSection
           value={nickname}
           status={nicknameStatus}
@@ -81,15 +83,17 @@ export function Step2Profile({
         />
       </div>
 
-      <div className="w-full flex flex-col gap-[16px]">
+      {/* 내 특기 선택 */}
+      <div className="flex flex-col gap-[16px] mb-[88px]">
         <div className="sub-title-large-emphasized text-on-surface">내 특기 선택</div>
-        
-        {/* 분야 선택 */}
-        <div className="w-full flex flex-col gap-[10px]">
-          <div className="w-[666px] flex items-end justify-between">
+
+        {/* 분야 */}
+        <div className="flex flex-col gap-[10px]">
+          <div className="flex items-end justify-between">
             <div className="label-large-emphasized text-on-surface">분야</div>
-            <div className="label-large text-on-surface-variant-lowest">최소 1개 최대 4개</div>
+            <div className="label-xlarge text-on-surface-variant-lowest">최소 1개 최대 4개</div>
           </div>
+
           <div className="w-[674px] -mx-[4px] grid grid-cols-6 gap-[10px]">
             {FIELD_KEYS.map((key) => {
               const selected = fieldTags.includes(key);
@@ -107,12 +111,13 @@ export function Step2Profile({
           </div>
         </div>
 
-        {/* 스타일 선택 */}
-        <div className="w-full flex flex-col gap-[10px]">
-          <div className="w-[666px] flex items-end justify-between">
+        {/* 스타일 */}
+        <div className="flex flex-col gap-[10px]">
+          <div className="flex items-end justify-between">
             <div className="label-large-emphasized text-on-surface">스타일</div>
-            <div className="label-large text-on-surface-variant-lowest">1개 선택</div>
+            <div className="label-xlarge text-on-surface-variant-lowest">1개 선택</div>
           </div>
+
           <div className="w-[674px] -mx-[4px] grid grid-cols-6 gap-[10px]">
             {STYLE_KEYS.map((key) => (
               <OnboardingTagChip
@@ -126,15 +131,18 @@ export function Step2Profile({
         </div>
       </div>
 
+      {/* 다음 버튼 */}
       <Button
         size="2xl"
         variant={canNext ? "primary" : "surfaceVariant"}
-        className={clsx("w-[666px]", !canNext && "bg-surface-variant-low")}
+        className={clsx("w-full", !canNext && "bg-surface-variant-low")}
         onClick={onNext}
         disabled={!canNext}
       >
         다음
       </Button>
     </div>
-  );
+  </div>
+);
+
 }

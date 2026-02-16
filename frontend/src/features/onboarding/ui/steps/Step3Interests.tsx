@@ -36,7 +36,8 @@ export function Step3Interests({
 
 
   const prevBtnClass =
-    "w-[82px] h-[60px] rounded-[10px] flex items-center justify-center bg-on-surface-variant-low";
+  "w-[82px] h-[60px] rounded-[10px] flex items-center justify-center bg-surface-variant-high";
+
 
   return (
     <div className="w-full flex flex-col items-center gap-[48px]">
@@ -54,7 +55,7 @@ export function Step3Interests({
         {/* 관심 분야 */}
         <div className="w-[666px] flex items-end justify-between">
           <div className="label-large-emphasized text-on-surface">분야</div>
-          <div className="label-large text-on-surface-variant-lowest">최소 1개 최대 4개</div>
+           <div className="label-xlarge text-on-surface-variant-lowest">최소 1개 최대 4개</div>
         </div>
 
         <div className="w-[674px] -mx-[4px] grid grid-cols-6 gap-[10px]">
@@ -77,7 +78,7 @@ export function Step3Interests({
         {/* 관심 스타일 */}
         <div className="w-[666px] flex items-end justify-between mt-[8px]">
           <div className="label-large-emphasized text-on-surface">스타일</div>
-          <div className="label-large text-on-surface-variant-lowest">1개 선택</div>
+          <div className="label-xlarge text-on-surface-variant-lowest">1개 선택</div>
         </div>
 
         <div className="w-[674px] -mx-[4px] grid grid-cols-6 gap-[10px]">

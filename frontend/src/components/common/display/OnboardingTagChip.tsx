@@ -25,13 +25,13 @@ export function OnboardingTagChip({
       onClick={onClick}
       className={clsx(
         "!w-[104px] !h-[40px] !px-0 !rounded-[12px]",
-        "!text-inherit label-large-emphasized",
+        "!text-[14px] !font-medium !leading-normal !tracking-normal",
+
         "shadow-[0_0_4px_rgba(18,19,21,0.20)]",
         selected
           ? "!bg-primary !text-secondary !border-transparent"
           : "!bg-surface !text-on-surface !border-transparent",
         disabled && "!opacity-50 !cursor-not-allowed",
-
         className,
       )}
     />
