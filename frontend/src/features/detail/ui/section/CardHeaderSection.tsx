@@ -32,8 +32,6 @@ const CardHeader = ({
               icon={`badge_${String(level).toLowerCase()}`}
             />
           </div>
-
-        
         </div>
       </div>
 
@@ -44,5 +42,6 @@ const CardHeader = ({
   );
 };
 
-// 최적화: React.memo를 사용하여 props가 변경되지 않으면 리렌더링을 방지합니다.
+// 최적화: React.memo를 사용하되, 커스텀 비교 함수 제거
+// rightNode의 변경 (isMenuOpen 변경 포함)을 정확히 추적하도록 기본 비교 사용
 export default memo(CardHeader);
