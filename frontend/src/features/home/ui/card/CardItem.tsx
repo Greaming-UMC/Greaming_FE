@@ -27,7 +27,10 @@ const CardItem = ({ card, context = "grid" }: Props) => {
     staleTime: 1000 * 60 * 5,
   });
 
-  const tags = useMemo(() => previewQuery.data?.tags ?? [], [previewQuery.data?.tags]);
+  const tags = useMemo(
+    () => previewQuery.data?.tags ?? [],
+    [previewQuery.data?.tags],
+  );
 
   return (
     <div className="w-[250px] h-[285px] rounded-2xl overflow-hidden">
@@ -44,19 +47,22 @@ const CardItem = ({ card, context = "grid" }: Props) => {
           alt={card.title ?? ""}
           aspectRatio="aspect-auto"
           hoverEffect
-          className="h-[237px] w-full rounded-b-2xl"
+          className="h-[237px] w-full rounded-b-2xl relative"
         >
           {tags.length > 0 && (
-            <Card.Overlay className="p-3">
-              <div className="relative w-full overflow-hidden">
+            <Card.Overlay className="absolute inset-0 flex flex-col justify-end">
+              <div className="absolute bottom-0 left-0 w-full h-[120px] bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
+              <div className="relative z-10 w-full p-3 overflow-hidden">
                 <div className="flex items-center gap-2 whitespace-nowrap">
                   {tags.map((t) => (
-                    <span key={t} className="text-sm font-semibold text-white">
+                    <span
+                      key={t}
+                      className="text-sm font-semibold text-white drop-shadow-md"
+                    >
                       #{t}
                     </span>
                   ))}
                 </div>
-                <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-[#121315] to-transparent" />
               </div>
             </Card.Overlay>
           )}
