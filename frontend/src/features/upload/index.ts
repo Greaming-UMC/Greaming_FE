@@ -1,1 +1,1 @@
-export {UploadView} from "./ui/pages/UploadView"
+export { UploadView } from "./ui/UploadView";

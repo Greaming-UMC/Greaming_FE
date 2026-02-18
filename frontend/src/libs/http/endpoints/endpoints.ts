@@ -52,7 +52,7 @@ export const ENDPOINTS = {
     DELETE_SUBMISSION: (submissionId: number | string) => `/api/submissions/${submissionId}`,
     GET_CHALLENGE_SUBMISSIONS: (challengeId: number | string) =>
       `/api/challenges/${challengeId}/submissions`,
-    UPLOAD_SUBMISSION: "/api/users/upload",
+    UPLOAD_SUBMISSION: "/api/submissions",
 
     // 레거시 호환: 기존 코드에서 참조 가능
     GET_HOME_TOP: "/api/home",

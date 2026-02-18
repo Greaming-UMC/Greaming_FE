@@ -1,64 +1,5 @@
-// import { useRef } from "react";
-// import ImportIcon from "../../../assets/icon/mono/import2.svg?react";
-
-// type UploadBoxProps = {
-//   onUpload: (files: FileList) => void;
-//   multiple?: boolean;
-//   className?: string;
-// };
-
-// export const UploadBox = ({ onUpload, multiple = true, className }: UploadBoxProps) => {
-//   const inputRef = useRef<HTMLInputElement | null>(null);
-
-//   const openPicker = () => inputRef.current?.click();
-
-//   const onDrop: React.DragEventHandler<HTMLButtonElement> = (e) => {
-//     e.preventDefault();
-//     e.stopPropagation();
-//     if (e.dataTransfer.files?.length) onUpload(e.dataTransfer.files);
-//   };
-
-//   const onDragOver: React.DragEventHandler<HTMLButtonElement> = (e) => {
-//     e.preventDefault();
-//     e.stopPropagation();
-//   };
-
-//   return (
-//     <>
-//       <button
-//         type="button"
-//         onClick={openPicker}
-//         onDragOver={onDragOver}
-//         onDrop={onDrop}
-//         className={`flex items-center justify-center cursor-pointer select-none ${className ?? ""}`}
-//         style={{
-//           width: 529,
-//           height: 395,
-//           borderRadius: 16,
-//           background: "var(--Schemes-Surface-Variant-Lowest,#545556)",
-//         }}
-//       >
-//         <ImportIcon width={28} height={28} />
-//       </button>
-
-//       <input
-//         ref={inputRef}
-//         type="file"
-//         accept="image/*"
-//         multiple={multiple}
-//         className="hidden"
-//         onChange={(e) => {
-//           if (e.target.files) onUpload(e.target.files);
-//           e.target.value = "";
-//         }}
-//       />
-//     </>
-//   );
-// };
-
-// src/components/common/post/UploadBox.tsx
 import { useRef } from "react";
-import ImportIcon from "../../../assets/icon/mono/import2.svg?react";
+import Icon from "../../common/Icon";
 
 type UploadBoxProps = {
   onUpload: (files: FileList) => void;
@@ -90,12 +31,11 @@ export const UploadBox = ({ onUpload, multiple = true, className }: UploadBoxPro
       onKeyDown={(e) => e.key === "Enter" && openPicker()}
       onDragOver={onDragOver}
       onDrop={onDrop}
-      className={`flex items-center justify-center cursor-pointer select-none ${className ?? ""}`}
+      className={`flex items-center justify-center cursor-pointer select-none hover:bg-state-layers-primary-opacity-8 ease-in-out duration-300 ${className ?? ""}`}
       style={{
-        width: 529,
-        height: 395,
-        borderRadius: 16,
-        background: "var(--Schemes-Surface-Variant-Lowest,#545556)",
+        width: 400,
+        height: 360,
+        borderRadius: 28,
       }}
     >
       <input
@@ -109,8 +49,10 @@ export const UploadBox = ({ onUpload, multiple = true, className }: UploadBoxPro
           e.currentTarget.value = ""; // 같은 파일 재선택 가능
         }}
       />
-
-      <ImportIcon width={28} height={28} />
+      <div className="flex flex-col items-center gap-5">
+        <Icon name="import" size={18} className="p-6 w-20 h-20 rounded-full bg-primary text-secondary" />
+        <span className="label-xlarge text-on-surface"> 그림을 드래그 또는 업로드해 주세요 </span>
+      </div>
     </div>
   );
 };

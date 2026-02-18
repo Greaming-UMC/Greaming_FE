@@ -1,7 +1,5 @@
-import type { useUploadForm } from "../../config/useUploadForm";
+import type { UploadForm } from "../../hooks";
 import { Checkbox } from "../../../../components/common/input/Checkbox/Checkbox";
-
-type UploadForm = ReturnType<typeof useUploadForm>;
 
 type Props = {
   form: UploadForm;

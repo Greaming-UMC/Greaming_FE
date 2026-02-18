@@ -68,7 +68,41 @@ export type IconProps = Omit<SVGProps<SVGSVGElement>, 'name'> & {
   title?: string
 }
 
-const Icon = ({ name, size, className, ...rest }: IconProps) => {
+const isBorderUtilityToken = (token: string) => {
+  const withoutBang = token.startsWith('!') ? token.slice(1) : token
+  const utility = withoutBang.split(':').pop() ?? withoutBang
+  return /^border(?:-|$)/.test(utility)
+}
+
+const sanitizeClassName = (className?: string) => {
+  if (!className) return undefined
+
+  const tokens = className
+    .split(/\s+/)
+    .filter(Boolean)
+    .filter((token) => !isBorderUtilityToken(token))
+
+  return tokens.length > 0 ? tokens.join(' ') : undefined
+}
+
+const sanitizeStyle = (style?: SVGProps<SVGSVGElement>['style']) => {
+  if (!style) return undefined
+
+  return {
+    ...style,
+    border: undefined,
+    borderTop: undefined,
+    borderRight: undefined,
+    borderBottom: undefined,
+    borderLeft: undefined,
+    borderColor: undefined,
+    borderWidth: undefined,
+    borderStyle: undefined,
+    borderRadius: undefined,
+  }
+}
+
+const Icon = ({ name, size, className, style, ...rest }: IconProps) => {
   // 1) name으로 SVG 컴포넌트를 찾습니다.
   const Component = iconMap[name]
 
@@ -88,10 +122,13 @@ const Icon = ({ name, size, className, ...rest }: IconProps) => {
 
   // 4) size가 있으면 width/height에 동시에 적용
   const sizeProps = size ? { width: size, height: size } : {}
+  const sanitizedClassName = sanitizeClassName(className)
+  const sanitizedStyle = sanitizeStyle(style)
 
   return (
     <Component
-      className={className}
+      className={sanitizedClassName}
+      style={sanitizedStyle}
       role={isDecorative ? 'presentation' : 'img'}
       aria-hidden={isDecorative}
       focusable="false"

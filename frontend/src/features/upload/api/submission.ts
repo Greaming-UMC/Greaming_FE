@@ -1,4 +1,5 @@
 import { http } from "../../../libs/http/client";
+import { ENDPOINTS } from "../../../libs/http/endpoints/endpoints";
 import type { UploadSubmissionPayload } from "../config/types";
 
 type ApiStatusResponse<T> = {
@@ -26,6 +27,21 @@ type SubmissionCreateSuccess = {
   submission_id?: number;
   createdAt?: string;
   created_at?: string;
+  userId?: number;
+  nickname?: string;
+  profileImageUrl?: string | null;
+  level?: string;
+  imageList?: string[];
+  likesCount?: number;
+  commentCount?: number;
+  bookmarkCount?: number;
+  title?: string;
+  caption?: string;
+  tags?: Array<{ tagId: number; tagName: string }>;
+  liked?: boolean;
+  uploadAt?: string;
+  field?: "WEEKLY" | "DAILY" | "FREE";
+  challengeId?: number | null;
 };
 
 type UploadCreateResponse =
@@ -65,7 +81,10 @@ const extractSubmissionData = (
 };
 
 export async function postSubmission(payload: UploadSubmissionPayload) {
-  const res = await http.post<UploadCreateResponse>("/api/submissions", payload);
+  const res = await http.post<UploadCreateResponse>(
+    ENDPOINTS.SUBMISSION.UPLOAD_SUBMISSION,
+    payload,
+  );
   const parsed = extractSubmissionData(res.data);
 
   // 서버가 2xx를 반환했다면 생성 자체는 성공으로 간주합니다.

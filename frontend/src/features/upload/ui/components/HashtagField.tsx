@@ -60,7 +60,9 @@ export function HashtagField({ value, onChange, tags, onAddTags, onRemoveTag }: 
 
   return (
     <div className="flex flex-col gap-[10px]">
-      <div className="sub-title-large-emphasized text-on-surface">해시태그</div>
+      <div className="sub-title-large-emphasized text-on-surface">
+        해시태그<span className="text-error">*</span>
+      </div>
 
       <div className={inputRow}>
         <input
