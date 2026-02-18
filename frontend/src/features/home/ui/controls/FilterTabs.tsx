@@ -32,7 +32,7 @@ const FilterTabs = ({ value, onChange }: Props) => {
       options={options}
       variant="primary"
       className="gap-0"
-      displayClassName="main-title-small-emphasized"
+      displayClassName="text-2xl font-semibold"
     />
   );
 };
