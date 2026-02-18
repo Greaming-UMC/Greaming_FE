@@ -109,3 +109,8 @@
   background-position: center;
   background-repeat: no-repeat;
 }
+@layer base {
+  html, body {
+    font-family: var(--font-plain), Pretendard, system-ui, sans-serif;
+  }
+}
