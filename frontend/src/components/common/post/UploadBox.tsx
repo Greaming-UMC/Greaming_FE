@@ -31,7 +31,7 @@ export const UploadBox = ({ onUpload, multiple = true, className }: UploadBoxPro
       onKeyDown={(e) => e.key === "Enter" && openPicker()}
       onDragOver={onDragOver}
       onDrop={onDrop}
-      className={`flex items-center justify-center cursor-pointer select-none ${className ?? ""}`}
+      className={`flex items-center justify-center cursor-pointer select-none hover:bg-state-layers-primary-opacity-8 ease-in-out duration-300 ${className ?? ""}`}
       style={{
         width: 400,
         height: 360,
