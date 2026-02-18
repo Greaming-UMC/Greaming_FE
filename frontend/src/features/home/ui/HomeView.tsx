@@ -47,7 +47,7 @@ const HomeView = () => {
         </PageContainer>
       </section>
 
-      <section className="w-full bg-surface">
+      <section className="w-full bg-surface pt-[96px]">
         <PageContainer>
           <div className="mx-auto w-full max-w-[1440px]">
             <CardControls
