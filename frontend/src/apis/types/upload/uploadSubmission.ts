@@ -1,31 +1,61 @@
-import type { VisibilityType } from '../common';
-
 /**
- * 일간/주간 챌린지, 서클 게시물 업로드 (POST /api/users/upload)
- * URI: /api/users/upload
+ * 게시글 생성 (POST /api/submissions)
+ * URI: /api/submissions
  */
 
-// Request
-export interface UploadSubmissionRequest {
-    title : string;
-    caption : string;
-    visibility : VisibilityType;
-    commentEnabled : boolean;
-    challengeId : number;
-    circleId? : number | null;
-    hashtags : string[];
-    imageUrls : string[];
-};
+export type SubmissionFieldType = "WEEKLY" | "DAILY" | "FREE";
+export type UploadVisibilityType = "PUBLIC" | "CIRCLE";
 
-// Response
-// ./common.ts의 ApiDataResponse, ApiErrorResponese 사용
-export interface UploadSubmissionRsult {
-    title : string;
-    caption : string;
-    visibility : VisibilityType;
-    commentEnabled : boolean;
-    challengeId : number;
-    circleId? : number | null;
-    hashtags : string[];
-    imageUrls : string[];
-};
+export interface UploadSubmissionRequest {
+  title: string;
+  caption: string;
+  visibility: UploadVisibilityType;
+  field: SubmissionFieldType;
+  challengeId: number | null;
+  thumbnailKey: string;
+  commentEnabled: boolean;
+  tags: string[];
+  imageList: string[];
+}
+
+export interface UploadSubmissionTag {
+  tagId: number;
+  tagName: string;
+}
+
+export interface UploadSubmissionResult {
+  submissionId: number;
+  userId: number;
+  nickname: string;
+  profileImageUrl: string | null;
+  level: string;
+  imageList: string[];
+  likesCount: number;
+  commentCount: number;
+  bookmarkCount: number;
+  title: string;
+  caption: string;
+  tags: UploadSubmissionTag[];
+  liked: boolean;
+  uploadAt: string;
+  field: SubmissionFieldType;
+  challengeId: number | null;
+}
+
+export interface UploadSubmissionSuccessResponse {
+  isSuccess: true;
+  code: string; // SUBMISSION_200
+  message: string;
+  result: UploadSubmissionResult;
+}
+
+export interface UploadSubmissionErrorResponse {
+  isSuccess: false;
+  code: string; // COMM_400, CHALLENGE_404 ...
+  message: string;
+  result: null;
+}
+
+export type UploadSubmissionResponse =
+  | UploadSubmissionSuccessResponse
+  | UploadSubmissionErrorResponse;
