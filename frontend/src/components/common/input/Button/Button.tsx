@@ -130,7 +130,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     <Icon
       name={icon as IconName}
       size={iconSize}
-      className="fill-current stroke-current"
+      className="fill-current"
       aria-hidden
     />
   ) : null;
