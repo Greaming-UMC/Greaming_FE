@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import PageContainer from "../../../components/common/layouts/PageContainer";
 import CardGrid from "./card/CardGrid";
 import HeroSection from "../components/HeroSection";
 import CardControls from "../components/CardControls";
@@ -40,37 +39,33 @@ const HomeView = () => {
   return (
     <>
       <section className="-mt-14 w-full min-h-200 bg-home">
-        <PageContainer>
-          <div className="pt-40 pb-10">
-            <HeroSection view={view} onJoin={handleJoin} dateTimeIso={dateTimeIso} />
-          </div>
-        </PageContainer>
+        <div className="mx-auto w-full max-w-[1783px] px-6 pt-40 pb-10">
+          <HeroSection view={view} onJoin={handleJoin} dateTimeIso={dateTimeIso} />
+        </div>
       </section>
 
       <section className="w-full bg-surface pt-[96px]">
-        <PageContainer>
-          <div className="mx-auto w-full max-w-[1440px]">
-            <CardControls
-              view={view}
-              type={gridType}
-              sort={gridSort}
-              tags={gridTags}
-              onChangeType={setGridType}
-              onChangeSort={setGridSort}
-              onChangeTags={setGridTags}
-              dateTimeIso={dateTimeIso}
-              onChangeDateTimeIso={setDateTimeIso}
-            />
+        <div className="mx-auto w-full max-w-[1440px] px-6">
+          <CardControls
+            view={view}
+            type={gridType}
+            sort={gridSort}
+            tags={gridTags}
+            onChangeType={setGridType}
+            onChangeSort={setGridSort}
+            onChangeTags={setGridTags}
+            dateTimeIso={dateTimeIso}
+            onChangeDateTimeIso={setDateTimeIso}
+          />
 
-            <CardGrid
-              view={view}
-              type={gridType}
-              sort={gridSort}
-              tags={gridTags}
-              dateTimeIso={dateTimeIso}
-            />
-          </div>
-        </PageContainer>
+          <CardGrid
+            view={view}
+            type={gridType}
+            sort={gridSort}
+            tags={gridTags}
+            dateTimeIso={dateTimeIso}
+          />
+        </div>
       </section>
     </>
   );
