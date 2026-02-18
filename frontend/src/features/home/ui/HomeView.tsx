@@ -39,7 +39,7 @@ const HomeView = () => {
   return (
     <>
       <section className="-mt-14 w-full min-h-200 bg-home">
-        <div className="mx-auto w-full max-w-[1783px] px-6 pt-40 pb-10">
+        <div className="mx-auto w-full max-w-[1783px] px-6 pt-44 pb-10">
           <HeroSection view={view} onJoin={handleJoin} dateTimeIso={dateTimeIso} />
         </div>
       </section>
