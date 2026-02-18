@@ -49,7 +49,7 @@ const HeroChallengeCard = ({
       <Blob className="absolute inset-0 w-full h-full pointer-events-none" />
 
       <div className="absolute inset-0 z-10 flex flex-col px-12">
-        {/* 기본 (호버 x) */}
+        {/* 기본 상태 (호버 X) */}
         <div
           className={`
             absolute inset-0 flex items-center justify-center gap-3 transition-opacity duration-300 pointer-events-none
@@ -57,15 +57,15 @@ const HeroChallengeCard = ({
           `}
         >
           <Logo name="primary" size={81} />
-          <span className="font-[Knewave] text-5xl text-on-surface pt-2 leading-none">
+          <span className="font-[Knewave] text-5xl text-on-surface pb-2 leading-none">
             {PRE_TITLE[type]}
           </span>
         </div>
 
-        {/* 상세 (호버) */}
+        {/* 상세 상태 (호버 O) */}
         <div
           className={`
-            flex flex-col justify-center w-full h-full transition-opacity duration-300 pointer-events-none gap-8
+            flex flex-col justify-center w-full h-full transition-opacity duration-300 pointer-events-none gap-6
             ${
               isActive
                 ? "opacity-100 pointer-events-auto"
@@ -73,21 +73,17 @@ const HeroChallengeCard = ({
             }
           `}
         >
-          <div className="flex items-center justify-center w-full gap-10">
-            <div className="flex items-center gap-3">
-              <Logo name={hoverLogoName} width={64} height={75} />
-
-              <div className="flex flex-col items-start">
-                <span className="font-[Knewave] text-4xl text-on-surface leading-none">
-                  {PRE_TITLE[type]}
-                </span>
-
-                {metaText && (
-                  <p className="mt-2 text-sm font-semibold text-on-surface">
-                    {metaText}
-                  </p>
-                )}
-              </div>
+          <div className="flex items-center justify-center w-full gap-2">
+            <Logo name={hoverLogoName} width={64} height={75} />
+            <div className="flex flex-col items-start justify-center pt-1">
+              <span className="font-[Knewave] text-4xl text-on-surface leading-none">
+                {PRE_TITLE[type]}
+              </span>
+              {metaText && (
+                <p className="mt-2 text-sm font-medium text-on-surface">
+                  {metaText}
+                </p>
+              )}
             </div>
 
             <button
@@ -96,9 +92,9 @@ const HeroChallengeCard = ({
                 e.stopPropagation();
                 onJoin?.(type);
               }}
-              className="flex items-center gap-1 cursor-pointer hover:opacity-80"
+              className="flex items-center gap-1 cursor-pointer hover:opacity-80 ml-10"
             >
-              <span className="text-xl font-bold text-on-surface">참여하기</span>
+              <span className="text-2xl font-semibold text-on-surface">참여하기</span>
               <Icon name="arrow_right_double" size={24} />
             </button>
           </div>
@@ -106,7 +102,12 @@ const HeroChallengeCard = ({
           <div className="flex items-center justify-center">
             {safeTopic && (
               <div className="relative flex items-center justify-center">
-                <Icon name="topic" className="text-primary" width={320} height={47} />
+                <Icon
+                  name="topic"
+                  className="text-primary"
+                  width={320}
+                  height={47}
+                />
                 <span className="absolute text-secondary font-medium pb-1">
                   ‘{safeTopic}’
                 </span>
