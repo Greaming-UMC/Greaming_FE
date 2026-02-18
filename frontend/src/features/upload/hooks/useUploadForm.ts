@@ -1,5 +1,10 @@
 import { useMemo, useRef, useState } from "react";
-import { getPresignedUrl, putToS3, postSubmission } from "../apis";
+import { getPresignedUrl, putToS3, postSubmission } from "../api";
+import type {
+  UploadFieldType,
+  UploadSubmissionPayload,
+  UploadVisibilityType,
+} from "../config/types";
 
 export type UploadImageItem = {
   id: string;
@@ -8,19 +13,13 @@ export type UploadImageItem = {
   signature: string;
 };
 
-type UploadField = "FREE" | "DAILY" | "WEEKLY";
-type UploadVisibility = "PUBLIC"; // 서클 제외 
-
-type CreateSubmissionRequest = {
-  title: string;
-  caption: string;
-  visibility: UploadVisibility;
-  field: UploadField;
-  thumbnailKey: string;
-  commentEnabled: boolean;
-  tags: string[];
-  imageList: string[];
+type SubmitMeta = {
+  field: UploadFieldType;
+  challengeId?: number | null;
+  visibility?: UploadVisibilityType;
 };
+
+export type UploadSubmitMeta = SubmitMeta;
 
 const uid = () => `${Date.now()}_${Math.random().toString(16).slice(2)}`;
 const fileSignature = (f: File) => `${f.name}_${f.size}_${f.lastModified}`;
@@ -32,7 +31,9 @@ export function useUploadForm() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const setActiveById = (id: string) => setActiveId(id);
 
-  const [allowComments, setAllowComments] = useState(false);
+  // 업로드 정책: 댓글 허용은 상시 true
+  const allowComments = true;
+  const setAllowComments = (_checked: boolean) => {};
 
   const [body, setBody] = useState("");
   const [title, setTitle] = useState("");
@@ -53,20 +54,16 @@ export function useUploadForm() {
     const arr = Array.from(files).filter((f) => f.type.startsWith("image/"));
 
     setImages((prev) => {
-      const prevSig = new Set(prev.map((p) => p.signature));
       const nextItems: UploadImageItem[] = [];
 
       for (const file of arr) {
         const sig = fileSignature(file);
-        if (prevSig.has(sig)) continue;
-
         nextItems.push({
           id: uid(),
           file,
           previewUrl: URL.createObjectURL(file),
           signature: sig,
         });
-        prevSig.add(sig);
       }
 
       if (prev.length === 0 && nextItems.length > 0) {
@@ -117,7 +114,7 @@ export function useUploadForm() {
     setHashtags((prev) => prev.filter((t) => t !== normalized));
   };
 
-  const submit = async (field: UploadField) => {
+  const submit = async ({ field, challengeId = null, visibility = "PUBLIC" }: SubmitMeta) => {
     if (!canUpload) return;
     if (submitLockRef.current) return;
     submitLockRef.current = true;
@@ -137,11 +134,12 @@ export function useUploadForm() {
 
       if (uploadedKeys.length === 0) return;
 
-      const payload: CreateSubmissionRequest = {
+      const payload: UploadSubmissionPayload = {
         title: title.trim(),
         caption: body,
-        visibility: "PUBLIC", 
+        visibility,
         field,
+        challengeId,
         commentEnabled: allowComments,
         tags: hashtags,
         thumbnailKey: uploadedKeys[0],
@@ -179,6 +177,8 @@ export function useUploadForm() {
     commitHashtags,
     removeHashtag,
 
-    submit, // submit("DAILY")
+    submit,
   };
 }
+
+export type UploadForm = ReturnType<typeof useUploadForm>;

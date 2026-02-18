@@ -14,6 +14,7 @@ export type UploadSubmissionPayload = {
   caption: string;
   visibility: UploadVisibilityType;
   field: UploadFieldType;
+  challengeId: number | null;
   thumbnailKey: string;     // S3 key (URL 아님)
   commentEnabled: boolean;
   tags: string[];

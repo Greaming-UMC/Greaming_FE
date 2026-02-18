@@ -1,15 +1,16 @@
 import type React from "react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { LoadingSpinner } from "../../../../components/common";
-import { useToast } from "../../../../components/common/feedback/Toast/ToastProvider";
-import { useUploadForm } from "../../config/useUploadForm";
+import { LoadingSpinner } from "../../../components/common";
+import { useToast } from "../../../components/common/feedback/Toast/ToastProvider";
+import { useUploadForm } from "../hooks";
+import { useUIStore } from "../../../stores/useUIStore";
 
-import { UploadImagesSection } from "../sections/UploadImagesSection";
-import { UploadOptionsSection } from "../sections/UploadOptionsSection";
-import { UploadContentSection } from "../sections/UploadContentSection";
-import { UploadActionsSection } from "../sections/UploadActionsSection";
+import { UploadImagesSection } from "./section/UploadImagesSection";
+import { UploadOptionsSection } from "./section/UploadOptionsSection";
+import { UploadContentSection } from "./section/UploadContentSection";
+import { UploadActionsSection } from "./section/UploadActionsSection";
 
 export type UploadHeaderRender = (ctx: {
   uploadButtonNode: React.ReactNode;
@@ -30,26 +31,54 @@ export function UploadView({ mode = "free", header }: UploadViewProps) {
   const PAGE_WIDTH = 1372;
 
   const form = useUploadForm();
+  const dailyChallengeInfo = useUIStore((state) => state.dailyChallengeInfo);
+  const weeklyChallengeInfo = useUIStore((state) => state.weeklyChallengeInfo);
 
   // 오버레이 표시 여부
   const [isUploading, setIsUploading] = useState(false);
 
-  const field = useMemo(() => {
-    if (mode === "daily") return "DAILY" as const;
-    if (mode === "weekly") return "WEEKLY" as const;
-    return "FREE" as const;
-  }, [mode]);
+  const submitMeta = useMemo(() => {
+    if (mode === "daily") {
+      return {
+        field: "DAILY" as const,
+        challengeId: dailyChallengeInfo?.challengeId ?? null,
+        visibility: "PUBLIC" as const,
+      };
+    }
+
+    if (mode === "weekly") {
+      return {
+        field: "WEEKLY" as const,
+        challengeId: weeklyChallengeInfo?.challengeId ?? null,
+        visibility: "PUBLIC" as const,
+      };
+    }
+
+    if (mode === "circle") {
+      return {
+        field: "FREE" as const,
+        challengeId: null,
+        visibility: "CIRCLE" as const,
+      };
+    }
+
+    return {
+      field: "FREE" as const,
+      challengeId: null,
+      visibility: "PUBLIC" as const,
+    };
+  }, [mode, dailyChallengeInfo?.challengeId, weeklyChallengeInfo?.challengeId]);
 
   const canUpload = form.canUpload;
 
-  const onSubmit = async () => {
+  const onSubmit = useCallback(async () => {
     if (!canUpload || isUploading) return;
 
     setIsUploading(true);
 
     try {
       // 업로드(= presigned 발급 -> S3 PUT -> submissions 생성) 완료
-      await form.submit(field);
+      await form.submit(submitMeta);
       showToast("업로드가 완료되었습니다.", "success");
       setIsUploading(false);
       navigate("/home", { replace: true });
@@ -58,7 +87,7 @@ export function UploadView({ mode = "free", header }: UploadViewProps) {
       showToast("업로드에 실패했습니다. 잠시 후 다시 시도해주세요.", "error");
       setIsUploading(false);
     }
-  };
+  }, [canUpload, isUploading, form, submitMeta, showToast, navigate]);
 
   const uploadButtonNode = (
     <UploadActionsSection

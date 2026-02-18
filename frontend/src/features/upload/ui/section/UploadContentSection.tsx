@@ -1,9 +1,7 @@
-import type { useUploadForm } from "../../config/useUploadForm";
+import type { UploadForm } from "../../hooks";
 
 import { WriteBodyField } from "../../../../components/common/post/WriteBodyField";
 import { HashtagField } from "../components/HashtagField";
-
-type UploadForm = ReturnType<typeof useUploadForm>;
 
 type Props = {
   form: UploadForm;
@@ -54,7 +52,9 @@ export function UploadContentSection({ form }: Props) {
 
       {/* 설명/내용 */}
       <div className={["flex flex-col w-full", INNER_GAP].join(" ")}>
-        <div className="sub-title-large-emphasized text-on-surface">설명/내용</div>
+        <div className="sub-title-large-emphasized text-on-surface">
+          설명/내용<span className="text-error">*</span>
+        </div>
 
         <div className="w-full">
           <WriteBodyField value={form.body} onChange={form.setBody} maxLength={350} />
