@@ -15,11 +15,13 @@ type Props = {
 export function UploadImagesSection({ form, pageWidth }: Props) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const isEmpty = form.images.length === 0;
+  const canHorizontalScroll = form.images.length >= 2;
 
   // drag-to-scroll
   const dragRef = useRef({ active: false, startX: 0, startScrollLeft: 0 });
 
   const onMouseDownScroller: MouseEventHandler<HTMLDivElement> = (e) => {
+    if (!canHorizontalScroll) return;
     if (e.button !== 0) return;
     const el = scrollerRef.current;
     if (!el) return;
@@ -33,6 +35,7 @@ export function UploadImagesSection({ form, pageWidth }: Props) {
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
+      if (!canHorizontalScroll) return;
       if (!dragRef.current.active) return;
       const el = scrollerRef.current;
       if (!el) return;
@@ -51,14 +54,17 @@ export function UploadImagesSection({ form, pageWidth }: Props) {
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("mouseup", onUp);
     };
-  }, []);
+  }, [canHorizontalScroll]);
 
   return (
     <div className="flex flex-col pt-6 pb-6" style={{ width: pageWidth }}>
       {/* 스크롤 영역 */}
       <div
         ref={scrollerRef}
-        className="overflow-x-auto overflow-y-hidden hide-scrollbar"
+        className={clsx(
+          "overflow-y-hidden hide-scrollbar",
+          canHorizontalScroll ? "overflow-x-auto" : "overflow-x-hidden",
+        )}
         onMouseDown={onMouseDownScroller}
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
@@ -125,7 +131,9 @@ export function UploadImagesSection({ form, pageWidth }: Props) {
       </div>
 
       {/* 공용 스크롤 인디케이터 */}
-      <ScrollIndicator scrollerRef={scrollerRef} className="mt-[8px]" />
+      {canHorizontalScroll ? (
+        <ScrollIndicator scrollerRef={scrollerRef} className="mt-[8px]" />
+      ) : null}
     </div>
   );
 }
