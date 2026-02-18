@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "../../libs/security/authStore";
 import { clearAccessToken } from "../../libs/security/tokenStore";
+import { stopPreemptiveRefresh } from "../../libs/security/refreshManeger";
 import { useHeaderProfileStore } from "../../stores/useHeaderProfileStore";
 import { checkAuthByReissue, type AuthCheckResult } from "../types/auth";
 import { logout } from "../logout";
@@ -28,6 +29,7 @@ export const useLogout = () => {
   return useMutation({
     mutationFn: logout,
     onSettled: () => {
+      stopPreemptiveRefresh();
       clearAccessToken();
       setUnauthenticated();
       clearProfile();

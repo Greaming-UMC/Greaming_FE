@@ -1,9 +1,11 @@
-import { httpRefresh } from "../../http/refreshClient";
 import { ENDPOINTS } from "../endpoints/endpoints";
 import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
-import { clearAccessToken, getAccessToken, setAccessToken } from "../../security/tokenStore";
-import { extractAccessTokenFromReissueResponse } from "../../security/reissueToken";
+import { clearAccessToken, getAccessToken } from "../../security/tokenStore";
 import { useAuthStore } from "../../security/authStore";
+import {
+  refreshAccessTokenNow,
+  stopPreemptiveRefresh,
+} from "../../security/refreshManeger";
 
 const REFRESH_PATH = ENDPOINTS.AUTH.REISSUE_TOKEN;
 const MY_PROFILE_PATH = ENDPOINTS.USER.GET_MY_PROFILE_HEADER;
@@ -26,7 +28,6 @@ interface RetryConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
-let refreshing: Promise<void> | null = null;
 let sessionExpiredHandled = false;
 
 const handleSessionExpired = () => {
@@ -47,6 +48,8 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
 
       if (status === 403) {
         useAuthStore.getState().setUnauthenticated();
+        clearAccessToken();
+        stopPreemptiveRefresh();
         const isOnLoginPage = isBrowser && window.location.pathname === "/login";
         if (
           isMyProfileRequest(originalRequest?.url) ||
@@ -66,36 +69,12 @@ export const attachResponseInterceptor = (http: AxiosInstance) => {
         return Promise.reject(error);
       }
       originalRequest._retry = true;
-      
-
-      if (!refreshing) {
-        refreshing = (async () => {
-          try {
-            const res = await httpRefresh.post(REFRESH_PATH);
-            const nextToken = extractAccessTokenFromReissueResponse(res);
-            if (!nextToken) {
-              clearAccessToken();
-              throw new Error("access token missing from reissue response");
-            }
-
-            setAccessToken(nextToken);
-            if (!getAccessToken()) {
-              throw new Error("invalid access token from reissue response");
-            }
-            useAuthStore.getState().setAuthenticated();
-          } catch {
-            clearAccessToken();
-            throw error;
-          }
-        })().finally(() => {
-          refreshing = null;
-        });
-      }
 
       try {
-        await refreshing;
+        await refreshAccessTokenNow("reactive");
       } catch (refreshError) {
         clearAccessToken();
+        stopPreemptiveRefresh();
         useAuthStore.getState().setUnauthenticated();
         const isOnLoginPage = isBrowser && window.location.pathname === "/login";
         if (
