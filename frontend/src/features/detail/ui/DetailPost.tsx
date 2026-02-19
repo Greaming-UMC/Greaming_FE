@@ -117,6 +117,8 @@ const DetailPost = ({
     headerRightNode,
     userId: submission.userId,
     isMe,
+    field: submission.field,
+    challengeTitle: submission.challengeTitle,
   });
 
   return (

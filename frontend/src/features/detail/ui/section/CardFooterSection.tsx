@@ -1,20 +1,58 @@
 import { memo } from "react";
 import { Chip } from "../../../../components/common/display";
 import { useDateFormatter } from "../../hooks/useDateFormatter";
+import Icon from "../../../../components/common/Icon";
 
 export interface CardFooterProps {
   title: string;
-  caption: string | null; // caption은 null일 수 있습니다.
+  caption: string | null;
   tags: string[];
   upload_at: string;
+  field?: string;
+  challengeTitle?: string | null;
   className?: string;
 }
+
+/** 챌린지 타입 배지 (WEEKLY / DAILY) */
+const ChallengeBadge = ({
+  field,
+  challengeTitle,
+}: {
+  field: string;
+  challengeTitle?: string | null;
+}) => {
+  if (field === "WEEKLY") {
+    return (
+      <div className="flex items-center gap-2 py-1">
+        <Icon name="check_circle" size={22} className="text-on-surface" />
+        <span className="text-body-large font-semibold text-success">
+          {challengeTitle}
+        </span>
+      </div>
+    );
+  }
+
+  if (field === "DAILY") {
+    return (
+      <div className="flex items-center gap-2 py-1">
+        <Icon name="calender" size={22} className="text-success" />
+        <span className="text-body-large font-semibold text-success">
+          {challengeTitle}
+        </span>
+      </div>
+    );
+  }
+
+  return null;
+};
 
 const CardFooter = ({
   title,
   caption,
   tags,
   upload_at,
+  field,
+  challengeTitle,
   className = "",
 }: CardFooterProps) => {
   const { formatKoreanDate } = useDateFormatter();
@@ -25,6 +63,12 @@ const CardFooter = ({
     >
       <div>
         <h2 className="text-sub-title-xlarge font-semibold py-2">{title}</h2>
+
+        {/* WEEKLY / DAILY 챌린지 배지 */}
+        {field && field !== "FREE" && (
+          <ChallengeBadge field={field} challengeTitle={challengeTitle} />
+        )}
+
         {caption ? (
           <p className="text-body-xlarge text-on-surface-variant mt-1">{caption}</p>
         ) : null}
@@ -47,5 +91,5 @@ const CardFooter = ({
   );
 };
 
-// 최적화: React.memo를 사용하여 props가 변경되지 않으면 리렌더링을 방지합니다.
 export default memo(CardFooter);
+

@@ -33,6 +33,9 @@ export interface WorkDetail {
   tags: string[];
   upload_at: string;
   userId: number;
+  field: string;
+  challengeId: number | null;
+  challengeTitle: string | null;
 }
 
 /**
@@ -53,6 +56,8 @@ export interface SubmissionDetail {
   commentCount: number;
   bookmarkCount: number;
   liked: boolean;
+  field: string;
+  challengeId: number | null;
 }
 
 export interface SubmissionDetailsCommentPage {
@@ -66,4 +71,7 @@ export interface SubmissionDetailsCommentPage {
 export interface SubmissionDetails {
   submission: SubmissionDetail;
   commentPage: SubmissionDetailsCommentPage;
+  field: string;
+  challengeId: number | null;
+  challengeTitle: string | null;
 }

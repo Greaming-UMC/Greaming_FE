@@ -67,6 +67,9 @@ const DetailView = () => {
       likes_count: s.likesCount,
       comment_count: s.commentCount,
       bookmark_count: s.bookmarkCount,
+      field: s.field,
+      challengeId: s.challengeId,
+      challengeTitle: submissionData.result.challengeTitle,
     };
   }, [submissionData]);
 
