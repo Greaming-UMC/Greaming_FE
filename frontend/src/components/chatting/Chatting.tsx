@@ -49,6 +49,7 @@ interface ChattingItemProps extends HTMLAttributes<HTMLDivElement> {
   isReply?: boolean; 
   onReply?: () => void;
   onLike?: () => void;
+  onAvatarClick?: () => void;
 }
 
 export const ChattingItem = ({
@@ -61,6 +62,7 @@ export const ChattingItem = ({
   isReply = false,
   onReply,
   onLike,
+  onAvatarClick,
   className = '',
   ...props
 }: ChattingItemProps) => {
@@ -72,7 +74,13 @@ export const ChattingItem = ({
     >
       {/* 아바타 */}
       <div className="shrink-0 flex-none">
-       <Avatar src={avatarSrc} size="sm" alt={nickname} />
+       <Avatar 
+         src={avatarSrc} 
+         size="sm" 
+         alt={nickname} 
+         onClick={onAvatarClick}
+         className={onAvatarClick ? 'cursor-pointer' : ''}
+       />
       </div>
       
 

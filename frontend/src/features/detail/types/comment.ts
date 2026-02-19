@@ -5,6 +5,7 @@ import type { CommentDetail } from '../../../apis/types/submission/checkSubmissi
  */
 export type Reply = {
   id: number;
+  userId: number;
   nickname: string;
   content: string;
   date?: string;
@@ -34,6 +35,7 @@ export const transformCommentDetail = (
   index: number
 ): Comment => ({
   id: detail.commentId ?? index,
+  userId: detail.user_id ?? 0,
   nickname: detail.writer_nickname,
   avatarSrc: detail.writer_profileImgUrl,
   content: detail.content,

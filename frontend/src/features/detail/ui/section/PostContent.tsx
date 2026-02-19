@@ -12,6 +12,8 @@ export interface PostContentProps {
   tags: string[];
   upload_at: string;
   headerRightNode?: React.ReactNode;
+  userId: number;
+  isMe: boolean;
 }
 
 /**
@@ -29,6 +31,8 @@ export const usePostContent = ({
   tags,
   upload_at,
   headerRightNode,
+  userId,
+  isMe,
 }: PostContentProps) => {
   // useMemo 제거 - headerRightNode가 변경될 때 즉시 반영되도록
   return {
@@ -37,7 +41,9 @@ export const usePostContent = ({
         nickname={nickname}
         profileImageUrl={profileImageUrl}
         level={level}
+        userId={String(userId)}
         rightNode={headerRightNode}
+        isMe={isMe}
       />
     ),
     mainContent: (

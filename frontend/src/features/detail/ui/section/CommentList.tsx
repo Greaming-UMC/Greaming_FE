@@ -1,9 +1,11 @@
 import { memo } from "react";
 import { Chatting } from "../../../../components/chatting";
+import { useProfileNavigation } from "../../hooks/useProfileNavigation";
 
 export interface CommentListProps {
   comments: Array<{
     id: number;
+    userId: number;
     nickname: string;
     content: string;
     date?: string;
@@ -27,6 +29,8 @@ const CommentList = ({
   toggleReply,
   getReplyState,
 }: CommentListProps) => {
+  const { navigateToProfile } = useProfileNavigation();
+
   return (
     <>
       <Chatting.Header />
@@ -51,6 +55,7 @@ const CommentList = ({
                 onLike={() => {
                   /* 댓글 좋아요 처리 로직 추가 예정 */
                 }}
+                onAvatarClick={() => navigateToProfile(comment.userId)}
               />
 
               {hasReplies && (
@@ -81,6 +86,7 @@ const CommentList = ({
                       onLike={() => {
                         /* 답글 좋아요 처리 로직 추가 예정 */
                       }}
+                      onAvatarClick={() => navigateToProfile(reply.userId)}
                     />
                   ))}
                 </div>

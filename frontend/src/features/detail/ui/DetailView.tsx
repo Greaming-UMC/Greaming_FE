@@ -72,6 +72,7 @@ const DetailView = () => {
       caption: apiSubmission.caption,
       tags: apiSubmission.tags.map((tag: { tagName: string }) => tag.tagName),
       upload_at: apiSubmission.uploadAt,
+      userId: apiSubmission.userId,
       likes_count: apiSubmission.likesCount,
       comment_count: apiSubmission.commentCount,
       bookmark_count: apiSubmission.bookmarkCount,

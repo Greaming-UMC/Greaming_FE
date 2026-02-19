@@ -4,8 +4,7 @@ import type { PageInfo } from "../common";
  * 댓글 정보
  */
 export interface CommentDetail {
-  commentId?: number;
-  userId?: number;
+  user_id?: number;
   writer_nickname: string;
   writer_profileImgUrl?: string | null;
   content: string;
@@ -31,6 +30,7 @@ export interface WorkDetail {
   caption: string;
   tags: string[];
   upload_at: string;
+  userId: number;
 }
 
 /**

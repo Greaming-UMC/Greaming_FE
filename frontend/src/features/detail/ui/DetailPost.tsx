@@ -111,6 +111,8 @@ const DetailPost = ({
     tags: submission.tags,
     upload_at: submission.upload_at,
     headerRightNode,
+    userId: submission.userId,
+    isMe,
   });
 
   return (
