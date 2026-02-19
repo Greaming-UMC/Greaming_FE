@@ -26,11 +26,11 @@ const MOCK_PROFILE_RESULT: CheckUserProfileResult = {
     profileImgUrl: "",
     journeyLevel: "PAINTER",
     introduction: "소개글 내용",
-    followerCount: 10,
-    followingCount: 10,
+    followerCount: 0,
+    followingCount: 0,
     specialtyTags: ["ILLUSTRATION", "DAILY"],
     interestTags:["ILLUSTRATION", "ARCHITECTURE","FAN_ART"],
-    followState: "COMPLETED"
+    followState: undefined,
   },
   challenge_calender: {
     dailyChallenge: [],
@@ -64,7 +64,32 @@ const ProfileOther = ({
     (info as { level?: string }).level;
   const usageIcon = resolveJourneyIcon(usageLevel);
   const targetId = userId ?? 0;
-  const followState = info.followState;
+  const followerCount = (() => {
+    if (typeof info.followerCount === "number") return info.followerCount;
+    const alt = (info as { follower_count?: number }).follower_count;
+    return typeof alt === "number" ? alt : 0;
+  })();
+  const followingCount = (() => {
+    if (typeof info.followingCount === "number") return info.followingCount;
+    const alt = (info as { following_count?: number }).following_count;
+    return typeof alt === "number" ? alt : 0;
+  })();
+  const followState = (() => {
+    const normalized = typeof info.followState === "string"
+      ? info.followState.trim().toUpperCase()
+      : undefined;
+
+    if (normalized === "REQUESTED" || normalized === "COMPLETED") {
+      return normalized as "REQUESTED" | "COMPLETED";
+    }
+
+    const isFollowing = (info as { isFollowing?: boolean }).isFollowing;
+    if (typeof isFollowing === "boolean") {
+      return isFollowing ? "COMPLETED" : null;
+    }
+
+    return null;
+  })();
   const uploadCountText = history.isLoading ? "..." : history.uploadCount.toLocaleString();
   const consecutiveDaysText = history.isLoading
     ? "..."
@@ -88,7 +113,7 @@ const ProfileOther = ({
             onClick={onFollowerClick}
             className="rounded-small state-layer primary-container-opacity-8"
           >
-            <Counter variant="label" size="sm" count={info.followerCount} label="팔로워" />
+            <Counter variant="label" size="sm" count={followerCount} label="팔로워" />
           </button>
           <Divider orientation="vertical" thickness={1} style={{ height: 16 }} />
           <button
@@ -96,7 +121,7 @@ const ProfileOther = ({
             onClick={onFollowingClick}
             className="rounded-small state-layer primary-container-opacity-8"
           >
-            <Counter variant="label" size="sm" count={info.followingCount} label="팔로잉" />
+            <Counter variant="label" size="sm" count={followingCount} label="팔로잉" />
           </button>
         </div>
         
