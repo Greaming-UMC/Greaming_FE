@@ -45,6 +45,7 @@ const HeroChallengeCard = ({
     <Card.Root
       clickable={!isActive}
       className="relative w-[702px] h-[352px] bg-transparent overflow-visible group border-none shadow-none"
+      onClick={() => onJoin?.(type)}
     >
       <Blob className="absolute inset-0 w-full h-full pointer-events-none" />
 
