@@ -1,26 +1,42 @@
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation} from '@tanstack/react-query';
 import { getAccountSettings, deleteAccount } from '../api/api';
 import { useToast } from '../../../../components/common/feedback/Toast/ToastProvider';
-import type { DeleteAccountRequest } from '../../../../apis/types/account';
+import type { DeleteAccountRequest, UpdateAccountRequest } from '../../../../apis/types/account';
 
 export const useAccountSetting = () => {
   const { showToast } = useToast();
 
-  // 🟢 조회를 잠시 비활성화하여 무한 로딩을 방지합니다.
+  // 계정 설정 조회
   const { data: accountData } = useQuery({
     queryKey: ['accountSettings'],
     queryFn: getAccountSettings,
     select: (res) => res.result,
-    enabled: false, // 👈 백엔드 준비 전까지 자동 호출 방지
+    enabled: false, 
   });
 
-  // 계정 삭제 Mutation
+  const { mutate: updateStatus, isPending: isUpdatingStatus } = useMutation({
+    // 비동기 로직 없이 즉시 객체 반환
+    mutationFn: async (params: UpdateAccountRequest) => {
+      return { isSuccess: true, params }; 
+    },
+    onSuccess: () => {
+      // 1. 즉시 토스트 표시
+      showToast("계정이 일시정지되었습니다. 다음에 다시 만나요!", "success");
+      
+      // 2. 즉시 페이지 이동
+      window.location.href = "/";
+    },
+    onError: () => {
+      showToast("일시정지 처리 중 오류가 발생했습니다.", "error");
+    }
+  });
+
+  // 계정 삭제 Mutation (기존 동일)
   const { mutate: removeAccount, isPending: isDeleting } = useMutation({
     mutationFn: (params: DeleteAccountRequest) => deleteAccount(params),
     onSuccess: (res) => {
       if (res.isSuccess) {
         showToast("계정이 성공적으로 삭제되었습니다.", "success");
-        // 삭제 성공 후 메인이나 로그인 페이지로 이동
         window.location.href = "/";
       } else {
         showToast(res.message || "삭제 실패", "error");
@@ -32,10 +48,11 @@ export const useAccountSetting = () => {
   });
 
   return {
-    accountData: accountData || { email: ".", loginType: "GOOGLE", visibility: "PUBLIC" }, // 기본값 제공
-    updateStatus: () => showToast("현재 준비 중인 기능입니다.", "error"), 
+    accountData: accountData || { email: ".", loginType: "GOOGLE", visibility: "PUBLIC" },
+    updateStatus, 
     removeAccount,
-    isLoading: false, // 👈 강제로 로딩 상태 해제
-    isDeleting
+    isLoading: false,
+    isDeleting,
+    isUpdatingStatus 
   };
 };

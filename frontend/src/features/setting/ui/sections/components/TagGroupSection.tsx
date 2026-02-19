@@ -42,8 +42,8 @@ export const TagGroupSection = ({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center px-1">
-        <span className="label-large-emphasized text-on-surface">{title}</span>
-        <span className="text-[11px] text-on-surface-variant-lowest">
+        <span className="label-xlarge text-on-surface">{title}</span>
+        <span className="label-large text-on-surface-variant-lowest">
           {max === 1 ? "1개 선택 필수" : `최소 1개 최대 ${max}개 (${selected.length}/${max})`}
         </span>
       </div>
@@ -61,6 +61,7 @@ export const TagGroupSection = ({
               size="sm" 
               widthMode="fixed" 
               width="110px"
+              textClassName="label-large"
               disabled={max > 1 && !isSelected && selected.length >= max}
               onClick={() => handleToggle(key)}
               className={clsx(

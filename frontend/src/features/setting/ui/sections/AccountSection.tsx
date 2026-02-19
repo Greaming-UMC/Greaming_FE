@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { Button, Modal } from "../../../../components/common";
+import { Button} from "../../../../components/common";
 import clsx from "clsx";
 import Icon from "../../../../components/common/Icon";
 import { useAccountSetting } from "../hooks/useAccountSetting";
 import { useProfileSetting } from "../hooks/useProfileSetting";
 import type { VisibilityType } from "../../../../apis/types/common";
+import DeleteAccountModal from "./components/DeleteAccountModal";
+import SuspendAccountModal from "./components/SuspendAccountModal";
 
 const VISIBILITY_OPTIONS: { type: VisibilityType; label: string; desc: string }[] = [
   { type: 'PUBLIC', label: '계정 공개', desc: '' },
@@ -13,12 +15,13 @@ const VISIBILITY_OPTIONS: { type: VisibilityType; label: string; desc: string }[
 ];
 
 const AccountSection = () => {
-  const { accountData, removeAccount, isLoading: isAccountLoading, isDeleting } = useAccountSetting();
+  const { accountData, removeAccount, isLoading: isAccountLoading, isDeleting, updateStatus } = useAccountSetting();
   const { isUpdating } = useProfileSetting();
 
   const [visibility, setVisibility] = useState<VisibilityType>('PUBLIC');
   const [isChanged, setIsChanged] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isSuspendedOpen, setIsSuspendedOpen] = useState(false);
 
   // 1. 초기 데이터 동기화
   useEffect(() => {
@@ -39,15 +42,19 @@ const AccountSection = () => {
   };
 
   const handleDeleteAccount = () => {
-    // 🟢 스웨거에 활성화된 삭제 API 호출
     removeAccount({ agreed: true } as any);
     setIsDeleteOpen(false);
+  };
+
+  const handleSuspendAccount = () => {
+    updateStatus({ status: 'SUSPENDED' } as any); 
+    setIsSuspendedOpen(false);
   };
 
   if (isAccountLoading) return <div className="w-full py-20 text-center">계정 정보를 불러오는 중...</div>;
 
   return (
-    <section className="flex flex-col gap-11">
+    <section className="flex flex-col gap-10">
       <header className="flex justify-between items-center">
         <h2 className="main-title-small-emphasized text-on-surface">계정</h2>
         <Button 
@@ -102,6 +109,15 @@ const AccountSection = () => {
       {/* 위험 구역: 삭제 버튼만 유지 */}
       <article className="flex flex-col gap-3 mb-20">
         <Button 
+          variant="surface"
+          className="shadow-1 py-6 rounded-medium" 
+          textClassName="label-xlarge text-on-surface"
+          onClick={() => setIsSuspendedOpen(true)}
+        >
+          계정 일시정지
+        </Button>
+
+        <Button 
           variant="surface" 
           widthMode="fill" 
           className="shadow-1 py-6 rounded-medium" 
@@ -112,26 +128,19 @@ const AccountSection = () => {
         </Button>
       </article>
 
+      <SuspendAccountModal 
+        isOpen={isSuspendedOpen} 
+        onClose={() => setIsSuspendedOpen(false)} 
+        onConfirm={handleSuspendAccount} 
+      />
+
       {/* 삭제 확인 모달 */}
-      <Modal variant="confirm" open={isDeleteOpen} onClose={() => setIsDeleteOpen(false)}>
-        <Modal.Header title="계정 삭제" />
-        <Modal.Body>
-          <p className="text-center py-8 body-large !text-error font-bold">
-            정말로 삭제하시겠습니까?<br />
-            삭제된 데이터는 절대 복구되지 않습니다.
-          </p>
-        </Modal.Body>
-        <Modal.Footer>
-          <div className="flex justify-center gap-4 w-full">
-            <Button variant="secondary" className="flex-1" onClick={handleDeleteAccount} disabled={isDeleting}>
-              {isDeleting ? "삭제 중..." : "삭제하기"}
-            </Button>
-            <Button variant="primary" className="flex-1" onClick={() => setIsDeleteOpen(false)}>
-              취소
-            </Button>
-          </div>
-        </Modal.Footer>
-      </Modal>
+      <DeleteAccountModal
+        isOpen={isDeleteOpen} 
+        onClose={() => setIsDeleteOpen(false)} 
+        onConfirm={handleDeleteAccount} 
+        isDeleting={isDeleting} 
+      />
     </section>
   );
 };

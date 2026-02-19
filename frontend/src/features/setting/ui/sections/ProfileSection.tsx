@@ -206,13 +206,13 @@ const ProfileSection = ({ isChanged, setIsChanged }: ProfileSectionProps) => {
       <GoalSection goal={weeklyGoal} onSelect={setWeeklyGoal} />
       
       <div className="flex flex-col gap-8 mb-10">
-        <h3 className="label-xlarge-emphasized text-on-surface"># 내 특기 선택</h3>
+        <h3 className="sub-title-large-emphasized text-on-surface"># 내 특기 선택</h3>
         <TagGroupSection title="분야" options={FIELD_KEYS} labelMap={ART_FIELD_LABEL} selected={specialtyFields} onChange={(val) => setSpecialtyFields(val as ArtField[])} />
         <TagGroupSection title="스타일" options={STYLE_KEYS} labelMap={ART_STYLE_LABEL} selected={specialtyStyle ? [specialtyStyle] : []} onChange={(val) => setSpecialtyStyle(val[0] as ArtStyle || null)} max={1} />
       </div>
 
       <div className="flex flex-col gap-8">
-        <h3 className="label-xlarge-emphasized text-on-surface"># 내 관심 해시태그 선택</h3>
+        <h3 className="sub-title-large-emphasized text-on-surface"># 내 관심 해시태그 선택</h3>
         <TagGroupSection title="분야" options={FIELD_KEYS} labelMap={ART_FIELD_LABEL} selected={interestFields} onChange={(val) => setInterestFields(val as ArtField[])} />
         <TagGroupSection title="스타일" options={STYLE_KEYS} labelMap={ART_STYLE_LABEL} selected={interestStyle ? [interestStyle] : []} onChange={(val) => setInterestStyle(val[0] as ArtStyle || null)} max={1} />
       </div>
