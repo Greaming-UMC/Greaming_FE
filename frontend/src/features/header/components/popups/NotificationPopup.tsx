@@ -5,7 +5,7 @@ const NotificationPopup = () => {
   return (
     <div className="w-[400px] bg-surface rounded-xl shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
       <div className="px-4 py-3 border-b border-surface-variant-low">
-        <h3 className="font-bold text-on-surface">알림</h3>
+        <h3 className="font-semibold text-on-surface">알림</h3>
       </div>
 
       <div className="max-h-[320px] overflow-y-auto">

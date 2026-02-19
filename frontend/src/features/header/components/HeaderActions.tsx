@@ -27,7 +27,7 @@ export const HeaderActions = ({ userInfo, onLogout }: HeaderActionsProps) => {
             variant="secondary"
             size="sm"
             shape="round"
-            className="font-medium shadow-none"
+            className="label-xlarge shadow-none"
           >
             로그인
           </Button>
