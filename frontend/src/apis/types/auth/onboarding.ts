@@ -11,9 +11,10 @@ export interface RegisterInfoRequest {
   intro: string;
   specialtyTags: string[];
   interestTags: string[];
-  usagePurpose: UsagePurpose;
+  journeyLevel: UsagePurpose;
   weeklyGoalScore: number;
-};
+  profileImageKey?: string;
+}
 
 
 // Response
