@@ -3,7 +3,7 @@ import type { ApiDataSuccessResponse, ApiErrorResponse } from '../../../apis/typ
 
 /**
  * [공용 무한 스크롤 훅]
- * T: API 응답의 실제 데이터 타입 (hasNext, nextCursor 포함 필수)
+ * T: API 응답 data 필드의 타입
  */
 export const useInfiniteScroll = <T extends { hasNext: boolean; nextCursor: string | number | null }>(
   queryKey: unknown[],
@@ -16,10 +16,11 @@ export const useInfiniteScroll = <T extends { hasNext: boolean; nextCursor: stri
     queryFn: ({ pageParam = null }) => fetchFn({ cursorId: pageParam as number | null, size }),
     initialPageParam: null,
     getNextPageParam: (lastPage) => {
-      // Family A 규격에 따라 lastPage.data 내부의 페이징 정보 확인
-      if (!lastPage.data?.hasNext || lastPage.data.nextCursor === null) return undefined;
-      return lastPage.data.nextCursor;
+      const data = lastPage?.data;
+      if (!data || !data.hasNext || data.nextCursor === null) return undefined;
+      return data.nextCursor;
     },
     enabled,
+    refetchOnWindowFocus: false, 
   });
 };
