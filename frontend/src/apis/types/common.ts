@@ -235,6 +235,7 @@ export interface BaseUserInfo {
   userId: number;
   nickname: string;
   profileImgUrl: string;
+  journeyLevel: string;
 };
 
 // 팔로워/팔로잉 유저 정보 타입
@@ -242,6 +243,13 @@ export interface FollowUserInfo extends BaseUserInfo {
   isFollowing: boolean;
   followState: FollowState;
 };
+
+export interface FollowListUserResponse extends BaseUserInfo {
+  following: boolean;    // Swagger: 내가 팔로우 중인지
+  follower: boolean;     // Swagger: 나를 팔로우 중인지
+  interestTags: string[];
+  specialtyTags: string[];
+}
 
 // ====================================================
 // Circle
