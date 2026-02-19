@@ -49,7 +49,7 @@ const ChallengeCarouselTypeSelector = ({
         variant="secondary"
         options={options}
         className="gap-0"
-        displayClassName="main-title-small-emphasized"
+        displayClassName="text-2xl font-semibold"
       />
 
       {mode === "switch" && onMoreClick && (

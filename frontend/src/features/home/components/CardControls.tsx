@@ -66,7 +66,7 @@ const CardControls = ({
                 label={`#${tag}`}
                 onDelete={() => handleRemoveTag(tag)}
                 variant="filled"
-                className="bg-surface-variant-lowest text-on-surface-variant-bright whitespace-nowrap"
+                className="flex items-center bg-surface-variant-lowest text-on-surface-variant-bright text-2xl h-[32px] font-medium whitespace-nowrap"
               />
             ))}
           </div>

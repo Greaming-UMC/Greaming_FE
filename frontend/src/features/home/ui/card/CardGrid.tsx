@@ -29,8 +29,8 @@ const CardGrid = ({ view, type, sort, tags, dateTimeIso }: Props) => {
 
   if (isLoading) {
     return (
-      <section className="w-full py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 justify-items-center">
+      <section className="w-full py-8 px-2 sm:px-4 lg:px-0">
+        <div className="mx-auto grid w-full max-w-[1346px] grid-cols-[repeat(auto-fit,minmax(250px,250px))] justify-center gap-x-6 gap-y-10">
           {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
             <CardSkeleton key={`init-skeleton-${i}`} />
           ))}
@@ -52,8 +52,8 @@ const CardGrid = ({ view, type, sort, tags, dateTimeIso }: Props) => {
   }
 
   return (
-    <section className="w-full py-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 justify-items-center">
+    <section className="w-full py-8 px-2 sm:px-4 lg:px-0">
+      <div className="mx-auto grid w-full max-w-[1346px] grid-cols-[repeat(auto-fit,minmax(250px,250px))] justify-center gap-x-6 gap-y-10">
         {items.map((card) => (
           <CardItem key={card.submissionId} card={card} />
         ))}

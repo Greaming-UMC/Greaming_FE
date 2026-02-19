@@ -10,7 +10,6 @@ import ErrorPage from './pages/ErrorPage';
 import ProfilePage from './pages/ProfilePage';
 import LoginPage from './pages/LoginPage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
-import ExamplePage from './pages/ExamplePage';
 import OnboardingWelcomePage from './pages/OnboardingWelcomePage';
 import OnboardingPage from './pages/OnboardingPage';
 import UploadPage from './pages/UploadPage';
@@ -77,10 +76,6 @@ const router = createBrowserRouter([
       {
         path: 'home',
         element: <HomePage />,
-      },
-      {
-        path: 'example',
-        element: <ExamplePage />,
       },
     ],
   },
