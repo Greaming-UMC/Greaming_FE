@@ -43,7 +43,7 @@ const HeroChallengeCard = ({
 
   return (
     <Card.Root
-      clickable={!isActive}
+      clickable={Boolean(onJoin)}
       className="relative w-[702px] h-[352px] bg-transparent overflow-visible group border-none shadow-none"
       onClick={() => onJoin?.(type)}
     >
