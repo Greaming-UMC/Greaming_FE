@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Modal } from "../../../../components/common";
+import { Button} from "../../../../components/common";
 import clsx from "clsx";
 import Icon from "../../../../components/common/Icon";
 import { useAccountSetting } from "../hooks/useAccountSetting";
@@ -15,7 +15,7 @@ const VISIBILITY_OPTIONS: { type: VisibilityType; label: string; desc: string }[
 ];
 
 const AccountSection = () => {
-  const { accountData, removeAccount, isLoading: isAccountLoading, isDeleting, updateStatus, isUpdatingStatus } = useAccountSetting();
+  const { accountData, removeAccount, isLoading: isAccountLoading, isDeleting, updateStatus } = useAccountSetting();
   const { isUpdating } = useProfileSetting();
 
   const [visibility, setVisibility] = useState<VisibilityType>('PUBLIC');

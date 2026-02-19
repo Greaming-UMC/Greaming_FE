@@ -1,11 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation} from '@tanstack/react-query';
 import { getAccountSettings, deleteAccount } from '../api/api';
 import { useToast } from '../../../../components/common/feedback/Toast/ToastProvider';
 import type { DeleteAccountRequest, UpdateAccountRequest } from '../../../../apis/types/account';
 
 export const useAccountSetting = () => {
   const { showToast } = useToast();
-  const queryClient = useQueryClient();
 
   // 계정 설정 조회
   const { data: accountData } = useQuery({
@@ -15,7 +14,6 @@ export const useAccountSetting = () => {
     enabled: false, 
   });
 
-  // 🟢 계정 상태 변경 (즉시 성공한 척 하기)
   const { mutate: updateStatus, isPending: isUpdatingStatus } = useMutation({
     // 비동기 로직 없이 즉시 객체 반환
     mutationFn: async (params: UpdateAccountRequest) => {
