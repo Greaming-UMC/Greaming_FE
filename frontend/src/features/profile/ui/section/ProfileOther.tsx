@@ -5,6 +5,7 @@ import SpeechBubble from "../../../../components/common/SpeechBubble";
 import SocialButton from "../../components/SocialButton";
 import { useProfileHistory, useUserProfile } from "../../hooks";
 import type { CheckUserProfileResult } from "../../../../apis/types/user";
+import { toKoreanTagLabel } from "../../utils/tagLabel";
 
 const JOURNEY_LEVEL_ICONS = ["SKETCHER", "PAINTER", "ARTIST", "MASTER"] as const;
 type JourneyLevelIcon = (typeof JOURNEY_LEVEL_ICONS)[number];
@@ -39,9 +40,15 @@ const MOCK_PROFILE_RESULT: CheckUserProfileResult = {
 
 type ProfileOtherProps = {
   userId?: number;
+  onFollowerClick?: () => void;
+  onFollowingClick?: () => void;
 };
 
-const ProfileOther = ({ userId }: ProfileOtherProps) => {
+const ProfileOther = ({
+  userId,
+  onFollowerClick,
+  onFollowingClick,
+}: ProfileOtherProps) => {
   const query = useUserProfile(userId);
   const history = useProfileHistory({ mode: "other", userId });
   const result = query.data?.result ?? MOCK_PROFILE_RESULT;
@@ -76,9 +83,21 @@ const ProfileOther = ({ userId }: ProfileOtherProps) => {
         </div>
 
         <div className="mt-[8px] flex items-center gap-[16px]">
-          <Counter variant="label" size="sm" count={info.followerCount} label="팔로워" />
+          <button
+            type="button"
+            onClick={onFollowerClick}
+            className="rounded-small state-layer primary-container-opacity-8"
+          >
+            <Counter variant="label" size="sm" count={info.followerCount} label="팔로워" />
+          </button>
           <Divider orientation="vertical" thickness={1} style={{ height: 16 }} />
-          <Counter variant="label" size="sm" count={info.followingCount} label="팔로잉" />
+          <button
+            type="button"
+            onClick={onFollowingClick}
+            className="rounded-small state-layer primary-container-opacity-8"
+          >
+            <Counter variant="label" size="sm" count={info.followingCount} label="팔로잉" />
+          </button>
         </div>
         
         <SocialButton
@@ -93,16 +112,16 @@ const ProfileOther = ({ userId }: ProfileOtherProps) => {
         <div className="flex items-start gap-[16px]">
           <span className="shrink-0 whitespace-nowrap">내 특기</span>
           <div className="flex flex-wrap gap-[8px]">
-            {specialtyTags.map((tag) => (
-              <Chip key={tag} label={`#${tag}`} />
+            {specialtyTags.map((tag, index) => (
+              <Chip key={`${tag}-${index}`} label={`#${toKoreanTagLabel(tag)}`} />
             ))}
           </div>
         </div>
         <div className="flex items-start gap-[16px]">
           <span className="shrink-0 whitespace-nowrap">내 취향</span>
           <div className="flex flex-wrap gap-[8px]">
-            {interestTags.map((tag) => (
-              <Chip key={tag} label={`#${tag}`} />
+            {interestTags.map((tag, index) => (
+              <Chip key={`${tag}-${index}`} label={`#${toKoreanTagLabel(tag)}`} />
             ))}
           </div>
         </div>

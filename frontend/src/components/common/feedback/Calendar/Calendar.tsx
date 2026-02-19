@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import './Calendar.css';
 import { CalendarContext } from './CalendarContext';
@@ -12,10 +12,12 @@ export const CalendarRoot = ({
   children,
   variant = 'inline',
   className = '',
+  style,
 }: {
   children: ReactNode;
   variant?: 'modal' | 'inline';
   className?: string;
+  style?: CSSProperties;
 }) => {
   const now = new Date();
   const initialDate = clampMinDate(now);
@@ -26,7 +28,10 @@ export const CalendarRoot = ({
     <CalendarContext.Provider
       value={{ viewDate, setViewDate, selectedDate, setSelectedDate, variant }}
     >
-      <div className={`calendar-root variant-${variant} flex flex-col items-start w-fit ${className}`}>
+      <div
+        className={`calendar-root variant-${variant} flex flex-col items-start w-fit ${className}`}
+        style={style}
+      >
         {children}
       </div>
     </CalendarContext.Provider>

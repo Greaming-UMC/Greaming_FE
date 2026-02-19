@@ -32,7 +32,11 @@ const ApplyButton = ({
   const handleClick = () => {
     mutate(targetId, {
       onSuccess: (data) => {
-        setLocalState(data.result?.followState ?? localState);
+        if (typeof data.result?.isFollowing === "boolean") {
+          setLocalState(data.result.isFollowing ? "COMPLETED" : null);
+          return;
+        }
+        setLocalState(localState);
       },
     });
   };

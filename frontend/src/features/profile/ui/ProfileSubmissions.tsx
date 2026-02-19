@@ -10,6 +10,7 @@ import type { ProfileViewContext } from "../config/profileRoleConfig";
 import type { SubmissionMetadata } from "../../../apis/types/common";
 import type { UserSubmission } from "../../../apis/types/submission/getUserSubmissions";
 import mockFeed from "../../../assets/background/mock_feed.jpg";
+import { useNavigate } from "react-router-dom";
 
 const USE_MOCK_FEED = false;
 const MOCK_COUNTERS = { likesCount: 10, commentCount: 10, bookmarkCount: 10 };
@@ -50,9 +51,13 @@ const ProfileSubmissions = ({
   userId,
   circleId,
 }: ProfileSubmissionsProps) => {
+  const navigate = useNavigate();
   const isCircleContext = context.type === "circle";
   const isOtherUserContext = context.type === "user" && context.role === "other";
   const isMyUserContext = context.type === "user" && context.role === "self";
+  const handleSubmissionClick = (submissionId: number) => {
+    navigate(`/detail/${submissionId}`);
+  };
 
   const circleQuery = useCircleSubmissions(
     isCircleContext ? circleId : undefined,
@@ -99,6 +104,7 @@ const ProfileSubmissions = ({
           showAuthor
           authorById={authorById}
           emptyMessage="써클에 포스팅된 그림이 없어요"
+          onItemClick={handleSubmissionClick}
         />
       </div>
     );
@@ -115,6 +121,7 @@ const ProfileSubmissions = ({
         <Submissions
           items={withMock(items)}
           emptyMessage="작가의 포스팅한 그림이 없어요"
+          onItemClick={handleSubmissionClick}
         />
       </div>
     );
@@ -130,6 +137,7 @@ const ProfileSubmissions = ({
       <Submissions
         items={withMock(items)}
         emptyMessage="포스팅한 그림이 없어요"
+        onItemClick={handleSubmissionClick}
       />
     </div>
   );

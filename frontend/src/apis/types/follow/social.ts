@@ -14,6 +14,15 @@ export type FollowRequestResult = {
     createdAt: string;
 };
 
+/**
+ * 팔로우 토글 (POST /api/users/{targetUserId}/follow)
+ * URI: /api/users/{targetUserId}/follow
+ */
+export type ToggleFollowResult = {
+    isFollowing: boolean;
+    followerCount: number;
+};
+
 
 
 /**

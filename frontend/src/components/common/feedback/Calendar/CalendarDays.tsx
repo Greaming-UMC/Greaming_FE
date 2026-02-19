@@ -56,7 +56,7 @@ const CalendarDays = ({ completedDates = [] }: CalendarDaysProps) => {
   CalendarTrigger.displayName = 'CalendarTrigger';
 
   return (
-    <div className={isInline ? 'w-full flex justify-center' : 'w-fit'}>
+    <div className={isInline ? 'w-full flex justify-start' : 'w-fit'}>
       <DatePicker
         fixedHeight
         selected={isShowSelected ? selectedDate : null}
@@ -98,7 +98,7 @@ const CalendarDays = ({ completedDates = [] }: CalendarDaysProps) => {
               <span className="label-xxlarge-emphasized text-on-surface">
                 {monthDate.getFullYear()}년 {monthDate.getMonth() + 1}월
               </span>
-              <div className="flex gap-[4px]">
+              <div className="flex gap-1">
                 <button
                   type="button"
                   onClick={decreaseMonth}

@@ -5,3 +5,7 @@ export * from './useUserSubmissions';
 export * from './useCircleProfile';
 export * from './useCircleSubmissions';
 export * from './useProfileHistory';
+export * from './useFollowRequest';
+export * from './useUnfollowRequest';
+export * from './useFollowers';
+export * from './useFollowings';

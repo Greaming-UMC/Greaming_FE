@@ -37,7 +37,7 @@
 .react-datepicker__day {
   width: 20px !important; 
   height: 20px !important;
-  margin: 0 12px !important; 
+  margin: 0 var(--calendar-day-gap-x, 12px) !important; 
   display: inline-flex !important;
   justify-content: center;
   align-items: center;
@@ -129,11 +129,30 @@
   background-color: var(--color-state-layers-primary-opacity-8) !important;
 }
 
-/* [인라인 모드] 일자별 좌우 간격 넓히기 */
-.variant-inline .react-datepicker__day-name, 
+/* [인라인 모드] 달력 폭을 컨테이너에 맞추고, 일자 균등 분배 */
+.variant-inline .react-datepicker {
+  width: 100% !important;
+}
+
+.variant-inline .react-datepicker__month-container {
+  float: none !important;
+  width: 100% !important;
+}
+
+.variant-inline .react-datepicker__month {
+  width: 100% !important;
+}
+
+.variant-inline .react-datepicker__day-names,
+.variant-inline .react-datepicker__week {
+  display: flex !important;
+  justify-content: space-between !important;
+  gap: 0 !important;
+}
+
+.variant-inline .react-datepicker__day-name,
 .variant-inline .react-datepicker__day {
-  /* 세로(0)는 유지하고, 가로(8px -> 14px)만 늘립니다. */
-  margin: 0 12px !important; 
+  margin: 0 !important;
 }
 
 /* [인라인 모드] 클릭 방지 및 커서 */

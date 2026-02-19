@@ -8,6 +8,7 @@ type SubmissionsProps = {
   emptyMessage?: string;
   showAuthor?: boolean;
   authorById?: Record<number, { name: string; avatarUrl?: string | null }>;
+  onItemClick?: (submissionId: number) => void;
   className?: string;
 };
 
@@ -16,6 +17,7 @@ const Submissions = ({
   emptyMessage = "포스팅한 그림이 없어요",
   showAuthor = false,
   authorById,
+  onItemClick,
   className = "",
 }: SubmissionsProps) => {
   if (items.length === 0) {
@@ -39,13 +41,25 @@ const Submissions = ({
     <section className={`flex w-full px-[8px] ${className}`}>
       <div className="submissions-grid">
         {items.map((item) => (
-          <div key={item.submissionId} className="flex flex-col">
-            <Card.Root className="w-[250px] h-[250px]">
+          <div key={item.submissionId} className="flex w-fit flex-col">
+            <Card.Root
+              className="w-[250px] h-[250px]"
+              clickable={Boolean(onItemClick)}
+              onClick={() => onItemClick?.(item.submissionId)}
+              onKeyDown={(event) => {
+                if (!onItemClick) return;
+                if (event.key !== "Enter" && event.key !== " ") return;
+                event.preventDefault();
+                onItemClick(item.submissionId);
+              }}
+              role={onItemClick ? "button" : undefined}
+              tabIndex={onItemClick ? 0 : undefined}
+            >
               <Card.Media
                 src={item.thumbnailUrl}
                 alt={`submission-${item.submissionId}`}
                 aspectRatio="aspect-square"
-                className="h-full"
+                className="h-full  state-layer primary-opacity-8"
               />
             </Card.Root>
             {(() => {
@@ -74,7 +88,7 @@ const Submissions = ({
 
               if (showAuthor && authorById?.[item.submissionId]) {
                 return (
-                  <div className="mt-[8px] flex items-center gap-[8px]">
+                  <div className="mt-[8px] flex w-full items-center gap-[8px]">
                     <Avatar
                       src={authorById[item.submissionId].avatarUrl}
                       size="xs"
@@ -90,7 +104,7 @@ const Submissions = ({
               }
 
               return (
-                <div className="mt-[8px] flex items-center justify-end gap-[4px]">
+                <div className="mt-[8px] flex w-full items-center justify-end gap-[4px] px-2">
                   {counters}
                 </div>
               );

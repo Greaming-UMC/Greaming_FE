@@ -7,6 +7,7 @@ export interface ActionItemProps extends ListBaseProps {
   onAccept?: () => void;
   onReject?: () => void;
   onFollow?: () => void;
+  onRequested?: () => void;
   onUnfollow?: () => void;
   onKick?: () => void;
   onJoin?: () => void;
@@ -19,6 +20,7 @@ export const ActionItem = ({
   onAccept,
   onReject,
   onFollow,
+  onRequested,
   onUnfollow,
   onKick,
   onJoin,  
@@ -31,6 +33,7 @@ export const ActionItem = ({
     accept: onAccept,
     reject: onReject,
     follow: onFollow,
+    requested: onRequested,
     unfollow: onUnfollow,
     kick: onKick,
     join: onJoin,
@@ -43,6 +46,7 @@ export const ActionItem = ({
     onPrimary: "onPrimary",
     secondary: "secondary",
     surface: "surface",
+    surfaceVariant: "surfaceVariant",
   } as const;
 
   const trailingNode =
@@ -57,6 +61,7 @@ export const ActionItem = ({
                 variant={actionVariantMap[config.variant]}
                 shape="round"
                 widthMode="hug"
+                disabled={config.disabled}
                 onClick={(e) => {
                   e.stopPropagation();
                   actionHandlers[config.key as keyof typeof actionHandlers]?.();
