@@ -51,13 +51,13 @@ const CardItem = ({ card, context = "grid" }: Props) => {
         >
           {tags.length > 0 && (
             <Card.Overlay className="absolute inset-0 flex flex-col justify-end">
-              <div className="absolute bottom-0 left-0 w-full h-[120px] bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-full h-[120px] bg-gradient-to-t from-primary/80 via-primary/30 to-transparent pointer-events-none" />
               <div className="relative z-10 w-full p-3 overflow-hidden">
                 <div className="flex items-center gap-2 whitespace-nowrap">
                   {tags.map((t) => (
                     <span
                       key={t}
-                      className="text-sm font-semibold text-white drop-shadow-md"
+                      className="label-medium-emphasized text-white drop-shadow-md"
                     >
                       #{t}
                     </span>
@@ -72,12 +72,12 @@ const CardItem = ({ card, context = "grid" }: Props) => {
           <div className={`flex h-full w-full items-center justify-between ${textClass}`}>
             <div className="flex items-center gap-2 min-w-0">
               <Avatar src={card.profileImgUrl} size="xs" />
-              <span className="text-xs font-medium truncate max-w-[90px]">
+              <span className="sub-title-medium-emphasized truncate max-w-[90px]">
                 {card.nickname}
               </span>
             </div>
 
-            <div className="flex items-center gap-2 text-sm shrink-0">
+            <div className="flex items-center gap-2 label-xlarge-emphasized shrink-0">
               <span className="flex items-center gap-0.5">
                 <Icon name="like" size={19} />
                 {card.counters.likesCount}

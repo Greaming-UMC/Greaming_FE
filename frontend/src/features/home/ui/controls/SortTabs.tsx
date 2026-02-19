@@ -30,7 +30,7 @@ const SortTabs = ({ value, onChange }: Props) => {
             variant={selected ? "primary" : "outlined"}
             onClick={() => onChange(key)}
             className={selected ? "" : "bg-surface border-1"}
-            textClassName="text-md font-semibold"
+            textClassName="label-xlarge-emphasized"
           >
             {SORT_LABEL[key]}
           </Button>

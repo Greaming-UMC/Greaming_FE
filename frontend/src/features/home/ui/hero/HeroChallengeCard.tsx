@@ -58,7 +58,7 @@ const HeroChallengeCard = ({
           `}
         >
           <Logo name="primary" size={81} />
-          <span className="font-[Knewave] text-5xl text-on-surface pb-2 leading-none">
+          <span className="font-[Knewave] text-display-large text-on-surface pb-2 leading-none">
             {PRE_TITLE[type]}
           </span>
         </div>
@@ -77,11 +77,11 @@ const HeroChallengeCard = ({
           <div className="flex items-center justify-center w-full gap-2">
             <Logo name={hoverLogoName} width={64} height={75} />
             <div className="flex flex-col items-start justify-center pt-1">
-              <span className="font-[Knewave] text-4xl text-on-surface leading-none">
+              <span className="font-[Knewave] text-display-medium text-on-surface leading-none">
                 {PRE_TITLE[type]}
               </span>
               {metaText && (
-                <p className="mt-2 text-sm font-medium text-on-surface">
+                <p className="mt-2 label-large-emphasized text-on-surface">
                   {metaText}
                 </p>
               )}
@@ -95,7 +95,7 @@ const HeroChallengeCard = ({
               }}
               className="flex items-center gap-1 cursor-pointer hover:opacity-80 ml-10"
             >
-              <span className="text-2xl font-semibold text-on-surface">참여하기</span>
+              <span className="label-xxxlarge-emphasized text-on-surface">참여하기</span>
               <Icon name="arrow_right_double" size={24} />
             </button>
           </div>
@@ -109,7 +109,7 @@ const HeroChallengeCard = ({
                   width={320}
                   height={47}
                 />
-                <span className="absolute text-secondary font-medium pb-1">
+                <span className="absolute text-secondary label-xlarge-emphasized pb-1">
                   ‘{safeTopic}’
                 </span>
               </div>
