@@ -4,7 +4,7 @@ import { type BadgeProps } from "../../display/Badge";
 import { type AvatarProps } from "../../display/Avatar";
 
 export type ListVariant = "onboarding" | "modal" | "notification" | "circle";
-export type ListAction = "none" | "acceptReject" | "follow" | "following" | "kick" | "join" | "joined" | "invite";
+export type ListAction = "none" | "acceptReject" | "follow" | "requested" | "following" | "kick" | "join" | "joined" | "invite";
 export type ListSelectedStyle = "check" | "solid";
 export type ListSize = "sm" | "md" | "lg" | "xl";
 export type ListWidthMode = "fixed" | "fill";
@@ -83,9 +83,10 @@ export const RADIUS_CLASS: Record<ListRadius, string> = {
 
 
 export type ListActionPreset = {
-    key: "accept" | "reject" | "follow" | "unfollow" | "kick" | "join" | "leave" | "invite";
+    key: "accept" | "reject" | "follow" | "requested" | "unfollow" | "kick" | "join" | "leave" | "invite";
     label: string;
-    variant: "Primary" | "onPrimary" | "secondary" | "surface";
+    variant: "Primary" | "onPrimary" | "secondary" | "surface" | "surfaceVariant";
+    disabled?: boolean;
 };
 export const ACTION_PRESET: Record<ListAction, ListActionPreset[]> = {
     none: [],
@@ -94,6 +95,7 @@ export const ACTION_PRESET: Record<ListAction, ListActionPreset[]> = {
       { key: "accept", label: "수락", variant: "secondary" },
     ],
     follow: [{ key: "follow", label: "팔로우", variant: "onPrimary" }],
+    requested: [{ key: "requested", label: "요청됨", variant: "surfaceVariant", disabled: true }],
     following: [{ key: "unfollow", label: "팔로잉", variant: "secondary" }],
     kick: [{ key: "kick", label: "내보내기", variant: "onPrimary" }],
     // 🟢 써클 관련 액션 추가

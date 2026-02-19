@@ -4,6 +4,7 @@ import type { IconName } from "../../../../components/common/Icon";
 import SpeechBubble from "../../../../components/common/SpeechBubble";
 
 import { useMyProfile, useProfileHistory } from "../../hooks";
+import { toKoreanTagLabel } from "../../utils/tagLabel";
 
 import type { CheckMyProfileResult } from "../../../../apis/types/user";
 
@@ -38,7 +39,12 @@ const MOCK_PROFILE_RESULT: CheckMyProfileResult = {
   },
 };
 
-const ProfileSelf = () => {
+type ProfileSelfProps = {
+  onFollowerClick?: () => void;
+  onFollowingClick?: () => void;
+};
+
+const ProfileSelf = ({ onFollowerClick, onFollowingClick }: ProfileSelfProps) => {
   const query = useMyProfile();
   const history = useProfileHistory({ mode: "self" });
 
@@ -73,9 +79,21 @@ const ProfileSelf = () => {
 
         {/* Counter */}
         <div className="mt-[8px] flex items-center gap-[16px]">
-          <Counter variant="label" size="sm" count={info.followerCount} label="팔로워" />
+          <button
+            type="button"
+            onClick={onFollowerClick}
+            className="rounded-small state-layer primary-container-opacity-8"
+          >
+            <Counter variant="label" size="sm" count={info.followerCount} label="팔로워" />
+          </button>
           <Divider orientation="vertical" thickness={1} style={{ height: 16 }} />
-          <Counter variant="label" size="sm" count={info.followingCount} label="팔로잉" />
+          <button
+            type="button"
+            onClick={onFollowingClick}
+            className="rounded-small state-layer primary-container-opacity-8"
+          >
+            <Counter variant="label" size="sm" count={info.followingCount} label="팔로잉" />
+          </button>
         </div>
         
       </div>
@@ -86,16 +104,16 @@ const ProfileSelf = () => {
         <div className="flex items-start gap-[16px]">
           <span className="shrink-0 whitespace-nowrap">내 특기</span>
           <div className="flex flex-wrap gap-[8px]">
-            {specialtyTags.map((tag) => (
-              <Chip key={tag} label={`#${tag}`} />
+            {specialtyTags.map((tag, index) => (
+              <Chip key={`${tag}-${index}`} label={`#${toKoreanTagLabel(tag)}`} />
             ))}
           </div>
         </div>
         <div className="flex items-start gap-[16px]">
           <span className="shrink-0 whitespace-nowrap">내 취향</span>
           <div className="flex flex-wrap gap-[8px]">
-            {interestTags.map((tag) => (
-              <Chip key={tag} label={`#${tag}`} />
+            {interestTags.map((tag, index) => (
+              <Chip key={`${tag}-${index}`} label={`#${toKoreanTagLabel(tag)}`} />
             ))}
           </div>
         </div>

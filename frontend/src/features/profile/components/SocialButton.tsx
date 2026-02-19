@@ -15,6 +15,12 @@ const getLabel = (state?: FollowState | null) => {
   return "팔로우";
 };
 
+const getVariant = (state?: FollowState | null) => {
+  if (state === "REQUESTED") return "surfaceVariant" as const;
+  if (state === "COMPLETED") return "secondary" as const;
+  return "onPrimary" as const;
+};
+
 const SocialButton = ({
   targetId,
   followState,
@@ -26,6 +32,7 @@ const SocialButton = ({
   const { mutate, isPending } = useFollowRequest();
 
   const label = getLabel(localState);
+  const variant = getVariant(localState);
   const isDisabled = localState === "REQUESTED" || localState === "COMPLETED";
 
   const handleClick = () => {
@@ -38,7 +45,7 @@ const SocialButton = ({
 
   return (
     <Button
-      variant="onPrimary"
+      variant={variant}
       size="md"
       widthMode="fixed"
       width="170px"
