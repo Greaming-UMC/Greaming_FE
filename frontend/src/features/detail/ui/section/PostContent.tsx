@@ -12,6 +12,10 @@ export interface PostContentProps {
   tags: string[];
   upload_at: string;
   headerRightNode?: React.ReactNode;
+  userId: number;
+  isMe: boolean;
+  field?: string;
+  challengeTitle?: string | null;
 }
 
 /**
@@ -29,6 +33,10 @@ export const usePostContent = ({
   tags,
   upload_at,
   headerRightNode,
+  userId,
+  isMe,
+  field,
+  challengeTitle,
 }: PostContentProps) => {
   // useMemo 제거 - headerRightNode가 변경될 때 즉시 반영되도록
   return {
@@ -37,7 +45,9 @@ export const usePostContent = ({
         nickname={nickname}
         profileImageUrl={profileImageUrl}
         level={level}
+        userId={String(userId)}
         rightNode={headerRightNode}
+        isMe={isMe}
       />
     ),
     mainContent: (
@@ -50,6 +60,8 @@ export const usePostContent = ({
             caption={caption}
             tags={tags}
             upload_at={upload_at}
+            field={field}
+            challengeTitle={challengeTitle}
           />
         </div>
       </div>

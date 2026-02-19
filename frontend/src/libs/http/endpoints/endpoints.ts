@@ -96,6 +96,7 @@ export const ENDPOINTS = {
     CREATE_COMMENT: "/api/comments",
     GET_COMMENT_REPLIES: (commentId: number | string) => `/api/comments/${commentId}/replies`,
     CREATE_REPLY: (commentId: number | string) => `/api/comments/${commentId}/replies`,
+    TOGGLE_LIKE: (commentId: number | string) => `/api/comments/${commentId}/likes`,
   },
 
   PRIVACY: {

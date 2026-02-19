@@ -4,16 +4,17 @@ import type { PageInfo } from "../common";
  * 댓글 정보
  */
 export interface CommentDetail {
+  comment_id?: number;
   commentId?: number;
-  userId?: number;
+  user_id?: number;
   writer_nickname: string;
   writer_profileImgUrl?: string | null;
   content: string;
   createdAt?: string;
   replyCount?: number;
   isWriter?: boolean;
-  isLike: boolean;
-  likeCount?: number;
+  isLiked: boolean;
+  is_liked?: boolean; // API snake_case support
 }
 
 /**
@@ -31,6 +32,10 @@ export interface WorkDetail {
   caption: string;
   tags: string[];
   upload_at: string;
+  userId: number;
+  field: string;
+  challengeId: number | null;
+  challengeTitle: string | null;
 }
 
 /**
@@ -51,6 +56,8 @@ export interface SubmissionDetail {
   commentCount: number;
   bookmarkCount: number;
   liked: boolean;
+  field: string;
+  challengeId: number | null;
 }
 
 export interface SubmissionDetailsCommentPage {
@@ -64,4 +71,7 @@ export interface SubmissionDetailsCommentPage {
 export interface SubmissionDetails {
   submission: SubmissionDetail;
   commentPage: SubmissionDetailsCommentPage;
+  field: string;
+  challengeId: number | null;
+  challengeTitle: string | null;
 }

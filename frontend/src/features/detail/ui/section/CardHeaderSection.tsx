@@ -1,27 +1,40 @@
 import { memo, type ReactNode } from "react";
 import { Avatar, Badge } from "../../../../components/common/display";
+import { useNavigate } from "react-router-dom";
 export interface CardHeaderSectionProps {
   nickname: string;
   profileImageUrl: string;
+  userId: string;
   level: string;
   rightNode?: ReactNode;
   className?: string;
+  isMe?: boolean;
 }
 
 const CardHeader = ({
   nickname,
   profileImageUrl,
+  userId,
   level,
   rightNode,
   className = "",
+  isMe = false,
 }: CardHeaderSectionProps) => {
+  const navigate = useNavigate();
   return (
     <div
       className={`flex items-center justify-between self-stretch ${className}`}
       role="group"
     >
       <div className="flex items-center gap-3 min-w-0">
-        <Avatar src={profileImageUrl} size={32} />
+        <Avatar 
+          src={profileImageUrl} 
+          size={32} 
+          onClick={() => {
+            navigate(isMe ? '/profile/self' : `/profile/user/${userId}`)
+          }} 
+          className="cursor-pointer"
+        />
 
         <div className="min-w-0">
           <div className="flex items-center gap-2">

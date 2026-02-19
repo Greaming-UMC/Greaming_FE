@@ -199,3 +199,15 @@ export const deleteSubmission = async (submissionId: number) => {
   );
   return data;
 };
+
+/**
+ * 댓글 좋아요 토글
+ * @param commentId - 좋아요를 토글할 댓글 ID
+ */
+export const toggleCommentLike = async (commentId: number) => {
+  const { data } = await http.post<ApiResultResponse<ToggleLikeResult>>(
+    ENDPOINTS.COMMENT.TOGGLE_LIKE(commentId),
+    {},
+  );
+  return data;
+};
