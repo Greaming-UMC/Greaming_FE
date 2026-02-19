@@ -4,7 +4,7 @@ import type { IconName } from "../../../../components/common/Icon";
 import SpeechBubble from "../../../../components/common/SpeechBubble";
 import SocialButton from "../../components/SocialButton";
 import { useProfileHistory, useUserProfile } from "../../hooks";
-import type { CheckUserProfileResult } from "../../../../apis/types/user";
+import type { CheckUserProfileResult, OtherUserInformation } from "../../../../apis/types/user";
 import { toKoreanTagLabel } from "../../utils/tagLabel";
 
 const JOURNEY_LEVEL_ICONS = ["SKETCHER", "PAINTER", "ARTIST", "MASTER"] as const;
@@ -20,8 +20,40 @@ const resolveJourneyIcon = (value: unknown): IconName => {
   return "SKETCHER";
 };
 
+const resolveFollowState = (
+  followState?: string,
+  isFollowing?: boolean,
+): "REQUESTED" | "COMPLETED" | null => {
+  const normalized = typeof followState === "string"
+    ? followState.trim().toUpperCase()
+    : undefined;
+
+  if (
+    normalized === "REQUESTED" ||
+    normalized === "REQUEST" ||
+    normalized === "PENDING"
+  ) {
+    return "REQUESTED";
+  }
+
+  if (
+    normalized === "COMPLETED" ||
+    normalized === "FOLLOWING" ||
+    normalized === "FOLLOWED"
+  ) {
+    return "COMPLETED";
+  }
+
+  if (typeof isFollowing === "boolean") {
+    return isFollowing ? "COMPLETED" : null;
+  }
+
+  return null;
+};
+
 const MOCK_PROFILE_RESULT: CheckUserProfileResult = {
   user_information: {
+    userId: 0,
     nickname: "닉네임",
     profileImgUrl: "",
     journeyLevel: "PAINTER",
@@ -52,44 +84,50 @@ const ProfileOther = ({
   const query = useUserProfile(userId);
   const history = useProfileHistory({ mode: "other", userId });
   const result = query.data?.result ?? MOCK_PROFILE_RESULT;
-  const fallbackInfo = MOCK_PROFILE_RESULT.user_information!;
-  const info =
-    result.user_information ??
-    result.userInformation ??
-    fallbackInfo;
-  const specialtyTags = info.specialtyTags ?? [];
-  const interestTags = info.interestTags ?? [];
+  const fallbackInfo = MOCK_PROFILE_RESULT.user_information as OtherUserInformation;
+  const rawInfo = (() => {
+    const nested = result.user_information ?? result.userInformation;
+    if (nested) return nested;
+
+    if (typeof result.nickname === "string" || typeof result.userId === "number") {
+      return result as OtherUserInformation;
+    }
+
+    return fallbackInfo;
+  })();
+  const info = {
+    userId: rawInfo.userId ?? 0,
+    nickname: rawInfo.nickname ?? fallbackInfo.nickname,
+    profileImgUrl: rawInfo.profileImgUrl ?? rawInfo.profileImageUrl ?? "",
+    journeyLevel: rawInfo.journeyLevel ?? rawInfo.level ?? rawInfo.usagePurpose ?? "SKETCHER",
+    introduction: rawInfo.introduction ?? rawInfo.intro ?? "",
+    followerCount:
+      typeof rawInfo.followerCount === "number"
+        ? rawInfo.followerCount
+        : typeof rawInfo.follower_count === "number"
+        ? rawInfo.follower_count
+        : 0,
+    followingCount:
+      typeof rawInfo.followingCount === "number"
+        ? rawInfo.followingCount
+        : typeof rawInfo.following_count === "number"
+        ? rawInfo.following_count
+        : 0,
+    specialtyTags: rawInfo.specialtyTags ?? [],
+    interestTags: rawInfo.interestTags ?? [],
+    followState: rawInfo.followState,
+    isFollowing: rawInfo.isFollowing,
+  };
+  const specialtyTags = info.specialtyTags;
+  const interestTags = info.interestTags;
   const usageLevel =
     info.journeyLevel ??
     (info as { level?: string }).level;
   const usageIcon = resolveJourneyIcon(usageLevel);
-  const targetId = userId ?? 0;
-  const followerCount = (() => {
-    if (typeof info.followerCount === "number") return info.followerCount;
-    const alt = (info as { follower_count?: number }).follower_count;
-    return typeof alt === "number" ? alt : 0;
-  })();
-  const followingCount = (() => {
-    if (typeof info.followingCount === "number") return info.followingCount;
-    const alt = (info as { following_count?: number }).following_count;
-    return typeof alt === "number" ? alt : 0;
-  })();
-  const followState = (() => {
-    const normalized = typeof info.followState === "string"
-      ? info.followState.trim().toUpperCase()
-      : undefined;
-
-    if (normalized === "REQUESTED" || normalized === "COMPLETED") {
-      return normalized as "REQUESTED" | "COMPLETED";
-    }
-
-    const isFollowing = (info as { isFollowing?: boolean }).isFollowing;
-    if (typeof isFollowing === "boolean") {
-      return isFollowing ? "COMPLETED" : null;
-    }
-
-    return null;
-  })();
+  const targetId = userId ?? info.userId ?? 0;
+  const followerCount = info.followerCount;
+  const followingCount = info.followingCount;
+  const followState = resolveFollowState(info.followState, info.isFollowing);
   const uploadCountText = history.isLoading ? "..." : history.uploadCount.toLocaleString();
   const consecutiveDaysText = history.isLoading
     ? "..."

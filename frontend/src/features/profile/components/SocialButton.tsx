@@ -29,6 +29,8 @@ const normalizeFollowState = (
   const normalized = state.trim().toUpperCase();
   if (normalized === "REQUESTED") return "REQUESTED";
   if (normalized === "COMPLETED") return "COMPLETED";
+  if (normalized === "FOLLOWING" || normalized === "FOLLOWED") return "COMPLETED";
+  if (normalized === "PENDING" || normalized === "REQUEST") return "REQUESTED";
 
   return null;
 };
@@ -49,7 +51,7 @@ const SocialButton = ({
 
   const label = getLabel(localState);
   const variant = getVariant(localState);
-  const isDisabled = localState === "REQUESTED" || localState === "COMPLETED";
+  const isDisabled = localState === "REQUESTED";
 
   const handleClick = () => {
     mutate(targetId, {
@@ -58,7 +60,7 @@ const SocialButton = ({
           setLocalState(data.result.isFollowing ? "COMPLETED" : null);
           return;
         }
-        setLocalState(localState);
+        setLocalState((prev) => (prev === "COMPLETED" ? null : "COMPLETED"));
       },
     });
   };

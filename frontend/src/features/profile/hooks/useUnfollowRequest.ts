@@ -20,15 +20,30 @@ export const useUnfollowRequest = () => {
         profileQueryKeys.user(targetId),
         (prev) => {
           if (!prev?.result) return prev;
-          const currentInfo =
-            prev.result.user_information ?? prev.result.userInformation;
-          if (!currentInfo) return prev;
+          const currentInfo = prev.result.user_information ?? prev.result.userInformation;
+          const isFlat = typeof prev.result.nickname === "string";
+
+          if (!currentInfo && !isFlat) return prev;
 
           return {
             ...prev,
             result: {
               ...prev.result,
-              user_information: { ...currentInfo, followState: undefined },
+              ...(isFlat
+                ? {
+                    followState: undefined,
+                    isFollowing: false,
+                  }
+                : {}),
+              ...(currentInfo
+                ? {
+                    user_information: {
+                      ...currentInfo,
+                      followState: undefined,
+                      isFollowing: false,
+                    },
+                  }
+                : {}),
             },
           };
         },
