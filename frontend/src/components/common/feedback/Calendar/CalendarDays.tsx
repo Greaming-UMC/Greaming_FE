@@ -56,7 +56,7 @@ const CalendarDays = ({ completedDates = [] }: CalendarDaysProps) => {
   CalendarTrigger.displayName = 'CalendarTrigger';
 
   return (
-    <div className={isInline ? 'w-full flex justify-center' : 'w-fit'}>
+    <div className={isInline ? 'w-full flex justify-start' : 'w-fit'}>
       <DatePicker
         fixedHeight
         selected={isShowSelected ? selectedDate : null}
