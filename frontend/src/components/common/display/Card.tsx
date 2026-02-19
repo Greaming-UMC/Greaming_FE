@@ -55,7 +55,7 @@ export const Card = ({
         ${variantStyles[variant]}
         
         /* 인터랙션 (커서 및 호버 레이어) */
-        ${isInteractive ? "cursor-pointer state-layer" : ""}
+        ${isInteractive ? "cursor-pointer state-layer primary-opacity-8 before:z-10" : ""}
         
         /* 호버 애니메이션 (둥둥 뜨기) - hoverEffect가 켜져있을 때만 동작 */
         ${isInteractive && hoverEffect ? "hover:-translate-y-1" : ""}

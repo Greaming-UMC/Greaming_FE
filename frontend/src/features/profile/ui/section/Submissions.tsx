@@ -8,6 +8,7 @@ type SubmissionsProps = {
   emptyMessage?: string;
   showAuthor?: boolean;
   authorById?: Record<number, { name: string; avatarUrl?: string | null }>;
+  onItemClick?: (submissionId: number) => void;
   className?: string;
 };
 
@@ -16,6 +17,7 @@ const Submissions = ({
   emptyMessage = "포스팅한 그림이 없어요",
   showAuthor = false,
   authorById,
+  onItemClick,
   className = "",
 }: SubmissionsProps) => {
   if (items.length === 0) {
@@ -40,7 +42,19 @@ const Submissions = ({
       <div className="submissions-grid">
         {items.map((item) => (
           <div key={item.submissionId} className="flex flex-col">
-            <Card.Root className="w-[250px] h-[250px]">
+            <Card.Root
+              className="w-[250px] h-[250px]"
+              clickable={Boolean(onItemClick)}
+              onClick={() => onItemClick?.(item.submissionId)}
+              onKeyDown={(event) => {
+                if (!onItemClick) return;
+                if (event.key !== "Enter" && event.key !== " ") return;
+                event.preventDefault();
+                onItemClick(item.submissionId);
+              }}
+              role={onItemClick ? "button" : undefined}
+              tabIndex={onItemClick ? 0 : undefined}
+            >
               <Card.Media
                 src={item.thumbnailUrl}
                 alt={`submission-${item.submissionId}`}
