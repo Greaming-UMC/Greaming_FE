@@ -6,6 +6,7 @@ import { ChallengeCalendar } from "../../../components/common/feedback";
 
 import { useMyProfile, useUserProfile } from "../hooks";
 import { PROFILE_VIEW_CONFIG, type ProfileViewContext } from "../config/profileRoleConfig";
+import type { CheckMyProfileResult, CheckUserProfileResult } from "../../../apis/types/user";
 
 interface ProfileViewProps {
     context: ProfileViewContext;
@@ -26,13 +27,16 @@ const ProfileView = ( { context, userId, circleId }: ProfileViewProps) => {
       context.type === "user" && context.role === "other" ? userId : undefined,
     );
 
-    const challengeCalendar =
+    const profileResult: CheckMyProfileResult | CheckUserProfileResult | undefined =
       context.type === "user"
         ? context.role === "self"
-          ? myProfileQuery.data?.result?.challenge_calender ??
-            myProfileQuery.data?.result?.challengeCalendar
-          : userProfileQuery.data?.result?.challenge_calender ??
-            userProfileQuery.data?.result?.challengeCalendar
+          ? myProfileQuery.data?.result ?? undefined
+          : userProfileQuery.data?.result ?? undefined
+        : undefined;
+
+    const challengeCalendar =
+      context.type === "user"
+        ? profileResult?.challenge_calender ?? profileResult?.challengeCalendar
         : undefined;
 
     return (
@@ -45,7 +49,12 @@ const ProfileView = ( { context, userId, circleId }: ProfileViewProps) => {
             <div className="mx-auto w-full flex gap-16 px-50">
 
                 <div className="relative flex flex-col w-fit gap-8 -mt-50">
-                    <ProfileDashboard context={context} userId={userId} circleId={circleId} />
+                    <ProfileDashboard
+                      context={context}
+                      userId={userId}
+                      circleId={circleId}
+                      profileResult={profileResult}
+                    />
                     {ui.showCalendar && (
                       <ChallengeCalendar
                         dailyChallengeDates={challengeCalendar?.dailyChallenge ?? []}

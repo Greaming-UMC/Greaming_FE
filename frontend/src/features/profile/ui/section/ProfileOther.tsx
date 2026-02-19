@@ -72,18 +72,20 @@ const MOCK_PROFILE_RESULT: CheckUserProfileResult = {
 
 type ProfileOtherProps = {
   userId?: number;
+  profileResult?: CheckUserProfileResult;
   onFollowerClick?: () => void;
   onFollowingClick?: () => void;
 };
 
 const ProfileOther = ({
   userId,
+  profileResult,
   onFollowerClick,
   onFollowingClick,
 }: ProfileOtherProps) => {
-  const query = useUserProfile(userId);
-  const history = useProfileHistory({ mode: "other", userId });
-  const result = query.data?.result ?? MOCK_PROFILE_RESULT;
+  const query = useUserProfile(userId, { enabled: !profileResult });
+  const history = useProfileHistory({ mode: "other", userId, profileResult });
+  const result = profileResult ?? query.data?.result ?? MOCK_PROFILE_RESULT;
   const fallbackInfo = MOCK_PROFILE_RESULT.user_information as OtherUserInformation;
   const rawInfo = (() => {
     const nested = result.user_information ?? result.userInformation;

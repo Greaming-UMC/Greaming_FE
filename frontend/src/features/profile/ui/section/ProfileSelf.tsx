@@ -40,15 +40,16 @@ const MOCK_PROFILE_RESULT: CheckMyProfileResult = {
 };
 
 type ProfileSelfProps = {
+  profileResult?: CheckMyProfileResult;
   onFollowerClick?: () => void;
   onFollowingClick?: () => void;
 };
 
-const ProfileSelf = ({ onFollowerClick, onFollowingClick }: ProfileSelfProps) => {
-  const query = useMyProfile();
-  const history = useProfileHistory({ mode: "self" });
+const ProfileSelf = ({ profileResult, onFollowerClick, onFollowingClick }: ProfileSelfProps) => {
+  const query = useMyProfile({ enabled: !profileResult });
+  const history = useProfileHistory({ mode: "self", profileResult });
 
-  const result = query.data?.result ?? MOCK_PROFILE_RESULT;
+  const result = profileResult ?? query.data?.result ?? MOCK_PROFILE_RESULT;
   const fallbackInfo = MOCK_PROFILE_RESULT.user_information!;
   const info =
     result.user_information ??

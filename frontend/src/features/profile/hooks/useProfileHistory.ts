@@ -4,10 +4,11 @@ import { useMyProfile } from "./useMyProfile";
 import { useMySubmissions } from "./useMySubmissions";
 import { useUserProfile } from "./useUserProfile";
 import { useUserSubmissions } from "./useUserSubmissions";
+import type { CheckMyProfileResult, CheckUserProfileResult } from "../../../apis/types/user";
 
 type UseProfileHistoryParams =
-  | { mode: "self" }
-  | { mode: "other"; userId?: number };
+  | { mode: "self"; profileResult?: CheckMyProfileResult }
+  | { mode: "other"; userId?: number; profileResult?: CheckUserProfileResult };
 
 type ProfileHistory = {
   uploadCount: number;
@@ -57,9 +58,14 @@ const getMaxConsecutiveDays = (dates: string[]): number => {
 
 export const useProfileHistory = (params: UseProfileHistoryParams): ProfileHistory => {
   const isSelf = params.mode === "self";
+  const providedProfileResult = params.profileResult;
 
-  const myProfileQuery = useMyProfile({ enabled: isSelf });
-  const userProfileQuery = useUserProfile(!isSelf ? params.userId : undefined);
+  const myProfileQuery = useMyProfile({
+    enabled: isSelf && !providedProfileResult,
+  });
+  const userProfileQuery = useUserProfile(!isSelf ? params.userId : undefined, {
+    enabled: !isSelf && !providedProfileResult,
+  });
   const mySubmissionsQuery = useMySubmissions(
     {},
     { enabled: isSelf },
@@ -69,9 +75,9 @@ export const useProfileHistory = (params: UseProfileHistoryParams): ProfileHisto
     {},
   );
 
-  const profileResult = isSelf
-    ? myProfileQuery.data?.result
-    : userProfileQuery.data?.result;
+  const profileResult =
+    providedProfileResult ??
+    (isSelf ? myProfileQuery.data?.result : userProfileQuery.data?.result);
   const submissionsResult = isSelf
     ? mySubmissionsQuery.data?.result
     : userSubmissionsQuery.data?.result;
@@ -91,8 +97,8 @@ export const useProfileHistory = (params: UseProfileHistoryParams): ProfileHisto
   const uploadCount = submissionsResult?.submissions?.length ?? 0;
 
   const isLoading = isSelf
-    ? myProfileQuery.isLoading || mySubmissionsQuery.isLoading
-    : userProfileQuery.isLoading || userSubmissionsQuery.isLoading;
+    ? (!providedProfileResult && myProfileQuery.isLoading) || mySubmissionsQuery.isLoading
+    : (!providedProfileResult && userProfileQuery.isLoading) || userSubmissionsQuery.isLoading;
 
   return {
     uploadCount,

@@ -4,6 +4,7 @@ import { Modal } from "../../../components/common/feedback";
 import { ActionItem } from "../../../components/common/input";
 import type { IconName } from "../../../components/common/Icon";
 import type { FollowState } from "../../../apis/types/common";
+import type { CheckMyProfileResult, CheckUserProfileResult } from "../../../apis/types/user";
 
 import DropdownButton from "../components/DropDownButton";
 import ProfileSelf from "./section/ProfileSelf";
@@ -14,8 +15,6 @@ import {
   useFollowers,
   useFollowRequest,
   useFollowings,
-  useMyProfile,
-  useUserProfile,
 } from "../hooks";
 import { PROFILE_VIEW_CONFIG, type ProfileViewContext } from "../config/profileRoleConfig";
 import { toKoreanTagLabel } from "../utils/tagLabel";
@@ -24,6 +23,7 @@ interface ProfileViewProps {
     context: ProfileViewContext;
     userId?: number;
     circleId?: number;
+    profileResult?: CheckMyProfileResult | CheckUserProfileResult;
 }
 
 type FollowModalType = "followers" | "followings" | null;
@@ -142,7 +142,7 @@ const normalizeFollowUser = (user: RawFollowUser): FollowListItem | null => {
   };
 };
 
-const ProfileDashboard = ( { context, userId, circleId }: ProfileViewProps) => {
+const ProfileDashboard = ( { context, userId, circleId, profileResult }: ProfileViewProps) => {
 
     const ui = context.type === "user"
       ? PROFILE_VIEW_CONFIG.user[context.role]
@@ -155,20 +155,22 @@ const ProfileDashboard = ( { context, userId, circleId }: ProfileViewProps) => {
     const isSelfUser = context.type === "user" && context.role === "self";
     const isOtherUser = context.type === "user" && context.role === "other";
 
-    const myProfileQuery = useMyProfile({ enabled: isSelfUser });
-    const userProfileQuery = useUserProfile(isOtherUser ? userId : undefined);
-
     const profileInfo = useMemo(() => {
-      if (isSelfUser) {
-        const data = myProfileQuery.data?.result;
-        return data?.user_information ?? data?.userInformation;
+      if (!profileResult) return undefined;
+
+      const nested =
+        profileResult.user_information ?? profileResult.userInformation;
+      if (nested) return nested;
+
+      if (
+        typeof (profileResult as { userId?: unknown }).userId === "number" ||
+        typeof (profileResult as { nickname?: unknown }).nickname === "string"
+      ) {
+        return profileResult as { userId?: number };
       }
-      if (isOtherUser) {
-        const data = userProfileQuery.data?.result;
-        return data?.user_information ?? data?.userInformation;
-      }
+
       return undefined;
-    }, [isOtherUser, isSelfUser, myProfileQuery.data, userProfileQuery.data]);
+    }, [profileResult]);
 
     const profileUserId = (profileInfo as { userId?: number } | undefined)?.userId;
     const targetProfileUserId =
@@ -177,7 +179,7 @@ const ProfileDashboard = ( { context, userId, circleId }: ProfileViewProps) => {
           ? profileUserId
           : undefined
         : isOtherUser
-        ? userId
+        ? (typeof userId === "number" ? userId : profileUserId)
         : undefined;
 
     const followersQuery = useFollowers(
@@ -275,12 +277,18 @@ const ProfileDashboard = ( { context, userId, circleId }: ProfileViewProps) => {
               {context.type === "user" ? (
                 context.role === "self" ? (
                   <ProfileSelf
+                    profileResult={
+                      (isSelfUser ? profileResult : undefined) as CheckMyProfileResult | undefined
+                    }
                     onFollowerClick={() => openFollowModal("followers")}
                     onFollowingClick={() => openFollowModal("followings")}
                   />
                 ) : (
                   <ProfileOther
                     userId={userId}
+                    profileResult={
+                      (isOtherUser ? profileResult : undefined) as CheckUserProfileResult | undefined
+                    }
                     onFollowerClick={() => openFollowModal("followers")}
                     onFollowingClick={() => openFollowModal("followings")}
                   />
