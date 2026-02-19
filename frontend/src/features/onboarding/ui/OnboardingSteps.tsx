@@ -1,4 +1,3 @@
-import type { ArtField, ArtStyle } from "../../../apis/types/common";
 import OnboardingBg from "../../../assets/background/onboarding_background.svg";
 import { useOnboardingSteps } from "../model/useOnboardingSteps";
 
@@ -16,6 +15,7 @@ export function OnboardingSteps() {
     prev, 
     setNickname, 
     toggleTag, 
+    setArtStyle,
     setPurpose,   
     setWeeklyGoal  
   } = useOnboardingSteps();
@@ -42,22 +42,25 @@ export function OnboardingSteps() {
                 <Step2Profile
                   nickname={draft.nickname}
                   onChangeNickname={setNickname}
-                  // 🟢 specialtyTags 단일 배열 전달
-                  tags={draft.specialtyTags as (ArtField | ArtStyle)[]}
-                  onToggleTag={(tag) => toggleTag('specialtyTags', tag as ArtField)}
+                  fieldTags={draft.specialties.fields}
+                  onChangeFieldTags={(tag) => toggleTag("specialties", tag)}
+                  styleTag={draft.specialties.style || null}
+                  onChangeStyleTag={(style) => setArtStyle("specialties", style)}
                   onNext={next}
                 />
               )}
 
               {step === 3 && (
                 <Step3Interests
-                  // 🟢 단순 배열 하나만 넘기기 (타입 에러 방지를 위해 as 단언 사용)
-                  tags={draft.interestTags as (ArtField | ArtStyle)[]}
-                  onToggleTag={(tag) => toggleTag('interestTags', tag as ArtField)}
+                  interestFields={draft.interests.fields}
+                  onChangeInterestFields={(tag) => toggleTag("interests", tag)}
+                  interestStyle={draft.interests.style || null}
+                  onChangeInterestStyle={(style) => setArtStyle("interests", style)}
                   onPrev={prev}
                   onNext={next}
                 />
               )}
+
               {step === 4 && (
                 <Step4Purpose 
                   onPrev={prev} 
