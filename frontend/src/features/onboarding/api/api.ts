@@ -1,27 +1,22 @@
 import { http } from "../../../libs/http/client";
 import { ENDPOINTS } from "../../../libs/http/endpoints/endpoints";
 import type { ApiResultResponse, UserInformations } from "../../../apis/types/common";
+import type { RegisterInfoRequest } from "../../../apis/types/auth/onboarding";
 
 export const registerOnboardingInfo = async (params: UserInformations) => {
   const {
-    followerCount,
-    followingCount,
-    followState,
-    visibility,
     specialties,
     interests,
-    ...rest
   } = params;
 
-  const payload = {
-    ...rest,
-    nickname: rest.nickname,
-    intro: rest.intro || "",
-
+  const payload: RegisterInfoRequest = {
+    nickname: params.nickname,
+    intro: params.intro || "",
     specialtyTags: [...specialties.fields, specialties.style].filter(Boolean),
     interestTags: [...interests.fields, interests.style].filter(Boolean),
-    usagePurpose: rest.usagePurpose,
-    weeklyGoalScore: rest.weeklyGoalScore,
+    journeyLevel: params.usagePurpose,
+    weeklyGoalScore: params.weeklyGoalScore,
+    ...(params.profileImgUrl ? { profileImageKey: params.profileImgUrl } : {}),
   };
 
   try {
@@ -34,12 +29,13 @@ export const registerOnboardingInfo = async (params: UserInformations) => {
     const status = e?.response?.status;
     const data = e?.response?.data;
 
-    // 이미 정보 등록된 유저(=온보딩 완료)면 성공처럼 처리 , 오류해결 위해 일시적으로 해결해봤습니다.
+    // 이미 정보 등록된 유저라면 PATCH로 실제 정보를 갱신한다.
     if (status === 409 && data?.code === "USER_409") {
-      return {
-        ...data,
-        isSuccess: true, // 
-      } as ApiResultResponse<null>;
+      const { data: patched } = await http.patch<ApiResultResponse<null>>(
+        ENDPOINTS.ONBOARDING.UPDATE_INFO,
+        payload
+      );
+      return patched;
     }
     throw e;
   }
