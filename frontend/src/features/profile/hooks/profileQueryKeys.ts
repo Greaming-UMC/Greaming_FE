@@ -2,6 +2,7 @@ import type {
   CheckSubmissionInterceptor,
 } from "../../../apis/types/common";
 import type { CheckCircleSubmissionsRequest } from "../../../apis/types/circle";
+import type { GetFollowersParams, GetFollowingsParams } from "../../../apis/types/follow";
 
 export const profileQueryKeys = {
 
@@ -33,6 +34,24 @@ export const profileQueryKeys = {
       "profile",
       "circleSubmissions",
       circleId,
+      params?.page ?? null,
+      params?.size ?? null,
+    ] as const,
+
+  followers: (userId: number, params?: GetFollowersParams) =>
+    [
+      "profile",
+      "followers",
+      userId,
+      params?.page ?? null,
+      params?.size ?? null,
+    ] as const,
+
+  followings: (userId: number, params?: GetFollowingsParams) =>
+    [
+      "profile",
+      "followings",
+      userId,
       params?.page ?? null,
       params?.size ?? null,
     ] as const,

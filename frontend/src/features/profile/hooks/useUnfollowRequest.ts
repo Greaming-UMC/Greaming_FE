@@ -1,23 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { ApiResultResponse } from "../../../apis/types/common";
 import type { CheckUserProfileResult } from "../../../apis/types/user";
-import type { ToggleFollowResult } from "../../../apis/types/follow";
-import { postFollowRequest } from "../api/api";
+import { deleteFollowRequest } from "../api/api";
 import { profileQueryKeys } from "./profileQueryKeys";
 
-export const useFollowRequest = () => {
+export const useUnfollowRequest = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<ApiResultResponse<ToggleFollowResult>, Error, number>({
+  return useMutation<ApiResultResponse<null>, Error, number>({
     mutationFn: async (targetId: number) => {
-      const data = await postFollowRequest(targetId);
+      const data = await deleteFollowRequest(targetId);
       if (!data.isSuccess) {
         throw new Error(`${data.code}: ${data.message}`);
       }
       return data;
     },
     onSuccess: (_data, targetId) => {
-      const nextState = _data.result?.isFollowing ? "COMPLETED" : undefined;
       queryClient.setQueryData<ApiResultResponse<CheckUserProfileResult>>(
         profileQueryKeys.user(targetId),
         (prev) => {
@@ -30,7 +28,7 @@ export const useFollowRequest = () => {
             ...prev,
             result: {
               ...prev.result,
-              user_information: { ...currentInfo, followState: nextState },
+              user_information: { ...currentInfo, followState: undefined },
             },
           };
         },

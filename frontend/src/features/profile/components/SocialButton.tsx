@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../../components/common/input";
 import type { FollowState } from "../../../apis/types/common";
 import { useFollowRequest } from "../hooks/useFollowRequest";
@@ -21,15 +21,31 @@ const getVariant = (state?: FollowState | null) => {
   return "onPrimary" as const;
 };
 
+const normalizeFollowState = (
+  state?: FollowState | string | null,
+): FollowState | null => {
+  if (typeof state !== "string") return null;
+
+  const normalized = state.trim().toUpperCase();
+  if (normalized === "REQUESTED") return "REQUESTED";
+  if (normalized === "COMPLETED") return "COMPLETED";
+
+  return null;
+};
+
 const SocialButton = ({
   targetId,
   followState,
   className,
 }: SocialButtonProps) => {
   const [localState, setLocalState] = useState<FollowState | null | undefined>(
-    followState,
+    normalizeFollowState(followState),
   );
   const { mutate, isPending } = useFollowRequest();
+
+  useEffect(() => {
+    setLocalState(normalizeFollowState(followState));
+  }, [followState]);
 
   const label = getLabel(localState);
   const variant = getVariant(localState);
@@ -38,7 +54,11 @@ const SocialButton = ({
   const handleClick = () => {
     mutate(targetId, {
       onSuccess: (data) => {
-        setLocalState(data.result?.followState ?? localState);
+        if (typeof data.result?.isFollowing === "boolean") {
+          setLocalState(data.result.isFollowing ? "COMPLETED" : null);
+          return;
+        }
+        setLocalState(localState);
       },
     });
   };

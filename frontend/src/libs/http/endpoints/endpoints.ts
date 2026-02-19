@@ -78,6 +78,7 @@ export const ENDPOINTS = {
   },
 
   FOLLOW: {
+    TOGGLE: (targetId: number | string) => `/api/users/${targetId}/follow`,
     REJECT_FOLLOW_REQUEST: (followerId: number | string) => `/api/users/${followerId}/follows/reject`,
     ACCEPT_FOLLOW_REQUEST: "/api/users/me/followRequests",
     GET_FOLLOWERS: (userId: number | string) => `/api/users/${userId}/followers`,

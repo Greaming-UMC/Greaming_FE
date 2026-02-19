@@ -10,7 +10,13 @@ import ProfileSelf from "./section/ProfileSelf";
 import ProfileOther from "./section/ProfileOther";
 import ProfileCircle from "./section/ProfileCircle";
 
-import { useMyProfile, useUserProfile } from "../hooks";
+import {
+  useFollowers,
+  useFollowRequest,
+  useFollowings,
+  useMyProfile,
+  useUserProfile,
+} from "../hooks";
 import { PROFILE_VIEW_CONFIG, type ProfileViewContext } from "../config/profileRoleConfig";
 import { toKoreanTagLabel } from "../utils/tagLabel";
 
@@ -29,7 +35,6 @@ type FollowListItem = {
   level?: IconName;
   specialtyTags: string[];
   interestTags: string[];
-  isPrivate?: boolean;
   followState?: FollowState | null;
 };
 
@@ -52,7 +57,9 @@ const ProfileDashboard = ( { context, userId, circleId }: ProfileViewProps) => {
       : PROFILE_VIEW_CONFIG.circle[context.role];
     const navigator = useNavigate();
     const [followModalType, setFollowModalType] = useState<FollowModalType>(null);
-    const [followItems, setFollowItems] = useState<FollowListItem[]>([]);
+    const [followStateOverrides, setFollowStateOverrides] = useState<
+      Record<number, FollowState | null>
+    >({});
     const isSelfUser = context.type === "user" && context.role === "self";
     const isOtherUser = context.type === "user" && context.role === "other";
 
@@ -71,70 +78,89 @@ const ProfileDashboard = ( { context, userId, circleId }: ProfileViewProps) => {
       return undefined;
     }, [isOtherUser, isSelfUser, myProfileQuery.data, userProfileQuery.data]);
 
-    const buildMockFollowItems = (): FollowListItem[] => {
-      const nickname = profileInfo?.nickname ?? "그리머";
-      const profileImgUrl = profileInfo?.profileImgUrl ?? "";
-      const specialtyTags = (profileInfo?.specialtyTags ?? []).slice(0, 2);
-      const interestTags = (profileInfo?.interestTags ?? []).slice(0, 2);
-      const level = resolveJourneyIcon(profileInfo?.journeyLevel ?? profileInfo?.level);
+    const profileUserId = (profileInfo as { userId?: number } | undefined)?.userId;
+    const targetProfileUserId =
+      isSelfUser
+        ? typeof profileUserId === "number"
+          ? profileUserId
+          : undefined
+        : isOtherUser
+        ? userId
+        : undefined;
 
-      return [
-        {
-          userId: 1001,
-          nickname,
-          profileImgUrl,
-          level,
-          specialtyTags,
-          interestTags,
-          isPrivate: true,
-          followState: "REQUESTED",
-        },
-        {
-          userId: 1002,
-          nickname: "그리머2026",
-          profileImgUrl: "",
-          level: "PAINTER",
-          specialtyTags: ["ILLUSTRATION", "CHARACTER"],
-          interestTags: ["FAN_ART", "ANIMATION"],
-          isPrivate: false,
-          followState: null,
-        },
-        {
-          userId: 1003,
-          nickname: "캔버스러버",
-          profileImgUrl: "",
-          level: "ARTIST",
-          specialtyTags: ["LANDSCAPE", "WATERCOLOR"],
-          interestTags: ["PORTRAIT", "PENCIL"],
-          isPrivate: false,
-          followState: "COMPLETED",
-        },
-      ];
-    };
+    const followersQuery = useFollowers(
+      followModalType === "followers" ? targetProfileUserId : undefined,
+      { page: 1, size: 20 },
+      { enabled: followModalType === "followers" },
+    );
+
+    const followingsQuery = useFollowings(
+      followModalType === "followings" ? targetProfileUserId : undefined,
+      { page: 1, size: 20 },
+      { enabled: followModalType === "followings" },
+    );
+    const { mutate: requestFollow } = useFollowRequest();
 
     const openFollowModal = (type: Exclude<FollowModalType, null>) => {
       setFollowModalType(type);
-      setFollowItems(buildMockFollowItems());
+      setFollowStateOverrides({});
     };
 
-    const closeFollowModal = () => setFollowModalType(null);
+    const closeFollowModal = () => {
+      setFollowModalType(null);
+      setFollowStateOverrides({});
+    };
+
+    const followUsers =
+      followModalType === "followers"
+        ? followersQuery.data?.result?.users ?? []
+        : followingsQuery.data?.result?.users ?? [];
+
+    const followItems: FollowListItem[] = useMemo(
+      () =>
+        followUsers.map((user) => {
+          const serverState: FollowState | null = user.isFollowing
+            ? "COMPLETED"
+            : null;
+          const followState = followStateOverrides[user.userId] ?? serverState;
+          return {
+            userId: user.userId,
+            nickname: user.nickname,
+            profileImgUrl: user.profileImgUrl,
+            level: resolveJourneyIcon(user.journeyLevel),
+            specialtyTags: user.specialtyTags ?? [],
+            interestTags: user.interestTags ?? [],
+            followState,
+          };
+        }),
+      [followStateOverrides, followUsers],
+    );
+
+    const isFollowListLoading =
+      followModalType === "followers"
+        ? followersQuery.isLoading
+        : followingsQuery.isLoading;
+
+    const followListError =
+      followModalType === "followers"
+        ? followersQuery.error
+        : followingsQuery.error;
 
     const handleToggleFollow = (targetUserId: number) => {
-      setFollowItems((prev) =>
-        prev.map((item) =>
-          item.userId === targetUserId
-            ? {
-                ...item,
-                followState:
-                  item.followState === "COMPLETED"
-                    ? null
-                    : item.isPrivate
-                    ? "REQUESTED"
-                    : "COMPLETED",
-              }
-            : item,
-        ),
-      );
+      requestFollow(targetUserId, {
+        onSuccess: (data) => {
+          const nextState =
+            typeof data.result?.isFollowing === "boolean"
+              ? data.result.isFollowing
+                ? "COMPLETED"
+                : null
+              : "COMPLETED";
+          setFollowStateOverrides((prev) => ({
+            ...prev,
+            [targetUserId]: nextState,
+          }));
+        },
+      });
     };
 
     const modalTitle = followModalType === "followers" ? "팔로워" : "팔로잉";
@@ -173,54 +199,64 @@ const ProfileDashboard = ( { context, userId, circleId }: ProfileViewProps) => {
           <Modal open={followModalType !== null} onClose={closeFollowModal} variant="default">
             <Modal.Header title={modalTitle} />
             <Modal.Body>
-              <div className="flex w-full flex-col">
-                {followItems.map((item) => {
-                  const specialty = item.specialtyTags
-                    .map((tag) => `#${toKoreanTagLabel(tag)}`)
-                    .join(" ");
-                  const interest = item.interestTags
-                    .map((tag) => `#${toKoreanTagLabel(tag)}`)
-                    .join(" ");
+              {isFollowListLoading ? (
+                <div className="flex min-h-[180px] items-center justify-center label-large text-on-surface-variant-lowest">
+                  목록을 불러오는 중...
+                </div>
+              ) : followListError ? (
+                <div className="flex min-h-[180px] items-center justify-center label-large text-error">
+                  팔로우 목록 조회에 실패했어요.
+                </div>
+              ) : (
+                <div className="flex w-full flex-col">
+                  {followItems.map((item) => {
+                    const specialty = item.specialtyTags
+                      .map((tag) => `#${toKoreanTagLabel(tag)}`)
+                      .join(" ");
+                    const interest = item.interestTags
+                      .map((tag) => `#${toKoreanTagLabel(tag)}`)
+                      .join(" ");
 
-                  const action =
-                    item.followState === "REQUESTED"
-                      ? "requested"
-                      : item.followState === "COMPLETED"
-                      ? "following"
-                      : "follow";
+                    const action =
+                      item.followState === "REQUESTED"
+                        ? "requested"
+                        : item.followState === "COMPLETED"
+                        ? "following"
+                        : "follow";
 
-                  return (
-                    <ActionItem
-                      key={item.userId}
-                      variant="modal"
-                      action={action}
-                      size="xl"
-                      radius="none"
-                      align="left"
-                      widthMode="fill"
-                      avatar={{
-                        src: item.profileImgUrl,
-                        alt: item.nickname,
-                        icon: "char_default",
-                      }}
-                      badge={
-                        item.level
-                          ? { icon: item.level, size: "md", className: "text-on-surface" }
-                          : undefined
-                      }
-                      title={item.nickname}
-                      titleClassName="main-title-small-emphasized text-on-surface"
-                      subtitle={{
-                        variant: "text",
-                        value: `특기 ${specialty || "-"} · 취향 ${interest || "-"}`,
-                      }}
-                      subtitleClassName="label-large text-on-surface-variant-lowest"
-                      onFollow={() => handleToggleFollow(item.userId)}
-                      onUnfollow={() => handleToggleFollow(item.userId)}
-                    />
-                  );
-                })}
-              </div>
+                    return (
+                      <ActionItem
+                        key={item.userId}
+                        variant="modal"
+                        action={action}
+                        size="xl"
+                        radius="none"
+                        align="left"
+                        widthMode="fill"
+                        avatar={{
+                          src: item.profileImgUrl ?? "",
+                          alt: item.nickname,
+                          icon: "char_default",
+                        }}
+                        badge={
+                          item.level
+                            ? { icon: item.level, size: "md", className: "text-on-surface" }
+                            : undefined
+                        }
+                        title={item.nickname}
+                        titleClassName="main-title-small-emphasized text-on-surface"
+                        subtitle={{
+                          variant: "text",
+                          value: `특기 ${specialty || "-"} · 취향 ${interest || "-"}`,
+                        }}
+                        subtitleClassName="label-large text-on-surface-variant-lowest"
+                        onFollow={() => handleToggleFollow(item.userId)}
+                        onUnfollow={() => handleToggleFollow(item.userId)}
+                      />
+                    );
+                  })}
+                </div>
+              )}
             </Modal.Body>
           </Modal>
         </>

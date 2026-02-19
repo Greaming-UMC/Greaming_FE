@@ -13,7 +13,13 @@ import type {
     CheckCircleProfileResult, 
     CheckCircleSubmissionsRequest, CheckCircleSubmissionsResult 
 } from "../../../apis/types/circle";
-import type { FollowRequestResult } from "../../../apis/types/follow";
+import type { ToggleFollowResult } from "../../../apis/types/follow";
+import type {
+    GetFollowersParams,
+    GetFollowersResult,
+    GetFollowingsParams,
+    GetFollowingsResult,
+} from "../../../apis/types/follow";
 
 
 export const getUserProfile = async (userId: number) => {
@@ -52,8 +58,37 @@ export const getCircleSubmissions = async (circleId: number, params: CheckCircle
 
 
 export const postFollowRequest = async (targetId: number) => {
-    const { data } = await http.post<ApiResultResponse<FollowRequestResult>>(
-        ENDPOINTS.FOLLOW.FOLLOW(targetId),
+    const { data } = await http.post<ApiResultResponse<ToggleFollowResult>>(
+        ENDPOINTS.FOLLOW.TOGGLE(targetId),
+    );
+    return data;
+};
+
+export const deleteFollowRequest = async (targetId: number) => {
+    const { data } = await http.delete<ApiResultResponse<null>>(
+        ENDPOINTS.FOLLOW.UNFOLLOW(targetId),
+    );
+    return data;
+};
+
+export const getFollowers = async (
+    userId: number,
+    params: GetFollowersParams = {},
+) => {
+    const { data } = await http.get<ApiResultResponse<GetFollowersResult>>(
+        ENDPOINTS.FOLLOW.GET_FOLLOWERS(userId),
+        { params },
+    );
+    return data;
+};
+
+export const getFollowings = async (
+    userId: number,
+    params: GetFollowingsParams = {},
+) => {
+    const { data } = await http.get<ApiResultResponse<GetFollowingsResult>>(
+        ENDPOINTS.FOLLOW.GET_FOLLOWINGS(userId),
+        { params },
     );
     return data;
 };
