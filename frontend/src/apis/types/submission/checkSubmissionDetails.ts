@@ -4,6 +4,8 @@ import type { PageInfo } from "../common";
  * 댓글 정보
  */
 export interface CommentDetail {
+  comment_id?: number;
+  commentId?: number;
   user_id?: number;
   writer_nickname: string;
   writer_profileImgUrl?: string | null;
@@ -11,8 +13,8 @@ export interface CommentDetail {
   createdAt?: string;
   replyCount?: number;
   isWriter?: boolean;
-  isLike: boolean;
-  likeCount?: number;
+  isLiked: boolean;
+  is_liked?: boolean; // API snake_case support
 }
 
 /**

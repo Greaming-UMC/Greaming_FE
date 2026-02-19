@@ -18,7 +18,6 @@ export type Reply = {
 export type Comment = Reply & {
   replyCount?: number;
   isLike?: boolean;
-  likeCount?: number;
 };
 
 /**
@@ -29,18 +28,17 @@ export const transformCommentDetail = (
     commentId?: number;
     replyCount?: number;
     createdAt?: string;
-    isLike?: boolean;
-    likeCount?: number;
+    isLiked?: boolean;
+    is_liked?: boolean;
   },
   index: number
 ): Comment => ({
-  id: detail.commentId ?? index,
+  id: detail.comment_id ?? detail.commentId ?? index,
   userId: detail.user_id ?? 0,
   nickname: detail.writer_nickname,
   avatarSrc: detail.writer_profileImgUrl,
   content: detail.content,
   date: detail.createdAt ?? '',
   replyCount: detail.replyCount ?? 0,
-  isLike: detail.isLike ?? false,
-  likeCount: detail.likeCount ?? 0,
+  isLike: detail.isLiked ?? detail.is_liked ?? false,
 });

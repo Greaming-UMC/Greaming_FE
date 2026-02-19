@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Chatting } from "../../../../components/chatting";
-import { useProfileNavigation } from "../../hooks/useProfileNavigation";
+import CommentItem from "./CommentItem";
 
 export interface CommentListProps {
   comments: Array<{
@@ -11,93 +11,53 @@ export interface CommentListProps {
     date?: string;
     avatarSrc?: string | null;
     isLike?: boolean;
-    likeCount?: number;
     replyCount?: number;
   }>;
   onReply: (comment: any) => void;
   toggleReply: (commentId: number) => void;
   getReplyState: (commentId: number, replyCount: number) => any;
+  onLoadMoreComments: () => void;
+  hasMoreComments: boolean;
 }
 
 /**
- * 댓글 목록을 렌더링하는 컴포넌트
- * input value 변경 시 리렌더되지 않도록 분리됨
+ * 댓글 목록 렌더링 컴포넌트
+ * 각 CommentItem이 좋아요 상태를 로컬로 관리하므로
+ * 좋아요 클릭 시 이 컴포넌트는 리렌더되지 않음
  */
 const CommentList = ({
   comments,
   onReply,
   toggleReply,
   getReplyState,
+  onLoadMoreComments,
+  hasMoreComments,
 }: CommentListProps) => {
-  const { navigateToProfile } = useProfileNavigation();
-
   return (
     <>
       <Chatting.Header />
       <Chatting.List>
-        {comments.map((comment) => {
-          const replyState = getReplyState(comment.id, comment.replyCount || 0);
-          const hasReplies = replyState.replyCount > 0;
-
-          return (
-            <div key={comment.id} className="flex flex-col">
-              <Chatting.Item
-                avatarSrc={
-                  comment.avatarSrc ??
-                  `https://i.pravatar.cc/150?u=${comment.id}`
-                }
-                nickname={comment.nickname}
-                content={comment.content}
-                date={comment.date}
-                onReply={() => onReply(comment)}
-                isLiked={comment.isLike}
-                likeCount={comment.likeCount}
-                onLike={() => {
-                  /* 댓글 좋아요 처리 로직 추가 예정 */
-                }}
-                onAvatarClick={() => navigateToProfile(comment.userId)}
-              />
-
-              {hasReplies && (
-                <Chatting.ReplySeparator
-                  isOpen={replyState.isOpen}
-                  replyCount={replyState.replyCount}
-                  onClick={() => toggleReply(comment.id)}
-                />
-              )}
-
-              {replyState.isOpen && (
-                <div className="flex flex-col">
-                  {replyState.isLoading && (
-                    <div className="pl-14 text-sm text-on-surface-variant py-2">
-                      답글 로딩 중...
-                    </div>
-                  )}
-                  {replyState.replies.map((reply: any) => (
-                    <Chatting.Item
-                      key={reply.replyId}
-                      isReply
-                      avatarSrc={reply.writer_profileImgUrl}
-                      nickname={reply.writer_nickname}
-                      content={reply.content}
-                      date={reply.createdAt}
-                      isLiked={reply.isLike}
-                      likeCount={reply.likeCount}
-                      onLike={() => {
-                        /* 답글 좋아요 처리 로직 추가 예정 */
-                      }}
-                      onAvatarClick={() => navigateToProfile(reply.userId)}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
+        {comments.map((comment) => (
+          <CommentItem
+            key={comment.id}
+            comment={comment}
+            onReply={onReply}
+            toggleReply={toggleReply}
+            getReplyState={getReplyState}
+          />
+        ))}
+        {hasMoreComments && (
+          <button
+            onClick={onLoadMoreComments}
+            className="w-full py-3 text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors border-t border-gray-100 mt-2"
+          >
+            댓글 더보기
+          </button>
+        )}
       </Chatting.List>
     </>
   );
 };
 
-// 최적화: comments가 변경될 때만 리렌더
+// memo: comments 배열 참조가 바뀔 때만 리렌더 (좋아요는 CommentItem 내부에서 처리)
 export default memo(CommentList);

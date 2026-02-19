@@ -12,12 +12,12 @@ export interface ChattingSectionProps {
     commentId?: number;
     replyCount?: number;
     createdAt?: string;
-    isLike?: boolean;
-    likeCount?: number;
   })[];
   submissionId: number;
   onCommentCreated: (newComment: CreateCommentResult) => void;
   userAvatarSrc?: string | null;
+  onLoadMoreComments: () => void;
+  hasMoreComments: boolean;
 }
 
 const ChattingSection = ({
@@ -25,6 +25,8 @@ const ChattingSection = ({
   submissionId,
   onCommentCreated,
   userAvatarSrc,
+  onLoadMoreComments,
+  hasMoreComments,
 }: ChattingSectionProps) => {
   // 데이터 변환
   const comments = useCommentTransform(comment_list);
@@ -57,6 +59,8 @@ const ChattingSection = ({
           onReply={startReply}
           toggleReply={toggleReply}
           getReplyState={getReplyState}
+          onLoadMoreComments={onLoadMoreComments}
+          hasMoreComments={hasMoreComments}
         />
 
         {/* 답글 모드 표시 */}

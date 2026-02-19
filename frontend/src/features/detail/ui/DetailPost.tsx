@@ -18,6 +18,8 @@ export interface DetailPostProps {
   onCommentCreated: (newComment: CreateCommentResult) => void;
   isMe: boolean;
   currentUserProfileImg: string | null;
+  onLoadMoreComments: () => void;
+  hasMoreComments: boolean;
 }
 
 const DetailPost = ({
@@ -27,6 +29,8 @@ const DetailPost = ({
   onCommentCreated,
   isMe,
   currentUserProfileImg,
+  onLoadMoreComments,
+  hasMoreComments,
 }: DetailPostProps) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -81,7 +85,7 @@ const DetailPost = ({
           widthMode="fill"
           onClick={() => {
             setIsMenuOpen(false);
-            console.log("수정 기능은 아직 구현되지 않았습니다.");
+            // TODO: 수정 기능 구현
           }}
         />
         <ListBase
@@ -140,6 +144,8 @@ const DetailPost = ({
                 submissionId={submissionId}
                 onCommentCreated={onCommentCreated}
                 userAvatarSrc={currentUserProfileImg}
+                onLoadMoreComments={onLoadMoreComments}
+                hasMoreComments={hasMoreComments}
               />
             </div>
           </aside>
