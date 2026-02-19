@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Calendar } from "./Calendar";
 import dailyChallenge from "../../../../assets/icon/multi/dailyChallenge.svg";
 import weeklyChallenge from "../../../../assets/icon/multi/weeklyChallenge.svg";
@@ -6,18 +7,28 @@ interface ChallengeCalendarProps {
   className?: string;
   dailyChallengeDates?: string[];
   weeklyChallengeDates?: string[];
+  dayGapX?: number;
 }
 
 const ChallengeCalendar = ({
   className = "",
   dailyChallengeDates = [],
   weeklyChallengeDates = [],
+  dayGapX = 12,
 }: ChallengeCalendarProps) => {
+  const calendarStyle = {
+    "--calendar-day-gap-x": `${dayGapX}px`,
+  } as CSSProperties;
+
   return (
     <div
       className={`bg-primary rounded-large flex flex-col px-[20px] py-[24px] gap-[12px] w-fit ${className}`}
     >
-      <Calendar variant="inline" className="gap-[12px] w-full">
+      <Calendar
+        variant="inline"
+        className="gap-[12px] w-full"
+        style={calendarStyle}
+      >
         <Calendar.Header />
 
         <div className="flex flex-col gap-[12px] bg-surface text-on-surface px-[16px] py-[20px] rounded-large w-full">
