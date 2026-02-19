@@ -53,7 +53,7 @@ export const HeaderActions = ({ userInfo, onLogout }: HeaderActionsProps) => {
             variant="surface"
             size="sm"
             shape="round"
-            className="font-medium text-on-surface shadow-none ml-1"
+            className="label-xlarge text-on-surface shadow-none ml-1"
           >
             그림 업로드
           </Button>
