@@ -38,6 +38,24 @@ type FollowListItem = {
   followState?: FollowState | null;
 };
 
+type RawFollowUser = {
+  userId?: number;
+  nickname?: string;
+  profileImgUrl?: string | null;
+  profileImageUrl?: string | null;
+  journeyLevel?: string;
+  level?: string;
+  usagePurpose?: string;
+  specialtyTags?: string[];
+  interestTags?: string[];
+  isFollower?: unknown;
+  isFollowing?: unknown;
+  isFollow?: unknown;
+  isfollow?: unknown;
+  following?: unknown;
+  followState?: string;
+};
+
 const JOURNEY_LEVEL_ICONS = ["SKETCHER", "PAINTER", "ARTIST", "MASTER"] as const;
 type JourneyLevelIcon = (typeof JOURNEY_LEVEL_ICONS)[number];
 
@@ -48,6 +66,80 @@ const resolveJourneyIcon = (value: unknown): IconName | undefined => {
     return normalized as JourneyLevelIcon;
   }
   return undefined;
+};
+
+const resolveFollowState = (
+  followState?: string,
+  isFollowing?: boolean,
+): FollowState | null => {
+  const normalized = typeof followState === "string"
+    ? followState.trim().toUpperCase()
+    : undefined;
+
+  if (
+    normalized === "REQUESTED" ||
+    normalized === "REQUEST" ||
+    normalized === "PENDING"
+  ) {
+    return "REQUESTED";
+  }
+
+  if (
+    normalized === "COMPLETED" ||
+    normalized === "FOLLOWING" ||
+    normalized === "FOLLOWED"
+  ) {
+    return "COMPLETED";
+  }
+
+  if (typeof isFollowing === "boolean") {
+    return isFollowing ? "COMPLETED" : null;
+  }
+
+  return null;
+};
+
+const toBoolean = (value: unknown): boolean | undefined => {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") {
+    if (value === 1) return true;
+    if (value === 0) return false;
+  }
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "true" || normalized === "1" || normalized === "y") return true;
+    if (normalized === "false" || normalized === "0" || normalized === "n") return false;
+  }
+  return undefined;
+};
+
+const resolveFollowingFlag = (user: {
+  isFollowing?: unknown;
+  following?: unknown;
+  isFollow?: unknown;
+  isfollow?: unknown;
+}) =>
+  toBoolean(user.isFollowing) ??
+  toBoolean(user.following) ??
+  toBoolean(user.isFollow) ??
+  toBoolean(user.isfollow);
+
+const normalizeFollowUser = (user: RawFollowUser): FollowListItem | null => {
+  if (typeof user.userId !== "number") return null;
+
+  const levelValue = user.journeyLevel ?? user.level ?? user.usagePurpose;
+  const followingFlag = resolveFollowingFlag(user);
+  const followState = resolveFollowState(user.followState, followingFlag);
+
+  return {
+    userId: user.userId,
+    nickname: user.nickname ?? `유저 ${user.userId}`,
+    profileImgUrl: user.profileImgUrl ?? user.profileImageUrl ?? null,
+    level: resolveJourneyIcon(levelValue),
+    specialtyTags: user.specialtyTags ?? [],
+    interestTags: user.interestTags ?? [],
+    followState,
+  };
 };
 
 const ProfileDashboard = ( { context, userId, circleId }: ProfileViewProps) => {
@@ -111,28 +203,31 @@ const ProfileDashboard = ( { context, userId, circleId }: ProfileViewProps) => {
       setFollowStateOverrides({});
     };
 
-    const followUsers =
+    const moveToUserProfile = (targetUserId: number) => {
+      closeFollowModal();
+      navigator(`/profile/user/${targetUserId}`);
+    };
+
+    const followUsers: RawFollowUser[] =
       followModalType === "followers"
-        ? followersQuery.data?.result?.users ?? []
-        : followingsQuery.data?.result?.users ?? [];
+        ? (followersQuery.data?.result?.users as RawFollowUser[] | undefined) ??
+          (followersQuery.data?.result as { data?: RawFollowUser[] } | null)?.data ??
+          []
+        : (followingsQuery.data?.result?.users as RawFollowUser[] | undefined) ??
+          (followingsQuery.data?.result as { data?: RawFollowUser[] } | null)?.data ??
+          [];
 
     const followItems: FollowListItem[] = useMemo(
-      () =>
-        followUsers.map((user) => {
-          const serverState: FollowState | null = user.isFollowing
-            ? "COMPLETED"
-            : null;
-          const followState = followStateOverrides[user.userId] ?? serverState;
-          return {
-            userId: user.userId,
-            nickname: user.nickname,
-            profileImgUrl: user.profileImgUrl,
-            level: resolveJourneyIcon(user.journeyLevel),
-            specialtyTags: user.specialtyTags ?? [],
-            interestTags: user.interestTags ?? [],
-            followState,
-          };
-        }),
+      () => {
+        const normalized = followUsers
+          .map(normalizeFollowUser)
+          .filter((item): item is FollowListItem => item !== null);
+
+        return normalized.map((item) => ({
+          ...item,
+          followState: followStateOverrides[item.userId] ?? item.followState,
+        }));
+      },
       [followStateOverrides, followUsers],
     );
 
@@ -252,6 +347,8 @@ const ProfileDashboard = ( { context, userId, circleId }: ProfileViewProps) => {
                         subtitleClassName="label-large text-on-surface-variant-lowest"
                         onFollow={() => handleToggleFollow(item.userId)}
                         onUnfollow={() => handleToggleFollow(item.userId)}
+                        onClick={() => moveToUserProfile(item.userId)}
+                        className="cursor-pointer"
                       />
                     );
                   })}

@@ -30,13 +30,20 @@ export interface GetFollowersParams {
 
 export interface FollowListUser {
   userId: number;
-  nickname: string;
-  profileImgUrl: string | null;
-  journeyLevel: UsagePurpose;
-  specialtyTags: string[];
-  interestTags: string[];
-  isFollower: boolean;
-  isFollowing: boolean;
+  nickname?: string;
+  profileImgUrl?: string | null;
+  profileImageUrl?: string | null;
+  journeyLevel?: UsagePurpose | string;
+  level?: UsagePurpose | string;
+  usagePurpose?: UsagePurpose | string;
+  specialtyTags?: string[];
+  interestTags?: string[];
+  isFollower?: boolean;
+  isFollowing?: boolean;
+  isFollow?: boolean;
+  isfollow?: boolean;
+  following?: boolean;
+  followState?: string;
 }
 
 export interface GetFollowersResult {
