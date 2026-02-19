@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
+import { motion } from "framer-motion";
 
 import { Button } from "../../../../components/common/input/Button/Button";
 
@@ -13,10 +14,6 @@ import CircleBlur from "../../../../assets/icon/mono/circle_blur.png";
 type Props = {
   onNext: () => void;
 };
-
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
-}
 
 function Dot({ active }: { active: boolean }) {
   return (
@@ -32,6 +29,23 @@ function Dot({ active }: { active: boolean }) {
 
 type SlideKey = "challenge" | "journey" | "circle";
 type Slide = { key: SlideKey; activeSrc: string; sideSrc: string };
+type CardSlot = "left" | "center" | "right" | "hidden";
+
+const CARD_MOTION: Record<CardSlot, { x: number; y: number; scale: number; opacity: number; rotate: number }> = {
+  left: { x: -182, y: 33, scale: 0.89, opacity: 0.6, rotate: -2 },
+  center: { x: 0, y: 0, scale: 1, opacity: 1, rotate: 0 },
+  right: { x: 182, y: 33, scale: 0.89, opacity: 0.6, rotate: 2 },
+  hidden: { x: 0, y: 36, scale: 0.84, opacity: 0, rotate: 0 },
+};
+
+const getCardSlot = (slideIndex: number, currentIndex: number, total: number): CardSlot => {
+  const diff = (slideIndex - currentIndex + total) % total;
+
+  if (diff === 0) return "center";
+  if (diff === 1) return "right";
+  if (diff === total - 1) return "left";
+  return "hidden";
+};
 
 export function Step1Welcome({ onNext }: Props) {
   const slides = useMemo<Slide[]>(
@@ -44,39 +58,30 @@ export function Step1Welcome({ onNext }: Props) {
   );
 
   const [index, setIndex] = useState(0);
+  const slideCount = slides.length;
 
-  const go = (to: number) => setIndex(clamp(to, 0, slides.length - 1));
-  const nextCard = () => go(index + 1);
-  const prevCard = () => go(index - 1);
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setIndex((prev) => (prev + 1) % slideCount);
+    }, 2500);
 
-  const showLeft = index === 1 || index === 2;
-  const showRight = index === 0 || index === 1;
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [slideCount]);
 
-  const leftPosClass =
-    index === 1
-      ? "left-[calc(50%_-_180px_-_128px)]"
-      : index === 2
-        ? "left-[calc(50%_-_180px_-_88px)]"
-        : "";
+  const go = (to: number) => {
+    if (to < 0 || to >= slideCount || to === index) return;
+    setIndex(to);
+  };
 
-  const rightPosClass =
-    index === 0
-      ? "left-[calc(50%_-_180px_+_127.625px)]"
-      : index === 1
-        ? "left-[calc(50%_-_180px_+_127.995px)]"
-        : "";
+  const nextCard = () => {
+    setIndex((prev) => (prev + 1) % slideCount);
+  };
 
-  const sideTopClass = "top-[33.43px]";
-
-  const sideBase =
-    "absolute z-10 select-none cursor-pointer overflow-hidden " +
-    "w-[320.375px] h-[380px] rounded-[13.3px] " +
-    sideTopClass;
-
-  const frontBase =
-    "absolute top-0 left-1/2 -translate-x-1/2 " +
-    "z-20 select-none cursor-pointer overflow-hidden " +
-    "w-[360px] h-[446.86px] rounded-[15.7px]";
+  const prevCard = () => {
+    setIndex((prev) => (prev - 1 + slideCount) % slideCount);
+  };
 
   return (
     <div className="w-full h-full relative">
@@ -92,54 +97,40 @@ export function Step1Welcome({ onNext }: Props) {
         <div className="mt-[24px] w-full flex flex-col items-center">
           {/* stage: 684 x 446.86 */}
           <div className="relative w-[684px] h-[446.86px]">
-            {/* left side */}
-            {showLeft && index - 1 >= 0 && (
-              <button
-                type="button"
-                aria-label="이전 카드"
-                onClick={prevCard}
-                className={clsx(sideBase, leftPosClass)}
-              >
-                <img
-                  src={slides[index - 1].sideSrc}
-                  alt=""
-                  draggable={false}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            )}
+            {slides.map((slide, slideIndex) => {
+              const slot = getCardSlot(slideIndex, index, slideCount);
+              if (slot === "hidden") return null;
 
-            {/* right side */}
-            {showRight && index + 1 < slides.length && (
-              <button
-                type="button"
-                aria-label="다음 카드"
-                onClick={nextCard}
-                className={clsx(sideBase, rightPosClass)}
-              >
-                <img
-                  src={slides[index + 1].sideSrc}
-                  alt=""
-                  draggable={false}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            )}
+              const isCenter = slot === "center";
+              const onCardClick = slot === "left" ? prevCard : nextCard;
 
-            {/* front */}
-            <button
-              type="button"
-              aria-label="다음 카드"
-              onClick={nextCard}
-              className={frontBase}
-            >
-              <img
-                src={slides[index].activeSrc}
-                alt=""
-                draggable={false}
-                className="w-full h-full object-cover"
-              />
-            </button>
+              return (
+                <motion.button
+                  key={slide.key}
+                  type="button"
+                  aria-label={slot === "left" ? "이전 카드" : "다음 카드"}
+                  onClick={onCardClick}
+                  className={clsx(
+                    "absolute top-0 left-1/2 -translate-x-1/2",
+                    "w-[360px] h-[446.86px] overflow-hidden rounded-[15.7px]",
+                    "select-none cursor-pointer",
+                    isCenter ? "z-30" : "z-20"
+                  )}
+                  animate={CARD_MOTION[slot]}
+                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <img
+                    src={isCenter ? slide.activeSrc : slide.sideSrc}
+                    alt=""
+                    draggable={false}
+                    className={clsx(
+                      "w-full h-full object-cover transition-opacity duration-300",
+                      isCenter ? "opacity-100" : "opacity-92"
+                    )}
+                  />
+                </motion.button>
+              );
+            })}
           </div>
 
           {/* dots */}
