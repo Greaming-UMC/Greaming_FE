@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import clsx from 'clsx';
 
 /* -------------------------------------------------------------------------- */
 /* 1. Types & Interfaces                                                     */
@@ -186,29 +187,33 @@ const ModalRoot = ({
 interface ModalHeaderProps {
   title: string;
   onClose?: () => void;
+  className?: string;
+  titleClassName?: string;
 }
 
-const ModalHeader = ({ title, onClose: customOnClose }: ModalHeaderProps) => {
+const ModalHeader = ({ title, onClose: customOnClose, className, titleClassName }: ModalHeaderProps) => {
   const { variant, onClose: contextOnClose } = useModalContext();
   const handleClose = customOnClose || contextOnClose;
 
   return (
     <div
-      className={`flex items-center
-        ${variant === 'confirm' ? 'justify-center pt-8' : 'mb-2 justify-between p-3 pl-6 border-b border-outline-variant'}
-      `}
+      className={clsx(
+        "flex items-center",
+        variant === 'confirm' 
+          ? 'justify-center pt-8' 
+          : 'mb-2 justify-between p-3 pl-6 border-b border-outline-variant',
+        className 
+      )}
     >
       <h2 
-        className={`text-on-surface ${
-          variant === 'confirm' 
-            ? 'main-title-small-emphasized'
-            : 'sub-title-xlarge-emphasized'
-        }`}
+        className={clsx(
+          titleClassName ? titleClassName : "text-on-surface", 
+          variant === 'confirm' ? 'main-title-small-emphasized' : 'sub-title-xlarge-emphasized'
+        )}
       >
         {title}
       </h2>
 
-      {/* 공용컴포넌트 버튼으로 수정 */}
       {variant === 'default' && (
         <button
           type="button"

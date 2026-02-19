@@ -4,16 +4,15 @@ import clsx from "clsx";
 const PrivacySection = () => {
 
   return (
-    <section className="flex flex-col gap-10">
-      {/* 1. 헤더 영역 - 원본 pb-2 유지 */}
-      <div className="pb-2">
+    <section className="flex flex-col gap-10 w-full">
+      <div className="flex justify-between items-center pb-2 pt-1">
         <h2 className="main-title-small-emphasized text-on-surface">개인정보</h2>
       </div>
 
       {/* 2. 데이터 관리 섹션 - 원본 gap-4 유지 */}
       <div className="flex flex-col gap-4 pb-80">
 
-        <h3 className="label-xlarge-emphasized text-on-surface">데이터 관리</h3>
+        <h3 className="sub-title-large-emphasized text-on-surface">데이터 관리</h3>
         
         {/* 원본 gap-2 유지 */}
         <div className="flex flex-col gap-2">
@@ -21,9 +20,8 @@ const PrivacySection = () => {
           <Button
             variant="surface"
             widthMode="fill"
-            // 🛠️ 원본의 px-6 py-4 h-auto 구조 유지 + 우리 그림자/테두리만 추가
             className={clsx(
-              "justify-start px-6 py-3 h-auto transition-all rounded-medium shadow-1",
+              "justify-start px-5 py-3 h-auto transition-all rounded-medium shadow-1",
             )}
             onClick={() => console.log("내 데이터 다운로드 클릭됨")}
           >
@@ -35,7 +33,7 @@ const PrivacySection = () => {
             variant="surface"
             widthMode="fill"
             className={clsx(
-              "justify-start px-6 py-3 h-auto transition-all rounded-medium shadow-1"
+              "justify-start px-5 py-3 h-auto transition-all rounded-medium shadow-1"
             )}
             onClick={() => console.log("활동 기록 삭제 클릭됨")}
           >

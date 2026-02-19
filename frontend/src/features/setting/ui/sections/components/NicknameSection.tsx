@@ -25,8 +25,8 @@
 
     return (
       <div className="flex flex-col gap-3">
-        <div className="flex justify-between items-center px-1">
-          <label className="label-xlarge-emphasized text-on-surface">닉네임</label>
+        <div className="flex justify-between items-center">
+          <label className="sub-title-large-emphasized text-on-surface">닉네임</label>
           {nicknameUI && (
             <div className="flex items-center gap-2">
               <Icon name={nicknameUI.icon as any} size={18} className={clsx("fill-current", nicknameUI.color)} />

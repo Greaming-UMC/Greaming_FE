@@ -11,7 +11,7 @@ interface Props {
 
 export const JourneySection = ({ list, selectedIdx, onSelect }: Props) => (
   <div className="flex flex-col gap-4">
-    <h3 className="label-xlarge-emphasized text-on-surface">Journey 수정하기</h3>
+    <h3 className="sub-title-large-emphasized text-on-surface">Journey 수정하기</h3>
     <div className="flex flex-col gap-2">
       {list.map((item, idx) => (
         <SelectItem

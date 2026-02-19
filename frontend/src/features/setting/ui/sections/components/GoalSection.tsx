@@ -9,7 +9,7 @@ interface Props {
 
 export const GoalSection = ({ goal, onSelect }: Props) => (
   <div className={clsx("flex flex-col gap-4 p-4 bg-surface rounded-large shadow-1")}>
-    <h4 className="label-xlarge-emphasized text-on-surface">주간 목표 점수 설정</h4>
+    <h4 className="sub-title-large-emphasized text-on-surface">주간 목표 점수 설정</h4>
     <div className="flex justify-between p-2 bg-surface-variant-low rounded-full px-4 h-12 items-center">
       {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((score) => (
         <Button
