@@ -11,27 +11,56 @@ import {
   searchUsersForInvite 
 } from '../api/api';
 import { useInfiniteScroll } from './useInfiniteScroll';
-
-// 원본 도메인 타입 임포트
 import type { newCreatCircleRequest } from '../../../apis/types/circle';
+import { useEffect } from 'react';
 
-/**
- * 1. 팔로우 관련 훅 (Family A - data 기반)
+/** * 1. 팔로우 관련 훅
+ * isOpen과 userId !== 0 조건을 통해 무한 루프와 500 에러를 원천 차단합니다.
  */
-export const useInfiniteFollowings = (userId: number, size: number = 10) => 
-  useInfiniteScroll(['followings', userId], (params) => getFollowings(userId, params), size);
+export const useInfiniteFollowings = (userId: number, isOpen: boolean = true, size: number = 10) => {
+  const query = useInfiniteScroll(
+    ['followings', userId], 
+    (params) => getFollowings(userId, params), 
+    size,
+    isOpen && !!userId && userId !== 0
+  );
 
-export const useInfiniteFollowers = (userId: number, size: number = 10) => 
-  useInfiniteScroll(['followers', userId], (params) => getFollowers(userId, params), size);
+  useEffect(() => {
+    // 🔍 데이터 로드 성공 시 구조 확인용 로그
+    if (query.data && !query.isFetching) {
+      console.log("📍 API 응답 전체 구조:", query.data.pages[0]);
+    }
+    // 🔍 에러 발생 시 원인 확인
+    if (query.isError) {
+      console.error("❌ 팔로잉 로드 실패 원인:", query.error);
+    }
+  }, [query.data, query.isFetching, query.isError, query.error]); 
+
+  return query;
+};
+
+export const useInfiniteFollowers = (userId: number, isOpen: boolean = true, size: number = 10) => {
+  const query = useInfiniteScroll(
+    ['followers', userId], 
+    (params) => getFollowers(userId, params), 
+    size,
+    isOpen && !!userId && userId !== 0
+  );
+
+  useEffect(() => {
+    if (query.data && !query.isFetching) {
+      console.log(`✅ [팔로워 로드 성공] 유저ID: ${userId}`, query.data.pages);
+    }
+  }, [query.data, query.isFetching, userId]);
+
+  return query;
+};
 
 export const useFollowAction = () => {
   const queryClient = useQueryClient();
-
   const invalidateSocialData = () => {
     queryClient.invalidateQueries({ queryKey: ['followings'] });
     queryClient.invalidateQueries({ queryKey: ['followers'] });
-    queryClient.invalidateQueries({ queryKey: ['circleMembers'] });
-    queryClient.invalidateQueries({ queryKey: ['searchUsers'] });
   };
 
   const followMutation = useMutation({ mutationFn: followUser, onSuccess: invalidateSocialData });
@@ -41,38 +70,38 @@ export const useFollowAction = () => {
 };
 
 /**
- * 2. 써클 관련 훅 (Family B - result 기반)
+ * 2. 써클 관련 훅 (🔴 API 미구현/에러로 인해 강제 비활성화)
+ * 서버가 502/404 에러를 뱉고 있어 enabled를 false로 고정해 루프를 끊습니다.
  */
-
-// 🟢 써클 목록 조회 및 검색 (페이지 번호 기반 무한 스크롤)
 export const useInfiniteCircles = (keyword: string = '', size: number = 10) => {
   return useInfiniteQuery({
     queryKey: ['circles', keyword],
     queryFn: ({ pageParam = 1 }) => getCircles({ keyword, page: pageParam as number, size }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      const result = lastPage.result;
+      const result = lastPage?.result;
       if (!result) return undefined;
-
       const nextPage = allPages.length + 1;
-      // 백엔드 명세의 totalPage와 현재 페이지 수 비교
       return nextPage <= result.totalPage ? nextPage : undefined;
     },
+    // 🟢 404 에러 무한 재시도 방지를 위해 봉인
+    enabled: false, 
+    retry: false,
   });
 };
 
-// ⭕ 써클 멤버 목록 조회 (단발성 조회)
-export const useCircleMembers = (circleId: number) => {
+export const useCircleMembers = (circleId: number, isOpen: boolean = true) => {
   return useInfiniteQuery({
     queryKey: ['circleMembers', circleId],
     queryFn: () => getCircleMembers(circleId),
-    enabled: !!circleId,
+    // 🟢 API가 준비될 때까지 호출 자체를 하지 않음
+    enabled: false, 
     initialPageParam: null,
-    getNextPageParam: () => undefined, 
+    getNextPageParam: () => undefined,
+    retry: false,
   });
 };
 
-// 🟢 써클 생성 훅
 export const useCreateCircle = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -83,7 +112,6 @@ export const useCreateCircle = () => {
   });
 };
 
-// ❌ 써클 멤버 강퇴 훅
 export const useKickMember = (circleId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -97,16 +125,15 @@ export const useKickMember = (circleId: number) => {
 /**
  * 3. 검색 관련 훅
  */
-
-// 🔎 초대 유저 검색 (ExploreUsersRequest 객체 구조 반영)
-export const useSearchUsers = (circleId: number, keyword: string) => {
+export const useSearchUsers = (circleId: number, keyword: string, isOpen: boolean = true) => {
   return useInfiniteQuery({
     queryKey: ['searchUsers', circleId, keyword],
-    // keyword를 객체로 감싸서 전달하여 타입 에러 해결
     queryFn: () => searchUsersForInvite(circleId, { keyword }), 
-    enabled: keyword.trim().length > 0,
+    // 🟢 검색어가 있고 모달이 열렸을 때만
+    enabled: isOpen && keyword.trim().length > 0 && !!circleId && circleId !== 0,
     initialPageParam: null,
     getNextPageParam: () => undefined,
-    gcTime: 0, 
+    gcTime: 0,
+    retry: false,
   });
 };

@@ -1,14 +1,13 @@
 import type { FollowUserInfo } from "../../../../apis/types/common";
 import { ActionItem, EmptyState } from "../../../../components/common";
 
-
 interface FollowerListSectionProps {
-  // 🟢 SocialUserItem 대신 FollowUserInfo 사용
   users: FollowUserInfo[];
   onToggle: (userId: number) => void;
 }
 
 const FollowerListSection = ({ users, onToggle }: FollowerListSectionProps) => {
+  // 1. 데이터가 없을 경우 처리
   if (users.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full min-h-[400px]">
@@ -21,25 +20,31 @@ const FollowerListSection = ({ users, onToggle }: FollowerListSectionProps) => {
     );
   }
 
+  // 2. 리스트 렌더링
   return (
     <div className="flex flex-col">
       {users.map((user) => (
         <ActionItem
           key={user.userId}
           size="lg"
-          // isFollowing 상태에 따라 'following' 또는 'follow' 액션 결정
+          // 🟢 내가 상대방을 팔로우 중인지 여부에 따라 버튼 표시
           action={user.isFollowing ? "following" : "follow"}
           title={user.nickname}
-          // 🟢 원본 명세에 bio가 없을 수 있으므로 방어 코드 작성 (필요 시 공통 타입에 bio 추가 검토)
-          subtitle={(user as any).bio || ""} 
+          // 🟢 디자인 시안대로 특기 태그 표시 (# 태그 형식)
+          subtitle={
+            (user as any).specialtyTags && (user as any).specialtyTags.length > 0 
+              ? (user as any).specialtyTags.map((tag: string) => `# ${tag}`).join(' ')
+              : "# 태그없음"
+          }
           badge={{
-            // 🟢 명세에 레벨이나 배지가 없다면 기본 배지 노출
-            icon: (user as any).badgeImage || 'badgeArtist',          
+            // 🟢 journeyLevel에 따른 동적 뱃지 아이콘 매핑
+            icon: user.journeyLevel === 'SKETCHER' ? 'SKETCHER' : 
+                  user.journeyLevel === 'PAINTER' ? 'PAINTER' :
+                  user.journeyLevel === 'ARTIST' ? 'ARTIST' : 'MASTER',
             size: "md"
           }}
           avatar={{ 
-            src: user.profileImgUrl, 
-            // 🟢 명세 외 필드이므로 기본 person 아이콘 사용
+            src: user.profileImgUrl || '', // 🟢 null 대응
             icon: "person" 
           }}
           onUnfollow={() => onToggle(user.userId)}

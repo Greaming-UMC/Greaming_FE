@@ -50,8 +50,8 @@ const ModalPracticePage = () => {
 
 
       {/* 모달들 */}
-      <FollowingModal isOpen={isFollowingModalOpen} onClose={() => setIsFollowingModalOpen(false)} userId={MOCK_MY_INFO.userId}/>
-      <FollowerModal isOpen={isFollowerModalOpen} onClose={() => setIsFollowerModalOpen(false)} userId={MOCK_MY_INFO.userId} />
+      <FollowingModal isOpen={isFollowingModalOpen} onClose={() => setIsFollowingModalOpen(false)} userId={2}/>
+      <FollowerModal isOpen={isFollowerModalOpen} onClose={() => setIsFollowerModalOpen(false)} userId={2} />
       
       <CircleSearchModal 
         isOpen={isCircleSearchModalOpen} 
